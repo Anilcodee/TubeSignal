@@ -37,6 +37,7 @@ Track every significant decision and its rationale for future reference.
 | D6 | Sep 29 | **Dark mode only** (no light mode toggle) | Saves development time, dark mode looks more premium, consistent with analytics tool aesthetic | Both modes (double the CSS work) |
 | D7 | Sep 29 | **In-memory cache** over database | No persistence needed for hackathon, simpler setup, zero cost | Redis (overkill), SQLite (unnecessary), localStorage (client-side only) |
 | D8 | Sep 29 | **Demo mode with pre-cached data** | Essential for reliable hackathon demo, protects against API rate limits | Live-only (risky during demo) |
+| D9 | Sep 29 | **Direct Intelligence Workspace UI** | Removed promotional marketing landing page fluff (how-it-works cards, marketing badges) in favor of a direct, high-density analytics console where users immediately interact with live/preset channel dossiers | Marketing landing page (felt too promotional/fluffy) |
 
 ---
 
