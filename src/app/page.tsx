@@ -1,224 +1,216 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useAnalysis } from '@/hooks/useAnalysis';
+import { ChannelOverview } from '@/components/dashboard/ChannelOverview';
+import { AIBrief } from '@/components/dashboard/AIBrief';
+import { ViewsDistribution } from '@/components/charts/ViewsDistribution';
+import { ContentThemes } from '@/components/charts/ContentThemes';
+import { PublishingTimeline } from '@/components/charts/PublishingTimeline';
+import { LengthVsViews } from '@/components/charts/LengthVsViews';
+import { TopVideos } from '@/components/dashboard/TopVideos';
+import Loading from '@/app/analyze/[channelId]/loading';
 import {
-  Sparkles,
-  BarChart3,
-  Brain,
-  Zap,
-  TrendingUp,
-  ArrowRight,
-  ShieldCheck,
-  PlaySquare,
   Search,
-  CheckCircle2,
+  Sparkles,
+  Share2,
+  Download,
+  Zap,
+  Activity,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
-import { SearchBar } from '@/components/search/SearchBar';
+import { Button } from '@/components/ui/Button';
 import styles from './page.module.css';
 
-export default function Home() {
-  const router = useRouter();
-  const [isSearching, setIsSearching] = useState(false);
+const PRESET_CHANNELS = [
+  { label: 'Marques Brownlee', id: 'mkbhd', handle: '@mkbhd' },
+  { label: 'Fireship', id: 'fireship', handle: '@fireship' },
+  { label: 'Veritasium', id: 'veritasium', handle: '@veritasium' },
+];
 
-  const handleSearch = (query: string) => {
-    setIsSearching(true);
-    // Sanitize handle/query
-    const cleanId = query.replace(/^@/, '').trim().toLowerCase();
-    router.push(`/analyze/${encodeURIComponent(cleanId)}`);
+export default function WorkspacePage() {
+  const [selectedChannel, setSelectedChannel] = useState('mkbhd');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const { data, isLoading, error, refetch, isDemoMode, toggleDemoMode } =
+    useAnalysis(selectedChannel, false);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = searchQuery.replace(/^@/, '').trim().toLowerCase();
+    if (clean) {
+      setSelectedChannel(clean);
+    }
   };
 
-  const handleDemoSelect = (channel: string) => {
-    router.push(`/analyze/${channel}?demo=true`);
+  const handlePillSelect = (channelId: string) => {
+    setSelectedChannel(channelId);
+    setSearchQuery('');
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleShare = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.origin);
+      alert('Workspace dossier link copied to clipboard!');
+    }
   };
 
   return (
-    <div className={styles.main}>
-      {/* Ambient Glows */}
-      <div className={styles.ambientGlowTop} />
-      <div className={styles.ambientGlowRight} />
-
-      {/* Hero Section */}
-      <section className={styles.heroSection}>
-        <div className={styles.badgeRow}>
-          <div className={styles.heroBadge}>
+    <div className={styles.workspace}>
+      {/* Workspace Control Bar */}
+      <div className={styles.controlBar}>
+        <form className={styles.searchRow} onSubmit={handleSearchSubmit}>
+          <div className={styles.searchInputWrapper}>
+            <Search size={16} className={styles.searchIcon} />
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="Search or enter any YouTube channel handle (e.g. mkbhd, fireship, veritasium)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <button type="submit" className={styles.analyzeBtn} disabled={isLoading || !searchQuery.trim()}>
             <Sparkles size={14} />
-            <span>SerpApi India Hackathon 2026 • Knowledge & Public Interest</span>
-          </div>
-        </div>
+            <span>Analyze Channel</span>
+          </button>
+        </form>
 
-        <h1 className={styles.heroTitle}>
-          Decode Any Creator’s <br />
-          <span className={styles.gradientText}>Content Strategy</span> with AI
-        </h1>
-
-        <p className={styles.heroSubtitle}>
-          Paste any YouTube channel name to generate an AI-powered intelligence brief in 30
-          seconds. Uncover topic themes, title formulas, upload cadence, and competitive
-          performance data.
-        </p>
-
-        <div className={styles.searchContainer}>
-          <SearchBar onSearch={handleSearch} isLoading={isSearching} />
-        </div>
-
-        <div className={styles.demoBanner}>
-          <ShieldCheck size={16} color="#7c5cfc" />
-          <span>
-            Instant Demo Available:{' '}
+        <div className={styles.quickPillsRow}>
+          <span className={styles.pillsLabel}>Preset Dossiers:</span>
+          {PRESET_CHANNELS.map((ch) => (
             <button
+              key={ch.id}
               type="button"
-              className={styles.demoLink}
-              onClick={() => handleDemoSelect('mkbhd')}
+              className={`${styles.pillBtn} ${
+                selectedChannel === ch.id ? styles.pillBtnActive : ''
+              }`}
+              onClick={() => handlePillSelect(ch.id)}
             >
-              Marques Brownlee (MKBHD)
-            </button>{' '}
-            or{' '}
-            <button
-              type="button"
-              className={styles.demoLink}
-              onClick={() => handleDemoSelect('fireship')}
-            >
-              Fireship
+              <Activity size={12} />
+              <span>{ch.handle}</span>
             </button>
-          </span>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* How It Works */}
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionLabel}>How It Works</span>
-          <h2 className={styles.sectionTitle}>From Raw Search to AI Intelligence</h2>
-        </div>
-
-        <div className={styles.stepsGrid}>
-          <div className={styles.stepCard}>
-            <div className={styles.stepNumber}>1</div>
-            <h3 className={styles.stepTitle}>Channel Discovery</h3>
-            <p className={styles.stepDesc}>
-              Search for any YouTube creator by name or @handle. SerpApi instantly resolves
-              the official channel ID, subscriber count, and metadata.
-            </p>
-          </div>
-
-          <div className={styles.stepCard}>
-            <div className={styles.stepNumber}>2</div>
-            <h3 className={styles.stepTitle}>Live Data Extraction</h3>
-            <p className={styles.stepDesc}>
-              Fetches recent uploads, duration, view statistics, and detailed top-performing
-              video metrics directly from SerpApi YouTube engines.
-            </p>
-          </div>
-
-          <div className={styles.stepCard}>
-            <div className={styles.stepNumber}>3</div>
-            <h3 className={styles.stepTitle}>AI Strategy Synthesis</h3>
-            <p className={styles.stepDesc}>
-              Google Gemini AI analyzes title formulas, clusters content themes, detects upload
-              patterns, and outputs actionable competitive recommendations.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* SerpApi Engine Integrations Showcase */}
-      <section className={styles.enginesSection}>
-        <div className={styles.enginesContainer}>
-          <span className={styles.sectionLabel}>SerpApi Architecture</span>
-          <h2 className={styles.sectionTitle}>Powered by 3 SerpApi YouTube Engines</h2>
-          <div className={styles.enginesGrid}>
-            <div className={styles.engineCard}>
-              <span className={styles.engineCode}>engine=youtube</span>
-              <h4 className={styles.engineTitle}>Channel Search & Discovery</h4>
-              <p className={styles.engineDesc}>
-                Fuzzy search queries to identify exact creator profiles, handles, and avatar
-                assets in real-time.
-              </p>
-            </div>
-
-            <div className={styles.engineCard}>
-              <span className={styles.engineCode}>engine=youtube_channel</span>
-              <h4 className={styles.engineTitle}>Channel Metadata & Video Feed</h4>
-              <p className={styles.engineDesc}>
-                Extracts complete upload histories, view counts, upload dates, and duration
-                information.
-              </p>
-            </div>
-
-            <div className={styles.engineCard}>
-              <span className={styles.engineCode}>engine=youtube_video</span>
-              <h4 className={styles.engineTitle}>Deep Video Analytics</h4>
-              <p className={styles.engineDesc}>
-                Parallel deep-dives into top 5 highest-viewed videos to extract precise engagement
-                metrics.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionLabel}>Key Capabilities</span>
-          <h2 className={styles.sectionTitle}>Everything You Need to Analyze YouTube Channels</h2>
+      {/* Action Bar */}
+      <div className={styles.actionRow}>
+        <div className={styles.statusIndicator}>
+          <span>Active Target:</span>
+          <strong style={{ color: 'var(--color-text-primary)' }}>
+            {data?.channel.name || selectedChannel.toUpperCase()}
+          </strong>
         </div>
 
-        <div className={styles.featuresGrid}>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <Brain size={24} />
-            </div>
-            <div className={styles.featureContent}>
-              <h3 className={styles.featureTitle}>AI Content Theme Clustering</h3>
-              <p className={styles.featureDesc}>
-                Gemini AI categorizes hundreds of video titles into 4-6 high-level content
-                pillars with exact distribution percentages.
-              </p>
-            </div>
-          </div>
+        <div className={styles.actionButtons}>
+          <button
+            type="button"
+            className={`${styles.actionBtn} ${isDemoMode ? styles.pillBtnActive : ''}`}
+            onClick={toggleDemoMode}
+            title="Toggle between cached dataset and live SerpApi API calls"
+          >
+            <Zap size={13} />
+            <span>{isDemoMode ? 'Demo Dataset' : 'Live SerpApi'}</span>
+          </button>
 
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <BarChart3 size={24} />
-            </div>
-            <div className={styles.featureContent}>
-              <h3 className={styles.featureTitle}>Interactive Data Visualizations</h3>
-              <p className={styles.featureDesc}>
-                Beautiful Chart.js graphs for views distribution, publishing timeline cadence,
-                and duration vs. performance scatter plots.
-              </p>
-            </div>
-          </div>
+          <button type="button" className={styles.actionBtn} onClick={handleShare}>
+            <Share2 size={13} />
+            <span>Share</span>
+          </button>
 
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <Zap size={24} />
-            </div>
-            <div className={styles.featureContent}>
-              <h3 className={styles.featureTitle}>Title Pattern & Emotional Triggers</h3>
-              <p className={styles.featureDesc}>
-                Reverse-engineers the creator’s title structures, character lengths, number
-                usage, and psychological emotional hooks.
-              </p>
-            </div>
-          </div>
+          <button type="button" className={styles.actionBtn} onClick={handlePrint}>
+            <Download size={13} />
+            <span>Export Brief</span>
+          </button>
+        </div>
+      </div>
 
-          <div className={styles.featureCard}>
-            <div className={styles.featureIconWrapper}>
-              <TrendingUp size={24} />
-            </div>
-            <div className={styles.featureContent}>
-              <h3 className={styles.featureTitle}>Competitive Action Items</h3>
-              <p className={styles.featureDesc}>
-                Get 5 tailored, practical recommendations if you want to compete or collaborate
-                in the creator’s specific niche.
-              </p>
-            </div>
+      {/* Loading State */}
+      {isLoading && <Loading />}
+
+      {/* Error State */}
+      {!isLoading && (error || !data) && (
+        <div
+          style={{
+            maxWidth: '520px',
+            margin: 'var(--space-12) auto',
+            background: 'var(--color-bg-secondary)',
+            border: '1px solid var(--color-surface-border)',
+            borderRadius: 'var(--radius-xl)',
+            padding: 'var(--space-8)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 'var(--space-4)',
+          }}
+        >
+          <AlertCircle size={28} color="#f87171" />
+          <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--weight-bold)' }}>
+            Dossier Extraction Failed
+          </h3>
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
+            {error || 'Unable to retrieve channel metrics. Check channel identifier or toggle Demo Dataset.'}
+          </p>
+          <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+            <Button variant="secondary" onClick={() => refetch()} leftIcon={<RefreshCw size={14} />}>
+              Retry Query
+            </Button>
+            <Button variant="primary" onClick={toggleDemoMode} leftIcon={<Zap size={14} />}>
+              Load Cached Dataset
+            </Button>
           </div>
         </div>
-      </section>
+      )}
+
+      {/* Active Intelligence Workspace Data */}
+      {!isLoading && data && (
+        <>
+          {/* Channel Header Overview */}
+          <ChannelOverview
+            channel={data.channel}
+            analytics={data.analytics}
+            isDemo={isDemoMode}
+          />
+
+          {/* AI Strategy Brief + Content Themes */}
+          <div className={styles.twoColGrid}>
+            <AIBrief analysis={data.aiAnalysis} />
+            <ContentThemes data={data.chartData.contentThemes} />
+          </div>
+
+          {/* Views Distribution & Publishing Cadence Charts */}
+          <div className={styles.equalGrid}>
+            <ViewsDistribution data={data.chartData.viewsDistribution} />
+            <PublishingTimeline data={data.chartData.publishingTimeline} />
+          </div>
+
+          {/* Length vs Views Scatter & Retention Synthesis */}
+          <div className={styles.equalGrid}>
+            <LengthVsViews data={data.chartData.lengthVsViews} />
+            <div className={styles.retentionCard}>
+              <span className={styles.retentionLabel}>Audience Retention Synthesis</span>
+              <h4 className={styles.retentionTitle}>
+                Optimal Duration: {data.analytics.avgVideoLength}
+              </h4>
+              <p className={styles.retentionText}>
+                Catalog analysis indicates uploads within the {data.analytics.avgVideoLength}{' '}
+                window sustain maximum completion ratios and relative performance index. Videos
+                outside this range require structured chapter signposts.
+              </p>
+            </div>
+          </div>
+
+          {/* Top Performing Uploads Grid */}
+          <TopVideos videos={data.videos} />
+        </>
+      )}
     </div>
   );
 }
