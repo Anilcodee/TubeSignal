@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAnalysis } from '@/hooks/useAnalysis';
 import { ChannelOverview } from '@/components/dashboard/ChannelOverview';
+import { StrategyScorecard } from '@/components/dashboard/StrategyScorecard';
 import { Battlecard } from '@/components/dashboard/Battlecard';
 import { TitleLab } from '@/components/dashboard/TitleLab';
 import { ViewsDistribution } from '@/components/charts/ViewsDistribution';
@@ -163,7 +164,7 @@ export default function WorkspacePage() {
             flexDirection: 'column',
             alignItems: 'center',
             gap: 'var(--space-4)',
-            boxShadow: 'var(--shadow-panel), var(--shadow-tactile)',
+            boxShadow: 'var(--shadow-card)',
           }}
         >
           <AlertCircle size={24} color="#f43f5e" />
@@ -192,6 +193,12 @@ export default function WorkspacePage() {
             channel={data.channel}
             analytics={data.analytics}
             isDemo={isDemoMode}
+          />
+
+          {/* Visual Strategy Scorecard (Gauges & Meters) */}
+          <StrategyScorecard
+            analytics={data.analytics}
+            analysis={data.aiAnalysis}
           />
 
           {/* Segmented Workspace Tabs */}

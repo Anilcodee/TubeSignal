@@ -2,11 +2,22 @@
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-panel), var(--shadow-tactile);
+  padding: var(--space-5) var(--space-6);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
+  position: relative;
+  overflow: hidden;
+}
+
+.topGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-amber-rose);
 }
 
 .header {
@@ -14,7 +25,7 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--color-surface-border);
-  padding-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
 }
 
 .titleGroup {
@@ -27,33 +38,96 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-md);
-  background: var(--color-warning-muted);
-  color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-tactile);
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .title {
-  font-size: var(--text-base);
+  font-size: var(--text-md);
   font-weight: var(--weight-bold);
-  color: var(--color-text-primary);
-  letter-spacing: var(--tracking-tight);
+  color: #ffffff;
 }
 
-.subtitle {
+/* Character Meter Card */
+.meterSection {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.meterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meterTitle {
   font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.meterValue {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  color: #ffffff;
+}
+
+.meterTrack {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(
+    90deg,
+    #06b6d4 0%,
+    #06b6d4 30%,
+    #10b981 30%,
+    #10b981 70%,
+    #f59e0b 70%,
+    #f43f5e 100%
+  );
+  border-radius: var(--radius-full);
+  position: relative;
+}
+
+.meterPin {
+  position: absolute;
+  top: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  border: 3px solid #6366f1;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+  transform: translateX(-50%);
+  transition: left 0.5s ease;
+}
+
+.meterLegend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-family: var(--font-mono);
   color: var(--color-text-tertiary);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+/* Formula Blocks */
+.formulasGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
-.metricCard {
+.formulaCard {
   background: var(--color-bg-tertiary);
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-lg);
@@ -61,91 +135,73 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  box-shadow: var(--shadow-tactile);
 }
 
-.metricLabel {
-  font-size: var(--text-2xs);
+.formulaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formulaBadge {
+  font-size: 10px;
   font-family: var(--font-mono);
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
+  color: #818cf8;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
 }
 
-.metricValue {
-  font-size: var(--text-xl);
-  font-weight: var(--weight-bold);
-  color: var(--color-text-primary);
+.syntaxRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: 4px;
 }
 
-.metricMeta {
+.syntaxPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
   font-size: var(--text-xs);
-  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-weight: 600;
 }
 
-.patternsSection {
+.pillHook { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.pillSubject { background: rgba(6, 182, 212, 0.15); color: #38bdf8; border: 1px solid rgba(6, 182, 212, 0.3); }
+.pillVerdict { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.syntaxPlus { color: var(--color-text-tertiary); font-weight: bold; }
+
+/* Trigger Tags */
+.triggersSection {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-.sectionHeader {
-  font-size: var(--text-xs);
-  font-family: var(--font-mono);
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
-}
-
-.patternsList {
+.triggerTags {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.patternItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-surface-border);
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-}
-
-.patternCode {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--color-accent-hover);
-  background: var(--color-accent-muted);
-  padding: 2px 8px;
-  border-radius: var(--radius-xs);
-}
-
-.triggersRow {
-  display: flex;
-  align-items: center;
   flex-wrap: wrap;
   gap: var(--space-2);
 }
 
-.triggerPill {
+.triggerChip {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: 4px 10px;
+  gap: 6px;
+  padding: 6px 12px;
   border-radius: var(--radius-full);
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-surface-border-subtle);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
   font-size: var(--text-xs);
   font-family: var(--font-mono);
-  color: var(--color-warning);
-}
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
 }

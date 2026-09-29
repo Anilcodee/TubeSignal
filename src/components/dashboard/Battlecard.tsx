@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AIAnalysis } from '@/types/analysis';
-import { ShieldCheck, Copy, Check, Target, TrendingUp, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Copy, Check, Target, Zap, TrendingUp, AlertOctagon, Sparkles, Award } from 'lucide-react';
 import styles from './Battlecard.module.css';
 
 interface BattlecardProps {
@@ -12,16 +12,16 @@ export const Battlecard = ({ analysis, channelName }: BattlecardProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const text = `TUBE SIGNAL STRATEGY DOSSIER: ${channelName.toUpperCase()}
---------------------------------------------------
+    const text = `TUBE SIGNAL CREATOR INTEL: ${channelName.toUpperCase()}
+==================================================
 EDITORIAL MOAT:
 ${analysis.summary}
 
-COMPETITIVE DIRECTIVES:
-${analysis.recommendations.map((r, i) => `${i + 1}. ${r}`).join('\n')}
+TACTICAL PLAYBOOK:
+${analysis.recommendations.map((r, i) => `[Directive #${i + 1}] ${r}`).join('\n')}
 
-TOP VIRAL TRAITS:
-${analysis.performanceInsights.topPerformingTraits.map((t) => `- ${t}`).join('\n')}
+VIRAL CATALYSTS:
+${analysis.performanceInsights.topPerformingTraits.map((t) => `✓ ${t}`).join('\n')}
 `;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
@@ -32,61 +32,111 @@ ${analysis.performanceInsights.topPerformingTraits.map((t) => `- ${t}`).join('\n
 
   return (
     <div className={styles.container}>
+      <div className={styles.topGlow} />
+
       <div className={styles.header}>
         <div className={styles.titleGroup}>
           <div className={styles.iconBox}>
-            <ShieldCheck size={16} />
+            <Award size={16} />
           </div>
           <div>
             <h3 className={styles.title}>Strategic Intelligence & Directives</h3>
-            <span className={styles.subtitle}>
-              Actionable playbook for competing or positioning against {channelName}
+            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>
+              Actionable playbook reverse-engineered from {channelName}&apos;s catalog
             </span>
           </div>
         </div>
 
         <button type="button" className={styles.copyBtn} onClick={handleCopy}>
           {copied ? <Check size={13} color="#10b981" /> : <Copy size={13} />}
-          <span>{copied ? 'Dossier Copied' : 'Copy Brief'}</span>
+          <span>{copied ? 'Copied to Clipboard' : 'Copy Brief'}</span>
         </button>
       </div>
 
-      <div className={styles.moatBox}>
-        <p>{analysis.summary}</p>
+      {/* Hero Moat Box */}
+      <div className={styles.moatHero}>
+        <div className={styles.moatHeader}>
+          <Sparkles size={12} />
+          <span>Core Editorial Moat</span>
+        </div>
+        <p className={styles.moatText}>{analysis.summary}</p>
       </div>
 
+      {/* Visual Actionable Directives */}
       <div>
-        <span className={styles.sectionHeader}>Tactical Playbook Directives</span>
+        <span className={styles.sectionTitle}>High-Impact Growth Directives</span>
         <div className={styles.directiveGrid}>
-          {analysis.recommendations.map((rec, idx) => (
-            <div key={idx} className={styles.directiveItem}>
-              <span className={styles.numBadge}>{idx + 1}</span>
-              <span className={styles.directiveText}>{rec}</span>
-            </div>
-          ))}
+          {analysis.recommendations.map((rec, idx) => {
+            const priorityClass =
+              idx === 0
+                ? styles.priorityHigh
+                : idx === 1
+                ? styles.priorityHigh
+                : idx === 2
+                ? styles.priorityMed
+                : styles.priorityScale;
+
+            const priorityLabel =
+              idx === 0
+                ? 'P0 • Critical'
+                : idx === 1
+                ? 'P0 • High Lift'
+                : idx === 2
+                ? 'P1 • Tactical'
+                : 'P2 • Scale';
+
+            return (
+              <div key={idx} className={styles.directiveCard}>
+                <div className={styles.directiveLeft}>
+                  <span className={`${styles.priorityPill} ${priorityClass}`}>
+                    {priorityLabel}
+                  </span>
+                </div>
+                <div className={styles.directiveBody}>
+                  <p className={styles.directiveTitle}>{rec}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      <div className={styles.splitInsights}>
-        <div className={styles.insightCol}>
-          <span className={styles.colHeaderPositive}>✓ High-Retention & Viral Catalysts</span>
-          <ul className={styles.list}>
+      {/* Visual Catalyst Chips */}
+      <div className={styles.catalystGrid}>
+        <div className={styles.catalystBox}>
+          <div className={styles.catalystHeaderGreen}>
+            <TrendingUp size={13} />
+            <span>Top Virality Drivers</span>
+          </div>
+          <div className={styles.chipsList}>
             {analysis.performanceInsights.topPerformingTraits.map((trait, i) => (
-              <li key={i}>{trait}</li>
+              <div key={i} className={styles.chipGreen}>
+                <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span>
+                <span>{trait}</span>
+              </div>
             ))}
             {analysis.performanceInsights.viralFactors.map((viral, i) => (
-              <li key={`v-${i}`}>Catalyst: {viral}</li>
+              <div key={`v-${i}`} className={styles.chipGreen}>
+                <span style={{ color: '#06b6d4', fontWeight: 'bold' }}>⚡</span>
+                <span>Catalyst: {viral}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
 
-        <div className={styles.insightCol}>
-          <span className={styles.colHeaderNegative}>⚠️ Audience Drop-off Signals</span>
-          <ul className={styles.list}>
+        <div className={styles.catalystBox}>
+          <div className={styles.catalystHeaderRed}>
+            <AlertOctagon size={13} />
+            <span>Audience Drop-Off Signals</span>
+          </div>
+          <div className={styles.chipsList}>
             {analysis.performanceInsights.underperformingTraits.map((trait, i) => (
-              <li key={i}>{trait}</li>
+              <div key={i} className={styles.chipRed}>
+                <span style={{ color: '#f43f5e', fontWeight: 'bold' }}>⚠️</span>
+                <span>{trait}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </div>
