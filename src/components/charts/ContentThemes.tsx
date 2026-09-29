@@ -20,27 +20,40 @@ interface ContentThemesProps {
 }
 
 export const ContentThemes = ({ data }: ContentThemesProps) => {
+  const palette = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+  const chartData = {
+    ...data,
+    datasets: data.datasets.map((ds) => ({
+      ...ds,
+      backgroundColor: ds.backgroundColor?.length ? ds.backgroundColor : palette,
+      borderWidth: 2,
+      borderColor: '#0d0f15',
+    })),
+  };
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '72%',
+    cutout: '74%',
     plugins: {
       legend: {
         position: 'bottom' as const,
         labels: {
-          color: '#8888a0',
-          font: { size: 11 },
-          padding: 12,
+          color: '#9496a8',
+          font: { size: 10 },
+          padding: 10,
           usePointStyle: true,
+          boxWidth: 6,
         },
       },
       tooltip: {
-        backgroundColor: '#1a1a28',
-        titleColor: '#f0f0f5',
-        bodyColor: '#8888a0',
-        borderColor: 'rgba(255,255,255,0.08)',
+        backgroundColor: '#13161f',
+        titleColor: '#f4f4f7',
+        bodyColor: '#9496a8',
+        borderColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
-        padding: 10,
+        padding: 8,
+        cornerRadius: 6,
         callbacks: {
           label: (context: any) => ` ${context.label}: ${context.raw}%`,
         },
@@ -49,8 +62,8 @@ export const ContentThemes = ({ data }: ContentThemesProps) => {
   };
 
   return (
-    <ChartWrapper title="Content Theme Pillars" icon={<PieChart size={16} />}>
-      <Doughnut data={data} options={options} />
+    <ChartWrapper title="Content Pillars & Category Share" icon={<PieChart size={14} />}>
+      <Doughnut data={chartData} options={options} />
     </ChartWrapper>
   );
 };

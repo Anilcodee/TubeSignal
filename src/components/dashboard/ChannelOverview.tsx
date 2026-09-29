@@ -1,7 +1,6 @@
 import React from 'react';
 import { ChannelData, ChannelAnalytics } from '@/types/analysis';
-import { Badge } from '@/components/ui/Badge';
-import { Users, Eye, Video, Calendar, Sparkles } from 'lucide-react';
+import { Users, Eye, Video, Calendar, CheckCircle, Radio } from 'lucide-react';
 import styles from './ChannelOverview.module.css';
 
 interface ChannelOverviewProps {
@@ -19,25 +18,25 @@ export const ChannelOverview = ({
     <div className={styles.overviewCard}>
       <div className={styles.profileRow}>
         <div className={styles.profileLeft}>
-          <img
-            src={channel.avatar}
-            alt={channel.name}
-            className={styles.avatar}
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80';
-            }}
-          />
+          <div className={styles.avatarWrapper}>
+            <img
+              src={channel.avatar}
+              alt={channel.name}
+              className={styles.avatar}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80';
+              }}
+            />
+          </div>
           <div className={styles.profileInfo}>
             <div className={styles.nameRow}>
-              <h1 className={styles.channelName}>{channel.name}</h1>
-              {isDemo && (
-                <Badge variant="brand" icon={<Sparkles size={12} />}>
-                  Demo Mode
-                </Badge>
-              )}
+              <h2 className={styles.channelName}>{channel.name}</h2>
+              <span className={styles.verifiedBadge} title="Verified Authority">
+                <CheckCircle size={14} />
+              </span>
+              <span className={styles.handle}>{channel.handle}</span>
             </div>
-            <span className={styles.handle}>{channel.handle}</span>
             <p className={styles.description}>{channel.description}</p>
           </div>
         </div>
@@ -45,27 +44,39 @@ export const ChannelOverview = ({
 
       <div className={styles.statsGrid}>
         <div className={styles.statPill}>
-          <span className={styles.statLabel}>Subscribers</span>
-          <span className={styles.statValue}>{channel.subscribers}</span>
-          <span className={styles.statSub}>Audience Reach</span>
+          <div className={styles.statHeader}>
+            <span>Audience Reach</span>
+            <Users size={12} />
+          </div>
+          <span className={`${styles.statValue} tabular-nums`}>{channel.subscribers}</span>
+          <span className={styles.statSub}>Subscribed Base</span>
         </div>
 
         <div className={styles.statPill}>
-          <span className={styles.statLabel}>Videos Analyzed</span>
-          <span className={styles.statValue}>{channel.totalVideosAnalyzed}</span>
-          <span className={styles.statSub}>Recent Catalog</span>
+          <div className={styles.statHeader}>
+            <span>Sampled Catalog</span>
+            <Video size={12} />
+          </div>
+          <span className={`${styles.statValue} tabular-nums`}>{channel.totalVideosAnalyzed}</span>
+          <span className={styles.statSub}>Uploads Deep-Dived</span>
         </div>
 
         <div className={styles.statPill}>
-          <span className={styles.statLabel}>Avg Views / Video</span>
-          <span className={styles.statValue}>{analytics.avgViewsFormatted}</span>
-          <span className={styles.statSub}>Per Upload</span>
+          <div className={styles.statHeader}>
+            <span>Avg Performance</span>
+            <Eye size={12} />
+          </div>
+          <span className={`${styles.statValue} tabular-nums`}>{analytics.avgViewsFormatted}</span>
+          <span className={styles.statSub}>Views / Video</span>
         </div>
 
         <div className={styles.statPill}>
-          <span className={styles.statLabel}>Upload Cadence</span>
-          <span className={styles.statValue}>{analytics.publishingFrequency}</span>
-          <span className={styles.statSub}>Weekly Pace</span>
+          <div className={styles.statHeader}>
+            <span>Upload Velocity</span>
+            <Calendar size={12} />
+          </div>
+          <span className={`${styles.statValue} tabular-nums`}>{analytics.publishingFrequency}</span>
+          <span className={styles.statSub}>Weekly Release Cadence</span>
         </div>
       </div>
     </div>

@@ -33,20 +33,36 @@ interface PublishingTimelineProps {
 }
 
 export const PublishingTimeline = ({ data }: PublishingTimelineProps) => {
+  const chartData = {
+    ...data,
+    datasets: data.datasets.map((ds) => ({
+      ...ds,
+      borderColor: '#06b6d4',
+      backgroundColor: 'rgba(6, 182, 212, 0.08)',
+      pointBackgroundColor: '#06b6d4',
+      pointBorderColor: '#0d0f15',
+      pointBorderWidth: 2,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.35,
+    })),
+  };
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       tooltip: {
-        backgroundColor: '#1a1a28',
-        titleColor: '#f0f0f5',
-        bodyColor: '#8888a0',
-        borderColor: 'rgba(255,255,255,0.08)',
+        backgroundColor: '#13161f',
+        titleColor: '#f4f4f7',
+        bodyColor: '#9496a8',
+        borderColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
-        padding: 10,
+        padding: 8,
+        cornerRadius: 6,
         callbacks: {
           label: (context: any) => ` Uploads: ${context.raw} videos`,
         },
@@ -54,20 +70,20 @@ export const PublishingTimeline = ({ data }: PublishingTimelineProps) => {
     },
     scales: {
       x: {
-        grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#8888a0', font: { size: 10 } },
+        grid: { display: false },
+        ticks: { color: '#5e6074', font: { size: 10 } },
       },
       y: {
         grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#8888a0' },
+        ticks: { color: '#5e6074', font: { size: 10 } },
         beginAtZero: true,
       },
     },
   };
 
   return (
-    <ChartWrapper title="Publishing Cadence (Uploads/Month)" icon={<Calendar size={16} />}>
-      <Line data={data} options={options} />
+    <ChartWrapper title="Upload Velocity & Cadence" icon={<Calendar size={14} />}>
+      <Line data={chartData} options={options} />
     </ChartWrapper>
   );
 };

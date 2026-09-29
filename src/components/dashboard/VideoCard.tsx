@@ -1,6 +1,6 @@
 import React from 'react';
 import { VideoData } from '@/types/analysis';
-import { Eye, ExternalLink } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import styles from './VideoCard.module.css';
 
 interface VideoCardProps {
@@ -38,14 +38,14 @@ export const VideoCard = ({ video, maxViews = 1 }: VideoCardProps) => {
 
         <div className={styles.metaRow}>
           <span className={styles.views}>
-            <Eye size={12} />
-            <span>{video.viewsFormatted} views</span>
+            <Eye size={11} />
+            <span>{video.viewsFormatted}</span>
           </span>
           <span>{video.relativeDate || video.publishedDate}</span>
         </div>
 
-        <div className={styles.perfBarTrack} title={`Relative Performance: ${percentage}%`}>
-          <div className={styles.perfBarFill} style={{ width: `${percentage}%` }} />
+        <div className={styles.perfTrack} title={`Relative Index: ${percentage}%`}>
+          <div className={styles.perfFill} style={{ width: `${percentage}%` }} />
         </div>
       </div>
     </a>
