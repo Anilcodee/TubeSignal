@@ -1,0 +1,152 @@
+{
+  "channel": {
+    "name": "Fireship",
+    "handle": "@fireship",
+    "channelId": "UCsBjURrPoezykLs9EqgamOA",
+    "avatar": "https://yt3.googleusercontent.com/ytc/AIdro_kX4QZqQYIuB9_2r_v_8nE1u00vQ=s176-c-k-c0x00ffffff-no-rj",
+    "subscribers": "3.4M",
+    "subscriberCount": 3400000,
+    "description": "High-intensity code tutorials and tech news to help you ship software faster.",
+    "totalVideosAnalyzed": 25
+  },
+  "videos": [
+    {
+      "videoId": "100-seconds-rust",
+      "title": "Rust in 100 Seconds",
+      "views": 4200000,
+      "viewsFormatted": "4.2M",
+      "publishedDate": "2026-06-10",
+      "relativeDate": "3 months ago",
+      "length": "02:15",
+      "lengthSeconds": 135,
+      "thumbnail": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock_rust"
+    },
+    {
+      "videoId": "ai-code-editors",
+      "title": "The End of VS Code? Cursor & AI IDEs Explained",
+      "views": 3100000,
+      "viewsFormatted": "3.1M",
+      "publishedDate": "2026-08-14",
+      "relativeDate": "1 month ago",
+      "length": "04:50",
+      "lengthSeconds": 290,
+      "thumbnail": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock_ai"
+    },
+    {
+      "videoId": "nextjs-drama",
+      "title": "Why Everyone is Mad at React & Next.js",
+      "views": 2800000,
+      "viewsFormatted": "2.8M",
+      "publishedDate": "2026-07-02",
+      "relativeDate": "2 months ago",
+      "length": "05:12",
+      "lengthSeconds": 312,
+      "thumbnail": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock_next"
+    }
+  ],
+  "analytics": {
+    "avgViews": 1950000,
+    "avgViewsFormatted": "1.95M",
+    "medianViews": 1400000,
+    "totalViews": 48750000,
+    "totalViewsFormatted": "48.8M",
+    "publishingFrequency": "3.5 videos/week",
+    "avgVideoLength": "04:15",
+    "mostActiveDay": "Wednesday",
+    "viewsGrowthTrend": "rising"
+  },
+  "aiAnalysis": {
+    "summary": "Fireship leads developer education by combining ultra-fast, meme-dense micro-documentaries ('in 100 Seconds') with sensationalized dev-news reaction videos ('The Code Report').",
+    "contentThemes": [
+      { "theme": "100 Seconds Tech Explainers", "percentage": 42, "videoCount": 10 },
+      { "theme": "The Code Report (Tech News)", "percentage": 32, "videoCount": 8 },
+      { "theme": "Full-Stack Coding Walkthroughs", "percentage": 16, "videoCount": 4 },
+      { "theme": "Meme Reviews & Dev Satire", "percentage": 10, "videoCount": 3 }
+    ],
+    "titlePatterns": {
+      "avgLength": 36,
+      "commonPatterns": [
+        "Tech + 'in 100 Seconds'",
+        "'The End of' + Established Tech Tool",
+        "'Why Nobody Uses' + Framework"
+      ],
+      "emotionalTriggers": ["Dead", "Ruined", "Finally", "100 Seconds", "Why"],
+      "useOfNumbers": "48% of titles include concise numbers (e.g. 100 seconds, 10 tools)"
+    },
+    "publishingStrategy": {
+      "frequency": "3-4 micro-videos per week",
+      "peakDays": ["Wednesday", "Friday", "Monday"],
+      "consistency": "Extremely consistent short-form cycle",
+      "seasonalPatterns": "Immediate same-day reaction when major tech CVEs or framework updates drop"
+    },
+    "performanceInsights": {
+      "topPerformingTraits": [
+        "Videos under 3 minutes with 120+ words-per-minute voiceover",
+        "Bold, high-saturation yellow-on-dark thumbnail designs"
+      ],
+      "underperformingTraits": [
+        "Long-form tutorial videos (>15 min) perform 60% below channel average"
+      ],
+      "viralFactors": [
+        "High algorithmic shareability due to meme inserts and extreme info density"
+      ]
+    },
+    "recommendations": [
+      "Keep video duration strictly under 5 minutes for news and under 2.5 minutes for explainers.",
+      "Use high-contrast yellow/orange primary branding in all thumbnails.",
+      "Publish breaking tech news within 6 hours of viral developer discussions."
+    ]
+  },
+  "chartData": {
+    "viewsDistribution": {
+      "labels": ["Rust in 100s", "End of VS Code", "Next.js Drama"],
+      "datasets": [
+        {
+          "label": "Views (Millions)",
+          "data": [4.2, 3.1, 2.8],
+          "backgroundColor": "#fbbf24",
+          "borderRadius": 8
+        }
+      ]
+    },
+    "publishingTimeline": {
+      "labels": ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+      "datasets": [
+        {
+          "label": "Uploads per Month",
+          "data": [14, 15, 13, 16, 15, 14],
+          "borderColor": "#fb923c",
+          "backgroundColor": "rgba(251, 146, 60, 0.1)",
+          "fill": true,
+          "tension": 0.4
+        }
+      ]
+    },
+    "contentThemes": {
+      "labels": ["100s Explainers", "Code Report", "Full-Stack Demos", "Dev Memes"],
+      "datasets": [
+        {
+          "data": [42, 32, 16, 10],
+          "backgroundColor": ["#fbbf24", "#06b6d4", "#7c5cfc", "#f472b6"]
+        }
+      ]
+    },
+    "lengthVsViews": {
+      "labels": ["Rust in 100s", "End of VS Code", "Next.js Drama"],
+      "datasets": [
+        {
+          "label": "Video Duration vs Views",
+          "data": [
+            { "x": 2.25, "y": 4.2 },
+            { "x": 4.83, "y": 3.1 },
+            { "x": 5.2, "y": 2.8 }
+          ],
+          "backgroundColor": "#34d399"
+        }
+      ]
+    }
+  }
+}

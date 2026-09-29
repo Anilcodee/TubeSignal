@@ -1,0 +1,184 @@
+{
+  "channel": {
+    "name": "Marques Brownlee",
+    "handle": "@mkbhd",
+    "channelId": "UCBcRF18a7Qf58cCRy5xuWwQ",
+    "avatar": "https://yt3.googleusercontent.com/lkH37D712tiyphnu0Id0D5MwwQ7IRuwgQLVD05iMXlDWO-kDHqqd8EM522QDcGQVcxDR52W6oQ=s176-c-k-c0x00ffffff-no-rj",
+    "subscribers": "19.5M",
+    "subscriberCount": 19500000,
+    "description": "Quality Tech Videos | YouTuber | Geek | Consumer Electronics Reviews",
+    "totalVideosAnalyzed": 30
+  },
+  "videos": [
+    {
+      "videoId": "iphone-16-pro",
+      "title": "iPhone 16 Pro Review: The Camera Button!",
+      "views": 12400000,
+      "viewsFormatted": "12.4M",
+      "publishedDate": "2026-09-15",
+      "relativeDate": "2 weeks ago",
+      "length": "14:32",
+      "lengthSeconds": 872,
+      "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock1"
+    },
+    {
+      "videoId": "pixel-9-pro",
+      "title": "Google Pixel 9 Pro Review: Actually Great?",
+      "views": 8900000,
+      "viewsFormatted": "8.9M",
+      "publishedDate": "2026-08-28",
+      "relativeDate": "1 month ago",
+      "length": "16:45",
+      "lengthSeconds": 1005,
+      "thumbnail": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock2"
+    },
+    {
+      "videoId": "best-tech-2026",
+      "title": "Smartphone Awards 2026: The Best & Worst!",
+      "views": 15200000,
+      "viewsFormatted": "15.2M",
+      "publishedDate": "2026-01-10",
+      "relativeDate": "8 months ago",
+      "length": "22:15",
+      "lengthSeconds": 1335,
+      "thumbnail": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock3"
+    },
+    {
+      "videoId": "apple-vision-pro-2",
+      "title": "Apple Vision Pro 2: 6 Months Later",
+      "views": 7800000,
+      "viewsFormatted": "7.8M",
+      "publishedDate": "2026-07-20",
+      "relativeDate": "2 months ago",
+      "length": "18:20",
+      "lengthSeconds": 1100,
+      "thumbnail": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock4"
+    },
+    {
+      "videoId": "macbook-m4",
+      "title": "M4 MacBook Pro: Don't Buy the Base Model!",
+      "views": 6400000,
+      "viewsFormatted": "6.4M",
+      "publishedDate": "2026-09-02",
+      "relativeDate": "3 weeks ago",
+      "length": "12:10",
+      "lengthSeconds": 730,
+      "thumbnail": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80",
+      "url": "https://www.youtube.com/watch?v=mock5"
+    }
+  ],
+  "analytics": {
+    "avgViews": 4850000,
+    "avgViewsFormatted": "4.85M",
+    "medianViews": 3600000,
+    "totalViews": 145500000,
+    "totalViewsFormatted": "145.5M",
+    "publishingFrequency": "2.8 videos/week",
+    "avgVideoLength": "14:18",
+    "mostActiveDay": "Tuesday",
+    "viewsGrowthTrend": "stable"
+  },
+  "aiAnalysis": {
+    "summary": "Marques Brownlee (MKBHD) is the gold standard of consumer tech journalism. His strategy centers on cinematic production values, highly objective hardware breakdowns, and crisp thumbnail-title hooks targeting mid-funnel tech buyers.",
+    "contentThemes": [
+      { "theme": "Flagship Smartphone Reviews", "percentage": 38, "videoCount": 12 },
+      { "theme": "Annual Tech Awards & Comparisons", "percentage": 22, "videoCount": 7 },
+      { "theme": "Ecosystem & Long-Term Tests", "percentage": 18, "videoCount": 5 },
+      { "theme": "Emerging Tech & EVs", "percentage": 14, "videoCount": 4 },
+      { "theme": "Studio BTS & Waveform Pod", "percentage": 8, "videoCount": 2 }
+    ],
+    "titlePatterns": {
+      "avgLength": 44,
+      "commonPatterns": [
+        "Product Name + ': The Truth / Review'",
+        "Superlative Comparison ('The Best Smartphone of 2026')",
+        "Contrarian Warning ('Don\\'t Buy...')"
+      ],
+      "emotionalTriggers": ["Truth", "Mistake", "Actually", "Best", "Why"],
+      "useOfNumbers": "34% of titles feature numbers or pricing cues"
+    },
+    "publishingStrategy": {
+      "frequency": "2-3 long-form videos per week",
+      "peakDays": ["Tuesday", "Thursday", "Sunday"],
+      "consistency": "Very high (96% regular cadence)",
+      "seasonalPatterns": "Peak uploads occur during September-November hardware release waves"
+    },
+    "performanceInsights": {
+      "topPerformingTraits": [
+        "First-look hardware reviews within 24h of embargo lift",
+        "Videos between 12-16 minutes have highest retention and share rate",
+        "Clean single-gadget thumbnails on matte dark backgrounds"
+      ],
+      "underperformingTraits": [
+        "Overly niche smart-home accessories",
+        "Videos exceeding 25 minutes without structured chapter markers"
+      ],
+      "viralFactors": [
+        "Authoritative review verdicts that set the industry narrative",
+        "High re-watch value on camera shootout comparisons"
+      ]
+    },
+    "recommendations": [
+      "Keep standard hardware review pacing within the 12-15 minute sweet spot.",
+      "Anchor titles around decisive questions or distinct product features (e.g. 'The Camera Button!').",
+      "Prioritize Tuesday releases to capture maximum weekday workday tech audiences.",
+      "Expand long-term '3 Months Later' revisits to capture high search traffic after hype dies down.",
+      "Maintain strict minimalist thumbnail composition with high contrast subjects."
+    ]
+  },
+  "chartData": {
+    "viewsDistribution": {
+      "labels": ["iPhone 16 Pro", "Pixel 9 Pro", "Awards 2026", "Vision Pro 2", "M4 MacBook"],
+      "datasets": [
+        {
+          "label": "Views (Millions)",
+          "data": [12.4, 8.9, 15.2, 7.8, 6.4],
+          "backgroundColor": "#7c5cfc",
+          "borderRadius": 8
+        }
+      ]
+    },
+    "publishingTimeline": {
+      "labels": ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+      "datasets": [
+        {
+          "label": "Uploads per Month",
+          "data": [11, 10, 12, 14, 16, 12],
+          "borderColor": "#06b6d4",
+          "backgroundColor": "rgba(6, 182, 212, 0.1)",
+          "fill": true,
+          "tension": 0.4
+        }
+      ]
+    },
+    "contentThemes": {
+      "labels": ["Smartphone Reviews", "Tech Awards", "Long-Term Tests", "EVs & Emerging", "Studio BTS"],
+      "datasets": [
+        {
+          "data": [38, 22, 18, 14, 8],
+          "backgroundColor": ["#7c5cfc", "#06b6d4", "#f472b6", "#34d399", "#fbbf24"]
+        }
+      ]
+    },
+    "lengthVsViews": {
+      "labels": ["iPhone 16 Pro", "Pixel 9 Pro", "Awards 2026", "Vision Pro 2", "M4 MacBook"],
+      "datasets": [
+        {
+          "label": "Video Duration vs Views",
+          "data": [
+            { "x": 14.5, "y": 12.4 },
+            { "x": 16.7, "y": 8.9 },
+            { "x": 22.2, "y": 15.2 },
+            { "x": 18.3, "y": 7.8 },
+            { "x": 12.1, "y": 6.4 }
+          ],
+          "backgroundColor": "#f472b6"
+        }
+      ]
+    }
+  }
+}

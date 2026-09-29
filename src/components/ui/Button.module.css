@@ -1,0 +1,86 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: inherit;
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Sizes */
+.sizeSm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  height: 32px;
+}
+
+.sizeMd {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  height: 40px;
+}
+
+.sizeLg {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+  height: 48px;
+}
+
+/* Variants */
+.variantPrimary {
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.variantPrimary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  box-shadow: 0 0 16px var(--color-accent-glow);
+}
+
+.variantGradient {
+  background: var(--gradient-brand);
+  color: #ffffff;
+}
+
+.variantGradient:hover:not(:disabled) {
+  box-shadow: 0 0 20px var(--color-accent-glow);
+  transform: translateY(-1px);
+}
+
+.variantSecondary {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-surface-border);
+  color: var(--color-text-primary);
+}
+
+.variantSecondary:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.variantGhost {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.variantGhost:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}

@@ -1,6 +1,6 @@
 {
-  "name": "app",
-  "version": "0.1.0",
+  "name": "tubesignal",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,8 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "chart.js": "^4.5.1",
+    "lucide-react": "^1.48.0",
     "next": "16.3.7",
     "react": "19.2.8",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
