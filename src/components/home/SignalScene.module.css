@@ -7,7 +7,7 @@
 .orbit i:nth-child(1) { top: 18%; left: 10%; }
 .orbit i:nth-child(2) { bottom: 20%; right: 9%; }
 .orbit i:nth-child(3) { top: 12%; right: 16%; background: var(--text-3); }
-.sculpture { position: absolute; top: 5rem; left: 50%; width: 20rem; height: 20rem; transform-style: preserve-3d; transform: translateX(-50%) rotateX(48deg) rotateZ(-30deg); animation: levitate 7s ease-in-out infinite; }
+.sculpture { position: absolute; top: 5rem; left: 50%; width: 20rem; height: 20rem; transform-style: preserve-3d; transform: translateX(-50%) rotateX(48deg) rotateZ(-30deg); animation: levitate 7s ease-in-out infinite; will-change: transform; }
 .ringOuter, .ringMiddle, .ringInner { position: absolute; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, var(--surface-warm) 38%, var(--accent) 67%, var(--surface-warm) 95%); box-shadow: 0 12px 0 var(--surface-warm), 0 14px 0 var(--accent-line), 0 30px 45px #0008, inset 0 2px 1px var(--accent); }
 .ringOuter { inset: 0; border: 1px solid var(--accent-line); }
 .ringMiddle { inset: 2.15rem; transform: translateZ(1.1rem); }
@@ -41,3 +41,4 @@
 @media (max-width: 1050px) { .insight { right: 0; bottom: 3rem; } .preview { left: 0; bottom: 5rem; width: 16rem; } .signalTag { right: 0; } }
 @media (max-width: 900px) { .scene { max-width: 28rem; min-height: 28rem; margin: 0 auto; } .coordinates { top: 0; } .sculpture { top: 2rem; } .orbit { top: .5rem; width: 23rem; height: 23rem; } .signalTag { top: 2rem; } .preview { bottom: 2rem; } .insight { bottom: 4.5rem; } .caption { bottom: -.5rem; } }
 @media (max-width: 400px) { .sculpture { width: 14.5rem; height: 14.5rem; top: 3.5rem; } .ringMiddle { inset: 1.6rem; } .ringInner { inset: 3.2rem; } .core { inset: 4.75rem; } .core svg { width: 3rem; } .orbit { width: 19rem; height: 19rem; } .insight { padding: var(--s-3); right: -.25rem; bottom: 1.5rem; } .preview { width: 15rem; bottom: 4rem; } }
+@media (prefers-reduced-motion: reduce) { .sculpture, .barChart > span, .preview, .insight { animation: none !important; } }
