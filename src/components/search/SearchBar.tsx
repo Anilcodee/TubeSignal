@@ -1,5 +1,5 @@
 import React, { useState, FormEvent } from 'react';
-import { Search, Sparkles, Loader2 } from 'lucide-react';
+import { Search, ArrowRight, Loader2 } from 'lucide-react';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
@@ -13,7 +13,7 @@ export const SearchBar = ({
   onSearch,
   isLoading = false,
   initialValue = '',
-  placeholder = 'Search creator name or @handle (e.g. mkbhd)...',
+  placeholder = 'Search creator name or @handle (e.g. mkbhd, fireship)...',
 }: SearchBarProps) => {
   const [query, setQuery] = useState(initialValue);
 
@@ -34,7 +34,7 @@ export const SearchBar = ({
     <div className={styles.searchWrapper}>
       <form className={styles.searchForm} onSubmit={handleSubmit}>
         <div className={styles.searchIcon}>
-          <Search size={20} />
+          <Search size={16} />
         </div>
         <input
           type="text"
@@ -52,20 +52,20 @@ export const SearchBar = ({
         >
           {isLoading ? (
             <>
-              <Loader2 size={16} className="spinner" style={{ animation: 'spin 1s linear infinite' }} />
-              <span>Searching...</span>
+              <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} />
+              <span>Analyzing</span>
             </>
           ) : (
             <>
-              <Sparkles size={16} />
-              <span>Analyze</span>
+              <span>Inspect</span>
+              <ArrowRight size={13} />
             </>
           )}
         </button>
       </form>
 
       <div className={styles.suggestions}>
-        <span className={styles.suggestLabel}>Try:</span>
+        <span className={styles.suggestLabel}>Presets:</span>
         <button
           type="button"
           className={styles.suggestBtn}

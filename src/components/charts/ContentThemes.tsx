@@ -1,69 +1,23 @@
 'use client';
 
-import React from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, type ChartOptions } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import type { FullAnalysisResponse } from '@/types/analysis';
+import { chartColors } from '@/lib/chart-theme';
 import { ChartWrapper } from './ChartWrapper';
-import { PieChart } from 'lucide-react';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
-interface ContentThemesProps {
-  data: {
-    labels: string[];
-    datasets: {
-      data: number[];
-      backgroundColor: string[];
-      borderWidth?: number;
-    }[];
-  };
-}
-
-export const ContentThemes = ({ data }: ContentThemesProps) => {
-  const palette = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
-  const chartData = {
-    ...data,
-    datasets: data.datasets.map((ds) => ({
-      ...ds,
-      backgroundColor: ds.backgroundColor?.length ? ds.backgroundColor : palette,
-      borderWidth: 2,
-      borderColor: '#0d0f15',
-    })),
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '74%',
-    plugins: {
-      legend: {
-        position: 'bottom' as const,
-        labels: {
-          color: '#9496a8',
-          font: { size: 10 },
-          padding: 10,
-          usePointStyle: true,
-          boxWidth: 6,
-        },
-      },
-      tooltip: {
-        backgroundColor: '#13161f',
-        titleColor: '#f4f4f7',
-        bodyColor: '#9496a8',
-        borderColor: 'rgba(255,255,255,0.1)',
-        borderWidth: 1,
-        padding: 8,
-        cornerRadius: 6,
-        callbacks: {
-          label: (context: any) => ` ${context.label}: ${context.raw}%`,
-        },
-      },
-    },
-  };
-
+export const ContentThemes = ({ data }: { data: FullAnalysisResponse['chartData']['contentThemes'] }) => {
+  const entries = data.labels.map((label, index) => ({ label, value: data.datasets[0]?.data[index] ?? 0 })).sort((a, b) => b.value - a.value);
+  const grouped = entries.length > 5 ? [...entries.slice(0, 5), { label: 'Other themes', value: entries.slice(5).reduce((sum, entry) => sum + entry.value, 0) }] : entries;
+  const chartData = { labels: grouped.map((entry) => entry.label), datasets: [{ data: grouped.map((entry) => entry.value), backgroundColor: grouped.map((_, index) => index === 0 ? chartColors.accent : chartColors.base), borderRadius: 3, maxBarThickness: 22 }] };
+  const options: ChartOptions<'bar'> = { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: (item) => `${item.raw}% of categorized uploads` } } }, scales: { x: { beginAtZero: true, max: 100, ticks: { callback: (value) => `${value}%` } }, y: { grid: { display: false } } } };
   return (
-    <ChartWrapper title="Content Pillars & Category Share" icon={<PieChart size={14} />}>
-      <Doughnut data={chartData} options={options} />
+    <ChartWrapper title="Topics in this sample" caption="AI-estimated share of categorized uploads—not share of views. Categories can be imperfect."
+      emptyMessage={!grouped.length ? 'Topic classification is unavailable for this report.' : undefined}
+      dataTable={grouped.length > 0 && <table><caption>Estimated content themes</caption><thead><tr><th scope="col">Theme</th><th scope="col">Share of uploads</th></tr></thead><tbody>{grouped.map((entry, index) => <tr key={index}><td>{entry.label}</td><td>{entry.value}%</td></tr>)}</tbody></table>}>
+      <Bar data={chartData} options={options} role="img" aria-label="Content themes. Exact values are in View chart data below." />
     </ChartWrapper>
   );
 };

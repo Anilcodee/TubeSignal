@@ -1,80 +1,21 @@
-.loadingContainer {
-  min-height: calc(100vh - 64px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-6);
-}
-
-.loadingCard {
-  width: 100%;
-  max-width: 540px;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-8);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  box-shadow: 0 0 40px rgba(124, 92, 252, 0.12);
-  text-align: left;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.spinnerWrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-lg);
-  background: var(--color-accent-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-accent-hover);
-}
-
-.title {
-  font-size: var(--text-lg);
-  font-weight: var(--weight-bold);
-  color: var(--color-text-primary);
-}
-
-.stepsList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.stepItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-glass);
-}
-
-.stepLeft {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.stepStatus {
-  font-size: var(--text-xs);
-  font-family: var(--font-mono);
-  color: var(--color-accent-hover);
-}
-
-.tipBox {
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-  text-align: center;
-  font-style: italic;
-}
+.loadingContainer { width: 100%; max-width: var(--page-max); margin: auto; padding: var(--s-12) var(--gutter); }
+.loadingCard { text-align: center; max-width: 40rem; margin: 0 auto; padding: var(--s-8) 0; animation: fadeIn .4s both; }
+.scanner { width: 8rem; height: 8rem; position: relative; display: grid; place-items: center; margin: 0 auto var(--s-8); }
+.scanner i { position: absolute; inset: 0; border: 1px solid var(--accent-line); border-top-color: var(--accent); border-radius: 50%; animation: spin 5s linear infinite; }
+.scanner i:nth-child(2) { inset: .7rem; border-style: dashed; border-color: var(--accent-line); animation-direction: reverse; animation-duration: 12s; }
+.scanner span { width: 4.5rem; height: 4.5rem; display: grid; place-items: center; border-radius: 1.25rem; color: var(--accent); border: 1px solid var(--accent-line); background: var(--accent-soft); box-shadow: 0 0 40px var(--accent-glow); }
+.eyebrow { color: var(--accent); font: .6rem var(--font-mono); letter-spacing: .15em; }
+.loadingCard h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); letter-spacing: -.055em; line-height: 1.2; font-weight: 500; margin-top: var(--s-5); }
+.loadingCard h1 > span { color: var(--text-3); }
+.status { font-size: .83rem; line-height: 1.8; color: var(--text-2); margin-top: var(--s-5); }
+.pipeline { display: flex; align-items: center; justify-content: center; gap: var(--s-3); margin-top: var(--s-6); font-size: .62rem; color: var(--text-3); }
+.pipeline i { height: 1px; width: 1.5rem; background: var(--line-strong); }
+.skeletons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); margin: var(--s-8) 0; }
+.skeletons > div { display: flex; flex-direction: column; gap: var(--s-3); border: 1px solid var(--line); border-radius: var(--r-panel); padding: var(--s-5); background: var(--surface-1); }
+.skeletons span { display: block; height: .4rem; width: 65%; background: var(--surface-3); border-radius: var(--r-control); animation: pulse-glow 1.8s ease-in-out infinite; }
+.skeletons span:nth-child(2) { height: 1.3rem; width: 80%; }
+.skeletons span:nth-child(3) { width: 90%; }
+.privacy, .back { display: flex; gap: var(--s-2); align-items: center; justify-content: center; font-size: .65rem; color: var(--text-3); }
+.back { min-height: 2.75rem; margin-top: var(--s-4); color: var(--text-2); }
+.back:hover { color: var(--accent); }
+@media (max-width: 500px) { .skeletons { grid-template-columns: repeat(2, minmax(0, 1fr)); } .loadingContainer { padding-top: var(--s-6); } }

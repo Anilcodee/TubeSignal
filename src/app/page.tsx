@@ -1,296 +1,68 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useAnalysis } from '@/hooks/useAnalysis';
-import { ChannelOverview } from '@/components/dashboard/ChannelOverview';
-import { StrategyScorecard } from '@/components/dashboard/StrategyScorecard';
-import { Battlecard } from '@/components/dashboard/Battlecard';
-import { TitleLab } from '@/components/dashboard/TitleLab';
-import { ViewsDistribution } from '@/components/charts/ViewsDistribution';
-import { ContentThemes } from '@/components/charts/ContentThemes';
-import { PublishingTimeline } from '@/components/charts/PublishingTimeline';
-import { LengthVsViews } from '@/components/charts/LengthVsViews';
-import { TopVideos } from '@/components/dashboard/TopVideos';
-import Loading from '@/app/analyze/[channelId]/loading';
-import {
-  Search,
-  Sparkles,
-  Share2,
-  Download,
-  Zap,
-  Activity,
-  AlertCircle,
-  RefreshCw,
-  LayoutDashboard,
-  Type,
-  TrendingUp,
-  Video,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import type { CSSProperties } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ArrowDown, ArrowRight, AudioLines, Check, ChevronRight, FlaskConical, Flame, ScanLine, ShieldCheck, Sparkles, TrendingUp, Video } from 'lucide-react';
+import { CommandBar } from '@/components/search/CommandBar';
+import { SignalScene } from '@/components/home/SignalScene';
 import styles from './page.module.css';
 
-const PRESET_CHANNELS = [
-  { label: 'Marques Brownlee', id: 'mkbhd', handle: '@mkbhd' },
-  { label: 'Fireship', id: 'fireship', handle: '@fireship' },
-  { label: 'Veritasium', id: 'veritasium', handle: '@veritasium' },
+const SAMPLES = [
+  { name: 'Marques Brownlee', handle: 'mkbhd', category: 'The tech perspective', detail: 'Reviews, launches & the bigger picture.', count: 5, Icon: Video, color: 'var(--accent)', bars: [82, 59, 100, 51, 42] },
+  { name: 'Fireship', handle: 'fireship', category: 'The developer perspective', detail: 'Code, fast takes & curious minds.', count: 3, Icon: Flame, color: 'var(--series-4)', bars: [100, 40, 66] },
+  { name: 'Veritasium', handle: 'veritasium', category: 'The science perspective', detail: 'Big questions. Unexpected answers.', count: 3, Icon: FlaskConical, color: 'var(--series-3)', bars: [100, 71, 78] },
 ];
 
-type ViewTab = 'overview' | 'title-lab' | 'growth' | 'catalog';
-
 export default function WorkspacePage() {
-  const [selectedChannel, setSelectedChannel] = useState('mkbhd');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<ViewTab>('overview');
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const { data, isLoading, error, refetch, isDemoMode, toggleDemoMode } =
-    useAnalysis(selectedChannel, false);
-
-  // Keyboard shortcut ⌘K / Ctrl+K focus on search
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const clean = searchQuery.replace(/^@/, '').trim().toLowerCase();
-    if (clean) {
-      setSelectedChannel(clean);
-    }
-  };
-
-  const handlePillSelect = (channelId: string) => {
-    setSelectedChannel(channelId);
-    setSearchQuery('');
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.origin);
-      alert('Workspace link copied to clipboard!');
-    }
-  };
-
+  const router = useRouter();
   return (
     <div className={styles.workspace}>
-      {/* Command Station / Omnibar */}
-      <div className={styles.commandStation}>
-        <form className={styles.searchRow} onSubmit={handleSearchSubmit}>
-          <div className={styles.omnibar}>
-            <Search size={14} className={styles.searchIcon} />
-            <input
-              ref={searchInputRef}
-              type="text"
-              className={styles.searchInput}
-              placeholder="Search or inspect any YouTube creator (e.g. mkbhd, fireship, veritasium)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <span className={styles.kbd}>⌘K</span>
+      <section className={styles.hero} aria-labelledby="workspace-title">
+        <div className={styles.heroCopy}>
+          <div className={styles.eyebrow}><span className={styles.liveDot} /> A clearer lens on YouTube</div>
+          <h1 id="workspace-title">Less noise.<br /><span>More signal.</span></h1>
+          <p className={styles.subtitle}>Understand any channel.<br />Find what stands out. Know where to look next.</p>
+          <div className={styles.searchWrapper}>
+            <CommandBar isHero placeholder="Paste a channel link or @handle" onSearch={(id) => router.push(`/analyze/${encodeURIComponent(id)}`)} />
           </div>
-          <button type="submit" className={styles.analyzeBtn} disabled={isLoading || !searchQuery.trim()}>
-            <Sparkles size={13} />
-            <span>Analyze</span>
-          </button>
-        </form>
-
-        <div className={styles.channelsRow}>
-          <div className={styles.pillGroup}>
-            <span className={styles.pillsLabel}>Dossiers:</span>
-            {PRESET_CHANNELS.map((ch) => (
-              <button
-                key={ch.id}
-                type="button"
-                className={`${styles.pillBtn} ${
-                  selectedChannel === ch.id ? styles.pillBtnActive : ''
-                }`}
-                onClick={() => handlePillSelect(ch.id)}
-              >
-                <span>{ch.handle}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className={styles.actionGroup}>
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${isDemoMode ? styles.pillBtnActive : ''}`}
-              onClick={toggleDemoMode}
-              title="Toggle between cached dataset and live SerpApi API calls"
-            >
-              <Zap size={11} />
-              <span>{isDemoMode ? 'Demo Dataset' : 'Live SerpApi'}</span>
-            </button>
-
-            <button type="button" className={styles.actionBtn} onClick={handleShare}>
-              <Share2 size={11} />
-              <span>Share</span>
-            </button>
-
-            <button type="button" className={styles.actionBtn} onClick={handlePrint}>
-              <Download size={11} />
-              <span>Export</span>
-            </button>
+          <div className={styles.searchHint}><span>Or search a creator by name</span><kbd>Ctrl / ⌘ K</kbd></div>
+          <div className={styles.trustRow}>
+            <span><ShieldCheck size={14} /> Public data only</span>
+            <span><Check size={14} /> No YouTube login</span>
+            <Link href="/compare" style={{ color: 'var(--accent)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <TrendingUp size={13} /> Compare creators
+            </Link>
           </div>
         </div>
-      </div>
+        <SignalScene />
+      </section>
 
-      {/* Loading State */}
-      {isLoading && <Loading />}
+      <section className={styles.journey} aria-label="What your report helps you understand">
+        <div className={styles.journeyIntro}><AudioLines size={19} /><span>A channel.<br /><strong>Three clear answers.</strong></span></div>
+        <div className={styles.journeyItem}><span>01</span><div><h2>What stands out?</h2><p>Spot the uploads worth a closer look.</p></div></div>
+        <ChevronRight className={styles.journeyArrow} size={16} aria-hidden="true" />
+        <div className={styles.journeyItem}><span>02</span><div><h2>What’s the pattern?</h2><p>See the titles, timing and formats.</p></div></div>
+        <ChevronRight className={styles.journeyArrow} size={16} aria-hidden="true" />
+        <div className={styles.journeyItem}><span>03</span><div><h2>What’s next?</h2><p>Turn observations into ideas to test.</p></div></div>
+      </section>
 
-      {/* Error State */}
-      {!isLoading && (error || !data) && (
-        <div
-          style={{
-            maxWidth: '520px',
-            margin: 'var(--space-12) auto',
-            background: 'var(--color-bg-secondary)',
-            border: '1px solid var(--color-surface-border)',
-            borderRadius: 'var(--radius-xl)',
-            padding: 'var(--space-8)',
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 'var(--space-4)',
-            boxShadow: 'var(--shadow-card)',
-          }}
-        >
-          <AlertCircle size={24} color="#f43f5e" />
-          <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--weight-bold)' }}>
-            Channel Analysis Unavailable
-          </h3>
-          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-            {error || 'Unable to retrieve metrics. Verify channel identifier or switch to Demo Dataset.'}
-          </p>
-          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-            <Button variant="secondary" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw size={13} />}>
-              Retry Query
-            </Button>
-            <Button variant="primary" size="sm" onClick={toggleDemoMode} leftIcon={<Zap size={13} />}>
-              Load Cached Dataset
-            </Button>
-          </div>
+      <section id="sample-reports" className={styles.samples} aria-labelledby="samples-title">
+        <div className={styles.sectionHeader}>
+          <div><span className={styles.sectionEyebrow}><ScanLine size={13} /> TAKE A LOOK INSIDE</span><h2 id="samples-title">Start with a familiar face.</h2><p>Three sample reports. Zero setup. A feel for the full picture.</p></div>
+          <span className={styles.sampleNote}>Explore the experience <ArrowDown size={14} /></span>
         </div>
-      )}
-
-      {/* Active Intelligence Workspace */}
-      {!isLoading && data && (
-        <>
-          {/* Header Overview Card */}
-          <ChannelOverview
-            channel={data.channel}
-            analytics={data.analytics}
-            isDemo={isDemoMode}
-          />
-
-          {/* Visual Strategy Scorecard (Gauges & Meters) */}
-          <StrategyScorecard
-            analytics={data.analytics}
-            analysis={data.aiAnalysis}
-          />
-
-          {/* Segmented Workspace Tabs */}
-          <div className={styles.tabNav}>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === 'overview' ? styles.tabBtnActive : ''}`}
-              onClick={() => setActiveTab('overview')}
-            >
-              <LayoutDashboard size={13} />
-              <span>Strategic Overview</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === 'title-lab' ? styles.tabBtnActive : ''}`}
-              onClick={() => setActiveTab('title-lab')}
-            >
-              <Type size={13} />
-              <span>Title & Hook Lab</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === 'growth' ? styles.tabBtnActive : ''}`}
-              onClick={() => setActiveTab('growth')}
-            >
-              <TrendingUp size={13} />
-              <span>Growth & Cadence</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === 'catalog' ? styles.tabBtnActive : ''}`}
-              onClick={() => setActiveTab('catalog')}
-            >
-              <Video size={13} />
-              <span>Catalog Explorer ({data.videos.length})</span>
-            </button>
-          </div>
-
-          {/* Tab 1: Strategic Overview */}
-          {activeTab === 'overview' && (
-            <div className={styles.viewContainer}>
-              <div className={styles.twoColGrid}>
-                <Battlecard analysis={data.aiAnalysis} channelName={data.channel.name} />
-                <ContentThemes data={data.chartData.contentThemes} />
-              </div>
-
-              <div className={styles.equalGrid}>
-                <ViewsDistribution data={data.chartData.viewsDistribution} />
-                <PublishingTimeline data={data.chartData.publishingTimeline} />
-              </div>
-
-              <TopVideos videos={data.videos.slice(0, 4)} />
-            </div>
-          )}
-
-          {/* Tab 2: Title & Hook Lab */}
-          {activeTab === 'title-lab' && (
-            <div className={styles.viewContainer}>
-              <TitleLab patterns={data.aiAnalysis.titlePatterns} />
-            </div>
-          )}
-
-          {/* Tab 3: Growth & Cadence */}
-          {activeTab === 'growth' && (
-            <div className={styles.viewContainer}>
-              <div className={styles.equalGrid}>
-                <PublishingTimeline data={data.chartData.publishingTimeline} />
-                <LengthVsViews data={data.chartData.lengthVsViews} />
-              </div>
-
-              <div className={styles.retentionCard}>
-                <span className={styles.retentionLabel}>Audience Retention Synthesis</span>
-                <h4 className={styles.retentionTitle}>
-                  Target Video Duration: {data.analytics.avgVideoLength}
-                </h4>
-                <p className={styles.retentionText}>
-                  Statistical clustering reveals videos published near {data.analytics.avgVideoLength} sustain
-                  the highest algorithmic recommendation probability. Videos exceeding 20+ minutes require
-                  strong chapter structuring to prevent mid-roll abandonment.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 4: Catalog Explorer */}
-          {activeTab === 'catalog' && (
-            <div className={styles.viewContainer}>
-              <TopVideos videos={data.videos} />
-            </div>
-          )}
-        </>
-      )}
+        <div className={styles.sampleGrid}>
+          {SAMPLES.map(({ Icon, ...sample }) => (
+            <Link key={sample.handle} href={`/analyze/${sample.handle}?demo=true`} className={styles.sampleCard} style={{ '--card-color': sample.color } as CSSProperties}>
+              <div className={styles.sampleTop}><span className={styles.sampleIcon}><Icon size={22} strokeWidth={1.6} /></span><span className={styles.sampleTag}>SAMPLE REPORT</span><ArrowRight size={17} className={styles.cardArrow} /></div>
+              <div className={styles.cardInfo}><span className={styles.category}>{sample.category}</span><h3>{sample.name}</h3><p>{sample.detail}</p></div>
+              <div className={styles.cardBottom}><span>@{sample.handle}<small>{sample.count} illustrative uploads</small></span><div className={styles.miniBars} aria-hidden="true">{sample.bars.map((height, i) => <i key={i} style={{ height: `${height}%` }} />)}</div></div>
+            </Link>
+          ))}
+        </div>
+        <p className={styles.disclosure}><Sparkles size={13} /> Built for clarity, not information overload. Samples are illustrative, not live channel stats.</p>
+      </section>
     </div>
   );
 }

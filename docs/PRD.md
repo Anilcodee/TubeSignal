@@ -67,38 +67,37 @@ TubeSignal turns raw YouTube data from SerpApi into a **visual, AI-analyzed rese
 - **Data Retrieved:**
   - Channel name, handle, description, subscriber count
   - List of recent videos (title, views, published date, length, thumbnail)
+- **Priority:** P0 (Mu### F3: Video Deep-Dive & Ranked Performance Table
+- **Engine:** `youtube_video` via SerpApi / `youtube_channel`
+- **Output:** Dense ranked table with 16:9 thumbnails, views (`tabular-nums`), "vs median" percentage delta badge (e.g. `▲ +288%`), and duration
 - **Priority:** P0 (Must Have)
 
-### F3: Video Deep-Dive (Selective)
-- **Engine:** `youtube_video` via SerpApi
-- **Data Retrieved:** Detailed metadata for top-performing videos
-- **Trigger:** Auto-fetch details for top 5 videos by view count
-- **Priority:** P1 (Should Have)
-
 ### F4: AI-Powered Content Analysis
-- **LLM Provider:** Google Gemini API (free tier) or Claude API
+- **LLM Provider:** Google Gemini API (Gemini 2.5 Flash)
 - **Analysis Modules:**
-  1. **Content Themes** — Categorize videos into topic clusters
-  2. **Title Pattern Analysis** — Common words, patterns, length, emotional triggers
-  3. **Publishing Strategy** — Frequency, day-of-week patterns, consistency
-  4. **Performance Insights** — What separates top videos from average ones
-  5. **Actionable Recommendations** — "If you want to compete in this niche, here's what to do"
+  1. **Strategic Verdict** — One punchy AI judgment leading the dashboard
+  2. **Content Themes** — Categorize videos into topic clusters (horizontal bars)
+  3. **Title Pattern Analysis** — Common words, recurring syntax, character count sweetspots
+  4. **Publishing Strategy** — Frequency, day-of-week cadence matrix
+  5. **Performance Insights** — What separates outlier videos from baseline median
+  6. **Actionable Recommendations** — Numbered rules with concrete catalog evidence
 - **Priority:** P0 (Must Have)
 
 ### F5: Visual Analytics Dashboard
-- **Charts:**
-  - 📊 Views distribution bar chart
-  - 📈 Publishing frequency timeline
-  - 🏷️ Content theme pie/donut chart
-  - 📏 Video length vs. views scatter plot
-- **Library:** Chart.js or Recharts
+- **F5a: Strategy Verdict (P0)** — The dashboard opens with a one-sentence AI judgment plus 1–2 supporting sentences with key numbers highlighted in Signal Amber.
+- **Charts (Insight-Led Titles):**
+  - 📊 Views distribution bar chart (amber outlier highlights + dashed median line)
+  - 📈 Publishing frequency timeline / weekday strip
+  - 🏷️ Content themes **horizontal bar chart** (sorted descending, ≤5 + Other)
+  - 📏 Video length vs. views scatter plot (duration sweetspot)
+- **Library:** Chart.js with unified `chart-theme.ts`
 - **Priority:** P0 (Must Have)
 
 ### F6: Export & Share
 - **Options:**
-  - Download report as PDF
-  - Copy shareable link (static snapshot)
-- **Priority:** P2 (Nice to Have)
+  - 1-click PDF export via print stylesheet (`window.print()` with `@media print`)
+  - Copy shareable snapshot link
+- **Priority:** P1 (Should Have)
 
 ---
 
@@ -107,7 +106,6 @@ TubeSignal turns raw YouTube data from SerpApi into a **visual, AI-analyzed rese
 | Feature | Description | SerpApi Engine |
 |---|---|---|
 | **Transcript Analysis** | Analyze video transcripts for speaking style, keywords | `youtube_video_transcript` |
-| **Multi-Channel Compare** | Compare 2-3 creators side by side | `youtube_channel` × N |
 | **Trend Context** | Show how channel topics align with Google Trends | `google` search |
 | **Comment Sentiment** | Analyze audience sentiment from comments | `youtube_video` (comments) |
 
@@ -117,39 +115,53 @@ TubeSignal turns raw YouTube data from SerpApi into a **visual, AI-analyzed rese
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     LANDING PAGE                            │
-│   "Analyze any YouTube creator's content strategy"          │
-│   [____Search creator name or @handle____] [🔍 Analyze]     │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   SEARCH RESULTS                            │
-│   Found channels matching "mkbhd":                          │
-│   ┌─────────────────────────────────────────────┐           │
-│   │ 🎬 MKBHD (@mkbhd) — 19.5M subscribers       │ [Select] │
-│   │ 🎬 MKBHD Clips (@mkbhdclips) — 200K subs    │ [Select] │
-│   └─────────────────────────────────────────────┘           │
-└──────────────────────┬──────────────────────────────────────┘
-                       │ (user selects)
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   LOADING STATE                             │
-│   🔄 Fetching channel data from YouTube...                   │
-│   🔄 Analyzing 47 videos with AI...                          │
-│   🔄 Generating content strategy report...                   │
-│   ████████████░░░░░░░░ 65%                                  │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                ANALYSIS DASHBOARD                           │
+│                     HOME / WORKSPACE                        │
+│   "Analyze any creator's channel."                          │
+│   [ 🔍 Search a creator or @handle...             Analyze ] │
 │                                                             │
-│  ┌──────────────────────────┐  ┌──────────────────────────┐ │
-│  │ CHANNEL OVERVIEW         │  │ AI STRATEGY BRIEF        │ │
-│  │ Name: MKBHD              │  │ "MKBHD focuses on..."   │ │
-│  │ Subs: 19.5M              │  │ Key Themes: Tech Reviews │ │
-│  │ Videos Analyzed: 47      │  │ Title Style: Product...  │ │
+│   Recent and sample dossiers:                               │
+│   • Marques Brownlee (@mkbhd) — 19.5M                       │
+│   • Fireship (@fireship) — 3.4M                             │
+│   • Veritasium (@veritasium) — 15.0M                        │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (user searches or clicks sample)
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 SKELETON IN-LAYOUT LOADING                  │
+│   Fetching channel... → Reading videos... → Writing brief...│
+│   [ Skeletons in full dashboard layout with shimmer ]       │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     DOSSIER DASHBOARD                       │
+│                                                             │
+│   Marques Brownlee (@mkbhd)                 [Share] [Export]│
+│   19.5M subscribers • 47 videos analyzed • live             │
+│                                                             │
+│   ▌ VERDICT: MKBHD wins on polished 10–15m reviews...       │
+│                                                             │
+│   [ 19.5M Subs | 3.2M Avg Views | 2.1/wk Cadence | 11:42 ]  │
+│                                                             │
+│   ┌──────────────────────────┐  ┌─────────────────────────┐ │
+│   │ 🏷️ Content Themes (Bars) │  │ 🎯 What to do next      │ │
+│   │ "Reviews drive 62% views"│  │ 1. Recommendation       │ │
+│   └──────────────────────────┘  └─────────────────────────┘ │
+│                                                             │
+│   ┌──────────────────────────┐  ┌─────────────────────────┐ │
+│   │ 📏 Length vs Views       │  │ 📈 Publishing Cadence   │ │
+│   │ "10–15m videos beat..."  │  │ "Publishes Tue & Thu"   │ │
+│   └──────────────────────────┘  └─────────────────────────┘ │
+│                                                             │
+│   ┌───────────────────────────────────────────────────────┐ │
+│   │ 📊 Views Distribution ("Top outliers drive...")       │ │
+│   └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│   ┌───────────────────────────────────────────────────────┐ │
+│   │ 🎬 Ranked Video Table (#, Thumb, Title, Views, Median)│ │
+│   └───────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```�� │
 │  │ Avg Views: 3.2M          │  │ 5 Recommendations...    │ │
 │  └──────────────────────────┘  └──────────────────────────┘ │
 │                                                             │

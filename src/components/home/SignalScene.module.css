@@ -1,0 +1,43 @@
+.scene { position: relative; width: 100%; min-height: 33rem; perspective: 70rem; isolation: isolate; }
+.halo { position: absolute; inset: 5% 0; background: radial-gradient(ellipse, var(--accent-glow), transparent 64%); z-index: -1; }
+.coordinates { position: absolute; inset: 1.5rem 1rem auto; display: flex; justify-content: space-between; color: var(--text-3); font: .6rem var(--font-mono); letter-spacing: .16em; }
+.orbit { position: absolute; width: 26rem; height: 26rem; border: 1px solid var(--line); border-radius: 50%; top: 3rem; left: 50%; transform: translateX(-50%); }
+.orbit::after { content: ''; position: absolute; inset: 2.5rem; border: 1px dashed var(--line-strong); border-radius: 50%; }
+.orbit i { position: absolute; width: .3rem; height: .3rem; background: var(--accent); border-radius: 50%; box-shadow: 0 0 14px var(--accent-line); }
+.orbit i:nth-child(1) { top: 18%; left: 10%; }
+.orbit i:nth-child(2) { bottom: 20%; right: 9%; }
+.orbit i:nth-child(3) { top: 12%; right: 16%; background: var(--text-3); }
+.sculpture { position: absolute; top: 5rem; left: 50%; width: 20rem; height: 20rem; transform-style: preserve-3d; transform: translateX(-50%) rotateX(48deg) rotateZ(-30deg); animation: levitate 7s ease-in-out infinite; }
+.ringOuter, .ringMiddle, .ringInner { position: absolute; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, var(--surface-warm) 38%, var(--accent) 67%, var(--surface-warm) 95%); box-shadow: 0 12px 0 var(--surface-warm), 0 14px 0 var(--accent-line), 0 30px 45px #0008, inset 0 2px 1px var(--accent); }
+.ringOuter { inset: 0; border: 1px solid var(--accent-line); }
+.ringMiddle { inset: 2.15rem; transform: translateZ(1.1rem); }
+.ringInner { inset: 4.1rem; transform: translateZ(2.2rem); }
+.ringOuter::after, .ringMiddle::after, .ringInner::after { content: ''; position: absolute; inset: .65rem; border-radius: 50%; background: var(--bg); box-shadow: inset 0 7px 7px #000b, 0 1px 0 var(--accent); }
+.core { position: absolute; inset: 6.1rem; display: grid; place-items: center; border-radius: 30%; color: var(--accent-ink); background: linear-gradient(135deg, var(--color-accent-hover), var(--accent), #B47432); transform: translateZ(3.5rem); box-shadow: 0 7px 0 #855A2C, 0 9px 0 var(--accent-line), 0 20px 50px var(--accent-glow), inset 0 2px 1px #fff7; }
+.core svg { transform: rotateZ(30deg); }
+.signalTag { position: absolute; top: 4rem; right: -.25rem; display: flex; align-items: center; gap: var(--s-2); padding: var(--s-3) var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--radius-full); background: var(--glass-bg); backdrop-filter: blur(16px); font-size: .68rem; color: var(--text-2); transform: rotate(5deg); }
+.signalTag > span:first-child { width: .35rem; height: .35rem; border-radius: 50%; background: var(--positive); box-shadow: 0 0 10px #34d39955; }
+.signalTag svg { color: var(--accent); }
+.preview { position: absolute; width: 18.5rem; left: .6rem; bottom: 3rem; padding: var(--s-5); border: 1px solid var(--line-strong); border-top-color: #ffffff29; border-radius: var(--r-panel); background: linear-gradient(135deg, #25292def, #121517f5); backdrop-filter: blur(20px); box-shadow: 0 24px 60px #0006; transform: rotateY(12deg) rotateZ(-5deg); animation: reveal 1s .15s both; }
+.previewTop { display: flex; align-items: center; gap: var(--s-3); }
+.avatar { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .65rem; background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--accent); font-size: .75rem; }
+.previewTop > div { display: flex; flex-direction: column; gap: .25rem; flex: 1; }
+.previewTop strong { font-size: .78rem; font-weight: 500; }
+.previewTop > div > span { font-size: .6rem; color: var(--text-3); }
+.previewTop > svg { color: var(--text-3); }
+.barChart { height: 4.5rem; display: flex; gap: .45rem; align-items: flex-end; padding: 0 .1rem; margin-top: var(--s-5); border-bottom: 1px solid var(--line); }
+.barChart > span { flex: 1; border-radius: .2rem .2rem 0 0; background: linear-gradient(0deg, var(--accent-soft), var(--accent-line)); transform-origin: bottom; animation: grow 1s both; }
+.barChart > span:nth-child(4), .barChart > span:nth-child(10) { background: linear-gradient(0deg, #B47432, var(--accent)); }
+.previewBottom { display: flex; justify-content: space-between; font-size: .55rem; color: var(--text-2); margin-top: var(--s-3); gap: var(--s-2); }
+.legend { color: var(--text-3); }
+.insight { position: absolute; right: -1rem; bottom: 7rem; display: flex; align-items: center; gap: var(--s-3); padding: var(--s-4); background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--r-panel); box-shadow: var(--shadow-card); transform: rotate(5deg); animation: reveal 1s .35s both; }
+.insight > div { display: grid; place-items: center; width: 2rem; height: 2rem; background: var(--accent-soft); color: var(--accent); border-radius: var(--r-control); }
+.insight > span { font-size: .7rem; color: var(--text-3); line-height: 1.7; }
+.insight strong { color: var(--text); font-weight: 500; }
+.caption { position: absolute; bottom: .1rem; right: 1rem; color: var(--text-3); font: .6rem var(--font-mono); letter-spacing: .02em; }
+@keyframes levitate { 0%, 100% { transform: translateX(-50%) translateY(0) rotateX(48deg) rotateZ(-30deg); } 50% { transform: translateX(-50%) translateY(-.8rem) rotateX(52deg) rotateZ(-24deg); } }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes reveal { from { opacity: 0; translate: 0 1rem; } to { opacity: 1; translate: 0 0; } }
+@media (max-width: 1050px) { .insight { right: 0; bottom: 3rem; } .preview { left: 0; bottom: 5rem; width: 16rem; } .signalTag { right: 0; } }
+@media (max-width: 900px) { .scene { max-width: 28rem; min-height: 28rem; margin: 0 auto; } .coordinates { top: 0; } .sculpture { top: 2rem; } .orbit { top: .5rem; width: 23rem; height: 23rem; } .signalTag { top: 2rem; } .preview { bottom: 2rem; } .insight { bottom: 4.5rem; } .caption { bottom: -.5rem; } }
+@media (max-width: 400px) { .sculpture { width: 14.5rem; height: 14.5rem; top: 3.5rem; } .ringMiddle { inset: 1.6rem; } .ringInner { inset: 3.2rem; } .core { inset: 4.75rem; } .core svg { width: 3rem; } .orbit { width: 19rem; height: 19rem; } .insight { padding: var(--s-3); right: -.25rem; bottom: 1.5rem; } .preview { width: 15rem; bottom: 4rem; } }

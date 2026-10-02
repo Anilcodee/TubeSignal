@@ -1,25 +1,36 @@
-import React from 'react';
+'use client';
+
 import Link from 'next/link';
-import { Activity } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ArrowLeft, ArrowUpRight, AudioLines } from 'lucide-react';
+import { CommandBar } from '@/components/search/CommandBar';
 import styles from './Header.module.css';
 
 export const Header = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+  const isCompare = pathname === '/compare';
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} no-print`}>
       <div className={styles.container}>
-        <Link href="/" className={styles.logo}>
-          <div className={styles.logoIconWrapper}>
-            <Activity size={16} strokeWidth={2.5} />
-          </div>
-          <span className={styles.logoText}>TubeSignal</span>
-          <span className={styles.tag}>Creator Intelligence Console</span>
+        <Link href="/" className={styles.logo} aria-label="TubeSignal home">
+          <span className={styles.logoMark}><AudioLines size={21} aria-hidden="true" /></span>
+          <span>TubeSignal<span className={styles.logoPeriod}>.</span></span>
         </Link>
-
-        <nav className={styles.nav}>
-          <div className={styles.badgeLive}>
-            <span className={styles.dot} />
-            <span>Engines Online</span>
-          </div>
+        {!isHome && <div className={styles.searchSlot}><CommandBar onSearch={(id) => router.push(`/analyze/${encodeURIComponent(id)}`)} /></div>}
+        <nav className={styles.navigation} aria-label="Main navigation">
+          <Link href="/compare" className={styles.sampleNav} style={isCompare ? { color: 'var(--accent)' } : undefined}>
+            Compare
+          </Link>
+          {isHome ? (
+            <>
+              <a href="#sample-reports" className={styles.sampleNav}>Sample reports</a>
+              <Link href="/analyze/mkbhd?demo=true" className={styles.demoLink}>Explore report <ArrowUpRight size={14} /></Link>
+            </>
+          ) : (
+            <Link href="/"><ArrowLeft size={13} /> New search</Link>
+          )}
         </nav>
       </div>
     </header>

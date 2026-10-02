@@ -1,8 +1,12 @@
+import type { NumericChartData, ScatterChartData } from './chart';
+
 export interface VideoData {
   videoId: string;
   title: string;
   views: number;
   viewsFormatted: string;
+  /** False means the numeric compatibility value is excluded from calculations. */
+  viewsAvailable?: boolean;
   publishedDate: string;
   relativeDate?: string;
   length: string;
@@ -17,7 +21,7 @@ export interface ChannelData {
   channelId: string;
   avatar: string;
   subscribers: string;
-  subscriberCount: number;
+  subscriberCount?: number;
   description: string;
   totalVideosAnalyzed: number;
 }
@@ -30,8 +34,9 @@ export interface ChannelAnalytics {
   totalViewsFormatted: string;
   publishingFrequency: string;
   avgVideoLength: string;
+  medianVideoLength: string;
   mostActiveDay: string;
-  viewsGrowthTrend: 'rising' | 'stable' | 'declining';
+  viewsGrowthTrend: 'rising' | 'stable' | 'declining' | 'unknown';
 }
 
 export interface ContentTheme {
@@ -75,9 +80,29 @@ export interface FullAnalysisResponse {
   analytics: ChannelAnalytics;
   aiAnalysis: AIAnalysis;
   chartData: {
-    viewsDistribution: any;
-    publishingTimeline: any;
-    contentThemes: any;
-    lengthVsViews: any;
+    viewsDistribution: NumericChartData;
+    publishingTimeline: NumericChartData;
+    contentThemes: NumericChartData;
+    lengthVsViews: ScatterChartData;
   };
+  meta: {
+    dataSource: 'live' | 'sample';
+    analysisSource: 'gemini' | 'computed';
+    generatedAt: string;
+    notice?: string;
+  };
+}
+
+export interface ChannelSearchResult {
+  name: string;
+  channelId: string;
+  handle: string;
+  avatar: string;
+  subscribers: string;
+  description: string;
+}
+
+export interface ChannelSearchResponse {
+  channels: ChannelSearchResult[];
+  error?: string;
 }

@@ -1,134 +1,134 @@
+import { createHash } from 'node:crypto';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ChannelData, VideoData, AIAnalysis } from '@/types/analysis';
+import type { ChannelData, VideoData, AIAnalysis } from '@/types/analysis';
 import { MASTER_ANALYSIS_SYSTEM_PROMPT, buildAnalysisUserPrompt } from '@/utils/prompts';
+import { formatViews } from '@/utils/format';
 import { cacheService } from './cache';
+import { DataTransformerService } from './data-transformer';
+import { geminiQuota } from './request-guard';
+
+export interface AnalysisResult { analysis: AIAnalysis; source: 'gemini' | 'computed'; notice?: string }
+const isObject = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+const string = (value: unknown, max = 1000): value is string => typeof value === 'string' && value.trim().length > 0 && value.length <= max;
+const strings = (value: unknown): value is string[] => Array.isArray(value) && value.length <= 12 && value.every((item) => string(item, 600));
+const exactKeys = (value: Record<string, unknown>, keys: string[]): boolean => Object.keys(value).length === keys.length && keys.every((key) => Object.hasOwn(value, key));
+
+/** Validate every nested field, then require measured fields to match server observations. */
+export function validateAIAnalysis(value: unknown, baseline: AIAnalysis): AIAnalysis | null {
+  if (!isObject(value) || !exactKeys(value, ['summary', 'contentThemes', 'titlePatterns', 'publishingStrategy', 'performanceInsights', 'recommendations'])) return null;
+  if (!string(value.summary, 2000) || !strings(value.recommendations) || value.recommendations.length < 1 || value.recommendations.length > 8) return null;
+  // No defensible category mapping is supplied in this flow; a model cannot invent one.
+  if (!Array.isArray(value.contentThemes) || value.contentThemes.length !== 0) return null;
+  const titles = value.titlePatterns;
+  if (!isObject(titles) || !exactKeys(titles, ['avgLength', 'commonPatterns', 'emotionalTriggers', 'useOfNumbers'])
+    || typeof titles.avgLength !== 'number' || !Number.isFinite(titles.avgLength) || titles.avgLength < 0 || titles.avgLength > 500
+    || !strings(titles.commonPatterns) || !strings(titles.emotionalTriggers) || !string(titles.useOfNumbers)) return null;
+  const publishing = value.publishingStrategy;
+  if (!isObject(publishing) || !exactKeys(publishing, ['frequency', 'peakDays', 'consistency', 'seasonalPatterns'])
+    || !string(publishing.frequency) || !strings(publishing.peakDays) || !string(publishing.consistency) || !string(publishing.seasonalPatterns)) return null;
+  const performance = value.performanceInsights;
+  if (!isObject(performance) || !exactKeys(performance, ['topPerformingTraits', 'underperformingTraits', 'viralFactors'])
+    || !strings(performance.topPerformingTraits) || !strings(performance.underperformingTraits) || !strings(performance.viralFactors)) return null;
+  // Compare individual fields, not JSON property order. These are data, not model opinions.
+  for (const [actual, expected] of [[titles, baseline.titlePatterns], [publishing, baseline.publishingStrategy], [performance, baseline.performanceInsights]] as const) {
+    for (const [key, expectedValue] of Object.entries(expected)) {
+      if (JSON.stringify(actual[key]) !== JSON.stringify(expectedValue)) return null;
+    }
+  }
+  const narrative = [value.summary, ...value.recommendations].join(' ');
+  // Guard against fabricated claims, external links, or metric promises
+  if (/https?:\/\/|guaranteed|proven to|retention rate|click.through rate|\bCTR\b|algorithm favors/i.test(narrative)) return null;
+  return { ...baseline, summary: value.summary.trim(), recommendations: value.recommendations.map((item) => item.trim()) };
+}
 
 export class AIAnalyzerService {
-  private apiKey: string;
-  private modelName = 'gemini-1.5-flash';
+  private pending = new Map<string, Promise<AnalysisResult>>();
 
-  constructor() {
-    this.apiKey = process.env.GEMINI_API_KEY || '';
+  public async analyzeChannel(channel: ChannelData, videos: VideoData[]): Promise<AnalysisResult> {
+    const baseline = this.generateFallbackAnalysis(channel, videos);
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
+    if (!apiKey) return { analysis: baseline, source: 'computed', notice: 'Gemini is not configured; this report uses a computed observational summary.' };
+    const modelName = process.env.GEMINI_MODEL?.trim() || 'gemini-1.5-flash';
+    // A count-only key could silently reuse an analysis for completely different videos.
+    const fingerprint = createHash('sha256').update(JSON.stringify({ modelName, channel, videos, baseline })).digest('hex');
+    const cacheKey = `ai:v2:${fingerprint}`;
+    const cached = cacheService.get<AnalysisResult>(cacheKey);
+    if (cached) return cached;
+    const existing = this.pending.get(cacheKey);
+    if (existing) return existing;
+    let release: (() => void) | undefined;
+    try { release = geminiQuota.acquire(); } catch {
+      return { analysis: baseline, source: 'computed', notice: 'AI request limit reached; the observed data is summarized without Gemini.' };
+    }
+    const promise = (async (): Promise<AnalysisResult> => {
+      try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          generationConfig: { temperature: 0.2, maxOutputTokens: 2048, responseMimeType: 'application/json' },
+          systemInstruction: MASTER_ANALYSIS_SYSTEM_PROMPT,
+        });
+        const prompt = buildAnalysisUserPrompt(channel.name, channel.subscribers, videos.map((video) => ({
+          title: video.title, views: DataTransformerService.hasViews(video) ? video.views : null,
+          publishedDate: video.publishedDate, length: video.length,
+        })), baseline);
+        const result = await model.generateContent(prompt, { timeout: 18_000 });
+        const response = result.response.text();
+        if (response.length > 30_000) throw new Error('Oversized AI response');
+        const parsed: unknown = JSON.parse(response.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''));
+        const analysis = validateAIAnalysis(parsed, baseline);
+        if (!analysis) throw new Error('Invalid AI response');
+        const output: AnalysisResult = { analysis, source: 'gemini' };
+        cacheService.set(cacheKey, output);
+        return output;
+      } catch {
+        // SDK errors can include full URLs or provider payloads. Never log/return them.
+        const output: AnalysisResult = { analysis: baseline, source: 'computed', notice: 'Gemini was unavailable or its response could not be validated; this report uses computed observations.' };
+        cacheService.set(cacheKey, output, 60_000);
+        return output;
+      } finally {
+        release?.();
+        this.pending.delete(cacheKey);
+      }
+    })();
+    this.pending.set(cacheKey, promise);
+    return promise;
   }
 
-  /**
-   * Main analysis method: invokes Gemini AI with structured schema or falls back cleanly
-   */
-  public async analyzeChannel(
-    channel: ChannelData,
-    videos: VideoData[]
-  ): Promise<AIAnalysis> {
-    const cacheKey = `ai:${channel.channelId}:${videos.length}`;
-    const cached = cacheService.get<AIAnalysis>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    if (!this.apiKey) {
-      console.warn('GEMINI_API_KEY not configured. Using rule-based fallback analysis.');
-      return this.generateFallbackAnalysis(channel, videos);
-    }
-
-    try {
-      const genAI = new GoogleGenerativeAI(this.apiKey);
-      const model = genAI.getGenerativeModel({
-        model: this.modelName,
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 2048,
-          responseMimeType: 'application/json',
-        },
-        systemInstruction: MASTER_ANALYSIS_SYSTEM_PROMPT,
-      });
-
-      const videoSnippets = videos.slice(0, 30).map((v) => ({
-        title: v.title,
-        views: v.views,
-        publishedDate: v.publishedDate,
-        length: v.length,
-      }));
-
-      const prompt = buildAnalysisUserPrompt(
-        channel.name,
-        channel.subscribers,
-        videoSnippets
-      );
-
-      const result = await model.generateContent(prompt);
-      const responseText = result.response.text();
-
-      // Clean response of potential markdown wrapping
-      const cleaned = responseText
-        .replace(/```json/gi, '')
-        .replace(/```/g, '')
-        .trim();
-
-      const parsed = JSON.parse(cleaned) as AIAnalysis;
-      cacheService.set(cacheKey, parsed);
-      return parsed;
-    } catch (err) {
-      console.error('Gemini AI analysis error:', err);
-      return this.generateFallbackAnalysis(channel, videos);
-    }
-  }
-
-  /**
-   * Intelligent heuristic fallback when LLM is unavailable or unconfigured
-   */
   public generateFallbackAnalysis(channel: ChannelData, videos: VideoData[]): AIAnalysis {
-    const titles = videos.map((v) => v.title);
-    const avgLen = titles.length
-      ? Math.round(titles.reduce((a, t) => a + t.length, 0) / titles.length)
-      : 42;
-
-    const words = titles.join(' ').toLowerCase().split(/\s+/);
-    const hasNumbers = titles.filter((t) => /\d/.test(t)).length;
-    const numPercent = titles.length ? Math.round((hasNumbers / titles.length) * 100) : 30;
-
+    const analytics = DataTransformerService.calculateAnalytics(videos);
+    const titles = videos.map((video) => video.title);
+    const avgLength = titles.length ? Math.round(titles.reduce((sum, title) => sum + title.length, 0) / titles.length) : 0;
+    const numbered = titles.filter((title) => /\d/.test(title)).length;
+    const questions = titles.filter((title) => title.includes('?')).length;
+    const colonTitles = titles.filter((title) => title.includes(':')).length;
+    const observed = videos.filter(DataTransformerService.hasViews).sort((a, b) => b.views - a.views);
+    const top = observed[0];
+    const summary = `${channel.name}: this report covers ${videos.length} supplied videos, not the full channel history. `
+      + (observed.length ? `${observed.length} have view counts, averaging ${analytics.avgViewsFormatted} views with a median of ${formatViews(analytics.medianViews)}. ` : 'View counts are unavailable. ')
+      + 'Lifetime view differences do not establish growth or explain why a video performed differently.';
     return {
-      summary: `${channel.name} operates a high-impact channel with ${channel.subscribers}. The content strategy leverages repeatable hook structures, high search intent topics, and consistent upload scheduling to capture target audience mindshare.`,
-      contentThemes: [
-        { theme: 'Core Flagship Breakdowns', percentage: 38, videoCount: Math.round(videos.length * 0.38) || 6 },
-        { theme: 'Deep Dives & Comparisons', percentage: 26, videoCount: Math.round(videos.length * 0.26) || 4 },
-        { theme: 'Industry Trends & Commentary', percentage: 20, videoCount: Math.round(videos.length * 0.20) || 3 },
-        { theme: 'Quick Tips & Walkthroughs', percentage: 16, videoCount: Math.round(videos.length * 0.16) || 2 },
-      ],
+      summary, contentThemes: [],
       titlePatterns: {
-        avgLength: avgLen,
-        commonPatterns: [
-          'Topic + Direct Benefit / Verdict',
-          'Question / Contrarian Hook',
-          'Superlative Comparison',
-        ],
-        emotionalTriggers: ['Best', 'Why', 'How', 'Mistake', 'Actually', 'The Truth'],
-        useOfNumbers: `${numPercent}% of titles leverage numeric data points or rankings`,
+        avgLength,
+        commonPatterns: [questions ? `${questions} of ${titles.length} titles contain a question mark` : '', colonTitles ? `${colonTitles} of ${titles.length} titles contain a colon` : ''].filter(Boolean),
+        emotionalTriggers: [],
+        useOfNumbers: `${numbered} of ${titles.length} titles contain digits${titles.length ? ` (${Math.round(numbered / titles.length * 100)}%)` : ''}; this does not measure title effectiveness.`,
       },
       publishingStrategy: {
-        frequency: '2-3 videos per week',
-        peakDays: ['Tuesday', 'Thursday', 'Saturday'],
-        consistency: 'High consistency across catalog lifecycle',
-        seasonalPatterns: 'Content volume scales with product launches and major seasonal cycles',
+        frequency: analytics.publishingFrequency,
+        peakDays: [],
+        consistency: 'Unavailable: a partial catalog cannot establish a complete publishing schedule.',
+        seasonalPatterns: 'Unavailable: no complete multi-season publishing history was supplied.',
       },
       performanceInsights: {
-        topPerformingTraits: [
-          'Direct problem-solving or comparison framing in titles',
-          'Standard video durations within the 10-15 minute engagement sweet spot',
-          'Clean, focused visual thumbnails',
-        ],
-        underperformingTraits: [
-          'Vague or generic non-descriptive titles',
-          'Extended runtimes exceeding 25 minutes without structured pacing',
-        ],
-        viralFactors: [
-          'First-mover coverage on trending topics and authoritative breakdown formatting',
-        ],
+        topPerformingTraits: top ? [`Highest observed view count: “${top.title}” (${formatViews(top.views)} views). This is a ranking, not evidence of a causal trait.`] : [],
+        underperformingTraits: [], viralFactors: [],
       },
       recommendations: [
-        'Maintain primary focus on titles that answer explicit user search queries.',
-        'Optimize video runtimes within 10-14 minutes for ideal retention curves.',
-        'Target Tuesday and Thursday release windows for maximum mid-week viewership.',
-        'Incorporate specific numerical cues or benchmarks in thumbnail and title pairings.',
-        'Produce follow-up comparison formats for any video exceeding channel median views.',
+        top ? `Review “${top.title}” as a possible follow-up experiment; its view count alone cannot establish the cause of performance.` : 'Collect public view counts before comparing video performance.',
+        'Compare videos at the same age after publication before making performance comparisons.',
+        analytics.publishingFrequency === 'Unavailable' ? 'Collect reliable publication dates before assessing upload cadence.' : 'Check the complete upload history before changing a publishing schedule based on this partial sample.',
       ],
     };
   }

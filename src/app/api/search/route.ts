@@ -1,100 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serpApiService } from '@/services/serpapi';
+import { DataTransformerService } from '@/services/data-transformer';
+import { readRequestObject, ServiceError } from '@/services/request-guard';
+import { isInvalidSearchInput, normalizeChannelInput } from '@/utils/channel-input';
+import type { ChannelSearchResponse } from '@/types/analysis';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { query } = body;
-
-    if (!query || typeof query !== 'string') {
-      return NextResponse.json(
-        { error: 'A valid search query string is required' },
-        { status: 400 }
-      );
+    const body = await readRequestObject(request);
+    if (typeof body.query !== 'string' || !body.query.trim() || body.query.length > 512) {
+      throw new ServiceError(400, 'Enter a channel name, @handle, or YouTube channel URL.');
     }
-
-    const cleanQuery = query.trim();
-
-    // Check for demo shortcuts
-    const lower = cleanQuery.toLowerCase().replace(/^@/, '');
-    if (lower === 'mkbhd' || lower === 'marques brownlee') {
-      return NextResponse.json({
-        channels: [
-          {
-            name: 'Marques Brownlee',
-            handle: '@mkbhd',
-            channelId: 'UCBcRF18a7Qf58cCRy5xuWwQ',
-            subscribers: '19.5M subscribers',
-            avatar:
-              'https://yt3.googleusercontent.com/lkH37D712tiyphnu0Id0D5MwwQ7IRuwgQLVD05iMXlDWO-kDHqqd8EM522QDcGQVcxDR52W6oQ=s176-c-k-c0x00ffffff-no-rj',
-            description: 'Quality Tech Videos | YouTuber | Geek | Consumer Electronics',
-          },
-        ],
-      });
+    const query = body.query.trim();
+    const identifier = normalizeChannelInput(query);
+    if (identifier) {
+      // A resolvable identifier is not a verified search match or invented channel profile.
+      const response: ChannelSearchResponse = { channels: [{
+        name: identifier, channelId: identifier, handle: identifier.startsWith('@') ? identifier : '',
+        avatar: '', subscribers: 'Unavailable',
+        description: 'Direct channel identifier, not yet verified. Public details will be fetched during analysis.',
+      }] };
+      return NextResponse.json(response);
     }
-
-    if (lower === 'fireship') {
-      return NextResponse.json({
-        channels: [
-          {
-            name: 'Fireship',
-            handle: '@fireship',
-            channelId: 'UCsBjURrPoezykLs9EqgamOA',
-            subscribers: '3.4M subscribers',
-            avatar:
-              'https://yt3.googleusercontent.com/ytc/AIdro_kX4QZqQYIuB9_2r_v_8nE1u00vQ=s176-c-k-c0x00ffffff-no-rj',
-            description: 'High-intensity code tutorials and tech news.',
-          },
-        ],
-      });
+    if (isInvalidSearchInput(query)) {
+      throw new ServiceError(400, 'Use a channel name, valid @handle, or youtube.com/@handle or /channel/UC… URL. Video and unsupported URLs cannot be analyzed as channels.');
     }
-
-    // Call SerpApi if key is configured
-    if (process.env.SERPAPI_API_KEY) {
-      const searchRes = (await serpApiService.searchChannels(cleanQuery)) as {
-        channel_results?: Array<{
-          title?: string;
-          link?: string;
-          channel_id?: string;
-          thumbnail?: string;
-          subscribers?: string;
-          description?: string;
-        }>;
-      };
-
-      const results = (searchRes?.channel_results || []).map((c) => ({
-        name: c.title || cleanQuery,
-        handle: c.title ? `@${c.title.toLowerCase().replace(/\s+/g, '')}` : cleanQuery,
-        channelId: c.channel_id || cleanQuery,
-        subscribers: c.subscribers || 'Creator Channel',
-        avatar:
-          c.thumbnail ||
-          'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
-        description: c.description || 'YouTube Channel',
-      }));
-
-      return NextResponse.json({ channels: results });
+    if (!process.env.SERPAPI_API_KEY?.trim()) {
+      throw new ServiceError(503, 'Live channel discovery is unavailable because SerpApi is not configured. Try a sample report, or enter a known @handle.');
     }
-
-    // Fallback search response
-    return NextResponse.json({
-      channels: [
-        {
-          name: cleanQuery,
-          handle: cleanQuery.startsWith('@') ? cleanQuery : `@${cleanQuery}`,
-          channelId: cleanQuery.replace(/^@/, ''),
-          subscribers: 'Creator',
-          avatar:
-            'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80',
-          description: `YouTube Channel matching ${cleanQuery}`,
-        },
-      ],
-    });
+    const result = await serpApiService.searchChannels(query);
+    if (result.channel_results !== undefined && !Array.isArray(result.channel_results)) {
+      throw new ServiceError(502, 'Channel discovery returned an unexpected result. Please retry or enter a known @handle.');
+    }
+    const response: ChannelSearchResponse = { channels: DataTransformerService.normalizeSearchResults(result.channel_results) };
+    return NextResponse.json(response);
   } catch (error) {
-    console.error('[API /search]', error);
-    return NextResponse.json(
-      { error: 'Failed to search YouTube channels. Please try again.' },
-      { status: 500 }
-    );
+    const response: ChannelSearchResponse = {
+      channels: [], error: error instanceof ServiceError ? error.message : 'Channel discovery is temporarily unavailable. Please retry or enter a known @handle.',
+    };
+    return NextResponse.json(response, { status: error instanceof ServiceError ? error.statusCode : 500 });
   }
 }

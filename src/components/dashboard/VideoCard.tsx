@@ -1,15 +1,22 @@
-import React from 'react';
+import Image from 'next/image';
 import { VideoData } from '@/types/analysis';
-import { Eye } from 'lucide-react';
+import { Eye, ExternalLink } from 'lucide-react';
 import styles from './VideoCard.module.css';
 
 interface VideoCardProps {
   video: VideoData;
   maxViews?: number;
+  avgViews?: number;
+  rank?: number;
 }
 
-export const VideoCard = ({ video, maxViews = 1 }: VideoCardProps) => {
+export const VideoCard = ({ video, maxViews = 1, avgViews, rank }: VideoCardProps) => {
   const percentage = Math.min(100, Math.round((video.views / Math.max(1, maxViews)) * 100));
+
+  // Calculate Outlier Multiplier (e.g. 2.4x channel average)
+  const multiplier = avgViews && avgViews > 0 ? (video.views / avgViews).toFixed(1) : null;
+  const isHighOutlier = multiplier && parseFloat(multiplier) >= 1.5;
+  const isUnderperforming = multiplier && parseFloat(multiplier) < 0.7;
 
   return (
     <a
@@ -19,33 +26,54 @@ export const VideoCard = ({ video, maxViews = 1 }: VideoCardProps) => {
       className={styles.card}
     >
       <div className={styles.thumbnailWrapper}>
-        <img
+        {video.thumbnail && <Image
           src={video.thumbnail}
           alt={video.title}
           className={styles.thumbnail}
-          onError={(e) => {
-            (e.target as HTMLImageElement).src =
-              'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&auto=format&fit=crop&q=80';
-          }}
-        />
+          width={600}
+          height={338}
+          unoptimized
+          onError={(event) => { event.currentTarget.style.display = 'none'; }}
+        />}
+        {typeof rank === 'number' && (
+          <span className={styles.rankBadge}>#{rank}</span>
+        )}
         <span className={styles.durationBadge}>{video.length}</span>
       </div>
 
       <div className={styles.content}>
-        <h4 className={styles.title} title={video.title}>
-          {video.title}
-        </h4>
+        <div className={styles.titleRow}>
+          <h4 className={styles.title} title={video.title}>
+            {video.title}
+          </h4>
+          <ExternalLink size={12} className={styles.extIcon} />
+        </div>
 
         <div className={styles.metaRow}>
           <span className={styles.views}>
-            <Eye size={11} />
+            <Eye size={12} />
             <span>{video.viewsFormatted}</span>
           </span>
-          <span>{video.relativeDate || video.publishedDate}</span>
+
+          {multiplier && (
+            <span
+              className={`${styles.multiplierBadge} ${
+                isHighOutlier
+                  ? styles.multiplierHigh
+                  : isUnderperforming
+                  ? styles.multiplierLow
+                  : styles.multiplierNormal
+              }`}
+            >
+              {multiplier}x avg
+            </span>
+          )}
+
+          <span className={styles.date}>{video.relativeDate || video.publishedDate}</span>
         </div>
 
-        <div className={styles.perfTrack} title={`Relative Index: ${percentage}%`}>
-          <div className={styles.perfFill} style={{ width: `${percentage}%` }} />
+        <div className={styles.perfTrack} title={`Relative: ${percentage}%`}>
+          <div className={styles.perfFill} style={{ width: `${Math.max(5, percentage)}%` }} />
         </div>
       </div>
     </a>

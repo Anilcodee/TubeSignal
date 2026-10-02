@@ -1,6 +1,6 @@
 import React from 'react';
 import { AIAnalysis } from '@/types/analysis';
-import { Sparkles, Target, Zap, Lightbulb, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Target } from 'lucide-react';
 import styles from './AIBrief.module.css';
 
 interface AIBriefProps {

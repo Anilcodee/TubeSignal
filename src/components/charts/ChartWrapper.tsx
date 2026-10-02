@@ -1,31 +1,12 @@
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import styles from './ChartWrapper.module.css';
 
-interface ChartWrapperProps {
-  title: string;
-  icon?: ReactNode;
-  headerAction?: ReactNode;
-  children: ReactNode;
-  className?: string;
-}
+interface ChartWrapperProps { title: string; caption?: string; children?: ReactNode; dataTable?: ReactNode; emptyMessage?: string; }
 
-export const ChartWrapper = ({
-  title,
-  icon,
-  headerAction,
-  children,
-  className = '',
-}: ChartWrapperProps) => {
-  return (
-    <div className={`${styles.wrapper} ${className}`}>
-      <div className={styles.header}>
-        <div className={styles.titleArea}>
-          {icon && <div className={styles.icon}>{icon}</div>}
-          <h3 className={styles.title}>{title}</h3>
-        </div>
-        {headerAction && <div>{headerAction}</div>}
-      </div>
-      <div className={styles.chartContainer}>{children}</div>
-    </div>
-  );
-};
+export const ChartWrapper = ({ title, caption, children, dataTable, emptyMessage }: ChartWrapperProps) => (
+  <section className={styles.wrapper} aria-label={title}>
+    <div className={styles.header}><h3 className={styles.title}>{title}</h3>{caption && <p className={styles.caption}>{caption}</p>}</div>
+    {emptyMessage ? <p className={styles.empty}>{emptyMessage}</p> : <div className={styles.chartContainer}>{children}</div>}
+    {dataTable && <details className={styles.dataDetails}><summary>View chart data</summary><div className={styles.dataScroll}>{dataTable}</div></details>}
+  </section>
+);

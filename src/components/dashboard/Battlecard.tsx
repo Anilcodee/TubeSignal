@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AIAnalysis } from '@/types/analysis';
-import { ShieldCheck, Copy, Check, Target, Zap, TrendingUp, AlertOctagon, Sparkles, Award } from 'lucide-react';
+import { Copy, Check, TrendingUp, AlertTriangle, BookOpen } from 'lucide-react';
 import styles from './Battlecard.module.css';
 
 interface BattlecardProps {
@@ -12,16 +12,19 @@ export const Battlecard = ({ analysis, channelName }: BattlecardProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const text = `TUBE SIGNAL CREATOR INTEL: ${channelName.toUpperCase()}
+    const text = `TUBE SIGNAL STRATEGY PLAYBOOK: ${channelName.toUpperCase()}
 ==================================================
-EDITORIAL MOAT:
+SUMMARY:
 ${analysis.summary}
 
-TACTICAL PLAYBOOK:
-${analysis.recommendations.map((r, i) => `[Directive #${i + 1}] ${r}`).join('\n')}
+KEY DIRECTIVES:
+${analysis.recommendations.map((r, i) => `${i + 1}. ${r}`).join('\n')}
 
-VIRAL CATALYSTS:
-${analysis.performanceInsights.topPerformingTraits.map((t) => `✓ ${t}`).join('\n')}
+TOP PERFORMING TRAITS:
+${analysis.performanceInsights.topPerformingTraits.map((t) => `+ ${t}`).join('\n')}
+
+RISK FACTORS:
+${analysis.performanceInsights.underperformingTraits.map((t) => `- ${t}`).join('\n')}
 `;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
@@ -32,107 +35,76 @@ ${analysis.performanceInsights.topPerformingTraits.map((t) => `✓ ${t}`).join('
 
   return (
     <div className={styles.container}>
-      <div className={styles.topGlow} />
-
       <div className={styles.header}>
         <div className={styles.titleGroup}>
           <div className={styles.iconBox}>
-            <Award size={16} />
+            <BookOpen size={15} />
           </div>
           <div>
-            <h3 className={styles.title}>Strategic Intelligence & Directives</h3>
-            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>
-              Actionable playbook reverse-engineered from {channelName}&apos;s catalog
+            <h3 className={styles.title}>Channel Strategy Playbook</h3>
+            <span className={styles.subtitle}>
+              Format structure and content patterns for {channelName}
             </span>
           </div>
         </div>
 
         <button type="button" className={styles.copyBtn} onClick={handleCopy}>
-          {copied ? <Check size={13} color="#10b981" /> : <Copy size={13} />}
-          <span>{copied ? 'Copied to Clipboard' : 'Copy Brief'}</span>
+          {copied ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
+          <span>{copied ? 'Copied' : 'Copy Playbook'}</span>
         </button>
       </div>
 
-      {/* Hero Moat Box */}
-      <div className={styles.moatHero}>
-        <div className={styles.moatHeader}>
-          <Sparkles size={12} />
-          <span>Core Editorial Moat</span>
-        </div>
-        <p className={styles.moatText}>{analysis.summary}</p>
+      {/* Summary Box */}
+      <div className={styles.summaryBox}>
+        <span className={styles.summaryLabel}>Content Positioning</span>
+        <p className={styles.summaryText}>{analysis.summary}</p>
       </div>
 
-      {/* Visual Actionable Directives */}
-      <div>
-        <span className={styles.sectionTitle}>High-Impact Growth Directives</span>
-        <div className={styles.directiveGrid}>
-          {analysis.recommendations.map((rec, idx) => {
-            const priorityClass =
-              idx === 0
-                ? styles.priorityHigh
-                : idx === 1
-                ? styles.priorityHigh
-                : idx === 2
-                ? styles.priorityMed
-                : styles.priorityScale;
-
-            const priorityLabel =
-              idx === 0
-                ? 'P0 • Critical'
-                : idx === 1
-                ? 'P0 • High Lift'
-                : idx === 2
-                ? 'P1 • Tactical'
-                : 'P2 • Scale';
-
-            return (
-              <div key={idx} className={styles.directiveCard}>
-                <div className={styles.directiveLeft}>
-                  <span className={`${styles.priorityPill} ${priorityClass}`}>
-                    {priorityLabel}
-                  </span>
-                </div>
-                <div className={styles.directiveBody}>
-                  <p className={styles.directiveTitle}>{rec}</p>
-                </div>
-              </div>
-            );
-          })}
+      {/* Directives */}
+      <div className={styles.directivesSection}>
+        <span className={styles.sectionTitle}>Key Strategy Rules</span>
+        <div className={styles.directiveList}>
+          {analysis.recommendations.map((rec, idx) => (
+            <div key={idx} className={styles.directiveItem}>
+              <span className={styles.directiveIndex}>{idx + 1}</span>
+              <p className={styles.directiveText}>{rec}</p>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Visual Catalyst Chips */}
-      <div className={styles.catalystGrid}>
-        <div className={styles.catalystBox}>
-          <div className={styles.catalystHeaderGreen}>
+      {/* Traits Breakdown */}
+      <div className={styles.traitsGrid}>
+        <div className={styles.traitBox}>
+          <div className={styles.traitHeaderGreen}>
             <TrendingUp size={13} />
-            <span>Top Virality Drivers</span>
+            <span>High-Performing Traits</span>
           </div>
-          <div className={styles.chipsList}>
+          <div className={styles.traitList}>
             {analysis.performanceInsights.topPerformingTraits.map((trait, i) => (
-              <div key={i} className={styles.chipGreen}>
-                <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span>
+              <div key={i} className={styles.traitItemGreen}>
+                <span className={styles.dotGreen}>+</span>
                 <span>{trait}</span>
               </div>
             ))}
             {analysis.performanceInsights.viralFactors.map((viral, i) => (
-              <div key={`v-${i}`} className={styles.chipGreen}>
-                <span style={{ color: '#06b6d4', fontWeight: 'bold' }}>⚡</span>
-                <span>Catalyst: {viral}</span>
+              <div key={`v-${i}`} className={styles.traitItemGreen}>
+                <span className={styles.dotGreen}>+</span>
+                <span>{viral}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className={styles.catalystBox}>
-          <div className={styles.catalystHeaderRed}>
-            <AlertOctagon size={13} />
-            <span>Audience Drop-Off Signals</span>
+        <div className={styles.traitBox}>
+          <div className={styles.traitHeaderRed}>
+            <AlertTriangle size={13} />
+            <span>Retention Risks</span>
           </div>
-          <div className={styles.chipsList}>
+          <div className={styles.traitList}>
             {analysis.performanceInsights.underperformingTraits.map((trait, i) => (
-              <div key={i} className={styles.chipRed}>
-                <span style={{ color: '#f43f5e', fontWeight: 'bold' }}>⚠️</span>
+              <div key={i} className={styles.traitItemRed}>
+                <span className={styles.dotRed}>-</span>
                 <span>{trait}</span>
               </div>
             ))}

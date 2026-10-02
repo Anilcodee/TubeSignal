@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "title": "Inspect the current UI, analysis flow, and project conventions",
+      "status": "done"
+    },
+    {
+      "title": "Implement a polished, visual-first channel analytics experience",
+      "status": "done"
+    },
+    {
+      "title": "Run checks and verify the updated experience",
+      "status": "in-progress"
+    }
+  ],
+  "updated_at": "2026-10-01T18:04:06.731Z",
+  "session_id": "01a0f879-f9ca-71f5-8d7d-46279ec9618e"
+}

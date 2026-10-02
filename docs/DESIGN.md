@@ -1,637 +1,362 @@
-# 🎨 TubeSignal — Design Document
+# TubeSignal — Design Document v2
 
-> **Version:** 1.0  
-> **Last Updated:** September 29, 2026  
-> **Design Philosophy:** Premium dark-mode SaaS aesthetic with glassmorphism and vibrant accents  
-
----
-
-## 1. Design Philosophy
-
-TubeSignal should feel like a **premium analytics tool** — think Linear, Raycast, or Vercel's dashboard. Not a hackathon project. The design must:
-
-1. **Impress at first glance** — dark mode with glowing accents
-2. **Communicate trust** — clean data visualization, professional typography
-3. **Feel alive** — micro-animations, smooth transitions, interactive charts
-4. **Be instantly usable** — no onboarding needed, one search bar, clear results
+> **Version:** 2.0 (replaces 1.0) · **Updated:** September 30, 2026
+> **Direction:** An instrument, not a poster. Quiet graphite surfaces, hairline structure, one signal-amber accent, and an AI verdict that leads every page.
 
 ---
 
-## 2. Color System
+## 0. Why v1 changes
 
-### 2.1 Core Palette
+The polished products you're benchmarking against (Linear, Stripe, Vercel, Posthog) don't look premium because of glow, glass, and gradients. They look premium because of **restraint**: few colors, consistent spacing, hairline borders, dense but calm typography, and data that is the hero. v1 (purple glassmorphism, gradient buttons, glowing shadows, hover-lift on every card) is what most hackathon dashboards look like, so it reads as generic.
 
-```css
-:root {
-  /* ═══════════════════════════════════════════ */
-  /* BACKGROUND LAYERS (darkest → lightest)      */
-  /* ═══════════════════════════════════════════ */
-  --color-bg-primary:     #0a0a0f;        /* Page background */
-  --color-bg-secondary:   #12121a;        /* Card backgrounds */
-  --color-bg-tertiary:    #1a1a28;        /* Elevated surfaces */
-  --color-bg-hover:       #222236;        /* Hover states */
-  --color-bg-active:      #2a2a40;        /* Active/pressed states */
+| v1 element | v2 replacement | Reason |
+|---|---|---|
+| Purple→cyan gradient everywhere | One accent: signal amber, used only for "the thing that matters" | Color should carry meaning |
+| Glassmorphism + `backdrop-filter` | Solid surfaces + 1px hairline borders | Cheaper to render, sharper, timeless |
+| Glow shadows, mesh gradients, gradient shift | Removed. Shadows only on popovers | Decoration with no information |
+| Every card lifts on hover | Only clickable rows/cards react | Motion should answer a click, not decorate |
+| Uppercase tracked labels | Sentence-case labels | Cleaner, easier to read |
+| 5 boxed "stat pills" | One KPI strip separated by hairlines | Reads as data, not widgets |
+| Chart titles like "Views distribution" | Chart titles state the finding | Insight-first is what makes analytics feel smart |
+| Carousel of video cards | Dense ranked table with thumbnails | Analysts scan tables; carousels hide data |
+| Inter | Geist Sans + Geist Mono | Sharper numerals, distinct identity |
+| Marketing "how it works" section | Already removed (D9). Stays removed | The product is the pitch |
 
-  /* ═══════════════════════════════════════════ */
-  /* SURFACE (glassmorphism layers)              */
-  /* ═══════════════════════════════════════════ */
-  --color-surface:        rgba(255, 255, 255, 0.03);
-  --color-surface-hover:  rgba(255, 255, 255, 0.06);
-  --color-surface-border: rgba(255, 255, 255, 0.08);
-  --color-surface-glass:  rgba(255, 255, 255, 0.04);
+---
 
-  /* ═══════════════════════════════════════════ */
-  /* TEXT                                        */
-  /* ═══════════════════════════════════════════ */
-  --color-text-primary:   #f0f0f5;        /* Main text */
-  --color-text-secondary: #8888a0;        /* Subdued text */
-  --color-text-tertiary:  #55556a;        /* Muted text */
-  --color-text-inverse:   #0a0a0f;        /* Text on light bg */
+## 1. Signature idea: the verdict
 
-  /* ═══════════════════════════════════════════ */
-  /* BRAND / ACCENT                              */
-  /* ═══════════════════════════════════════════ */
-  --color-accent:         #7c5cfc;        /* Primary purple */
-  --color-accent-hover:   #9178ff;        /* Purple hover */
-  --color-accent-muted:   rgba(124, 92, 252, 0.15);
-  --color-accent-glow:    rgba(124, 92, 252, 0.4);
+Every big analytics product has one moment people remember. Ours: **the dashboard opens with one sentence of AI judgment**, set large, before any chart. Charts below are the evidence for it.
 
-  /* ═══════════════════════════════════════════ */
-  /* SEMANTIC COLORS                             */
-  /* ═══════════════════════════════════════════ */
-  --color-success:        #34d399;
-  --color-success-muted:  rgba(52, 211, 153, 0.15);
-  --color-warning:        #fbbf24;
-  --color-warning-muted:  rgba(251, 191, 36, 0.15);
-  --color-error:          #f87171;
-  --color-error-muted:    rgba(248, 113, 113, 0.15);
-  --color-info:           #60a5fa;
-  --color-info-muted:     rgba(96, 165, 250, 0.15);
+> **MKBHD wins on polished 10–15 minute reviews, and his top 5 videos are all flagships.**
+> Publishes ~2× a week, mostly Tuesday and Thursday. Shorter videos underperform the channel median by 38%.
 
-  /* ═══════════════════════════════════════════ */
-  /* CHART COLORS (harmonious palette)          */
-  /* ═══════════════════════════════════════════ */
-  --chart-1:              #7c5cfc;        /* Purple */
-  --chart-2:              #06b6d4;        /* Cyan */
-  --chart-3:              #f472b6;        /* Pink */
-  --chart-4:              #34d399;        /* Green */
-  --chart-5:              #fbbf24;        /* Yellow */
-  --chart-6:              #fb923c;        /* Orange */
-  --chart-7:              #a78bfa;        /* Light Purple */
-  --chart-8:              #38bdf8;        /* Sky Blue */
-}
-```
+This is the single place the UI is allowed to be big and expressive. Everything else stays quiet.
 
-### 2.2 Gradient Presets
+---
+
+## 2. Color
+
+Dark only (decision D6 stands). Neutral graphite, not blue-black, so the amber accent reads clean.
 
 ```css
 :root {
-  --gradient-brand:       linear-gradient(135deg, #7c5cfc 0%, #06b6d4 100%);
-  --gradient-card:        linear-gradient(135deg, rgba(124, 92, 252, 0.08) 0%, rgba(6, 182, 212, 0.04) 100%);
-  --gradient-hero:        radial-gradient(ellipse at 50% 0%, rgba(124, 92, 252, 0.15) 0%, transparent 60%);
-  --gradient-glow:        radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%);
-  --gradient-mesh:        conic-gradient(from 0deg at 50% 50%, #7c5cfc22, #06b6d422, #f472b622, #7c5cfc22);
+  /* Surfaces */
+  --bg:          #0C0D0F;   /* canvas */
+  --surface-1:   #131417;   /* panels */
+  --surface-2:   #191B1F;   /* inputs, row hover, popovers */
+  --surface-3:   #21242A;   /* pressed */
+
+  /* Lines */
+  --line:        #24262B;   /* default hairline */
+  --line-strong: #33363D;   /* input borders, dividers that need presence */
+
+  /* Text (all ≥ 4.5:1 on --surface-1) */
+  --text:        #ECEDEF;
+  --text-2:      #A0A4AD;
+  --text-3:      #7E838D;
+
+  /* Accent: signal amber. Use sparingly. */
+  --accent:      #FFB224;
+  --accent-ink:  #1A1200;                    /* text on amber */
+  --accent-soft: rgba(255, 178, 36, 0.12);   /* selected row, chip bg */
+  --accent-line: rgba(255, 178, 36, 0.40);   /* focus ring */
+
+  /* Semantic */
+  --positive:    #3DD68C;
+  --negative:    #FF6B6B;
+
+  /* Data series. Neutral first; color only where it means something. */
+  --series-base: #666B77;   /* context (all other videos) */
+  --series-1:    #FFB224;   /* highlight (top performers, current focus) */
+  --series-2:    #5B9DFF;
+  --series-3:    #3CCFB4;
+  --series-4:    #FF7A90;
+  --series-5:    #A58BFF;
 }
 ```
+
+**Usage rules**
+- Amber appears in: primary button, focus ring, the highlighted series in charts, the verdict's key figure, and the selected state. Nowhere else.
+- No gradients on surfaces, text, or buttons.
+- Body text is `--text-2`; only headings, numbers, and the verdict use `--text`.
 
 ---
 
 ## 3. Typography
 
-### 3.1 Font Stack
-
+```
+npm i geist
+```
+```tsx
+// layout.tsx
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+// <html className={`${GeistSans.variable} ${GeistMono.variable}`}>
+```
 ```css
 :root {
-  --font-sans:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono:   'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  --font-display: 'Inter', sans-serif;  /* For hero headings */
+  --font-sans: var(--font-geist-sans), -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-geist-mono), 'SF Mono', Consolas, monospace;
 }
+body { font-family: var(--font-sans); font-feature-settings: 'tnum' 1, 'cv11' 1; }
 ```
 
-### 3.2 Type Scale
-
-```css
-:root {
-  /* Size scale */
-  --text-xs:    0.75rem;    /* 12px */
-  --text-sm:    0.875rem;   /* 14px */
-  --text-base:  1rem;       /* 16px */
-  --text-lg:    1.125rem;   /* 18px */
-  --text-xl:    1.25rem;    /* 20px */
-  --text-2xl:   1.5rem;     /* 24px */
-  --text-3xl:   1.875rem;   /* 30px */
-  --text-4xl:   2.25rem;    /* 36px */
-  --text-5xl:   3rem;       /* 48px */
-  --text-6xl:   3.75rem;    /* 60px */
-
-  /* Line heights */
-  --leading-tight:    1.2;
-  --leading-snug:     1.375;
-  --leading-normal:   1.5;
-  --leading-relaxed:  1.625;
-
-  /* Font weights */
-  --weight-regular:   400;
-  --weight-medium:    500;
-  --weight-semibold:  600;
-  --weight-bold:      700;
-  --weight-extrabold: 800;
-
-  /* Letter spacing */
-  --tracking-tight:   -0.02em;
-  --tracking-normal:  0;
-  --tracking-wide:    0.02em;
-  --tracking-wider:   0.05em;
-}
-```
-
-### 3.3 Typography Usage
-
-| Element | Size | Weight | Color | Tracking |
+| Role | Size / line-height | Weight | Tracking | Color |
 |---|---|---|---|---|
-| Hero heading | `text-5xl` / `text-6xl` | extrabold | text-primary | tight |
-| Page title | `text-3xl` | bold | text-primary | tight |
-| Section heading | `text-xl` | semibold | text-primary | normal |
-| Card title | `text-lg` | semibold | text-primary | normal |
-| Body text | `text-base` | regular | text-secondary | normal |
-| Caption / label | `text-sm` | medium | text-tertiary | wide |
-| Stat number | `text-3xl` | bold | accent | tight |
-| Monospace / data | `text-sm` | regular (mono) | text-secondary | normal |
+| Verdict | 32 / 1.2 (26 on mobile) | 500 | -0.025em | `--text` |
+| Page title (channel name) | 24 / 1.25 | 600 | -0.02em | `--text` |
+| Panel title (the finding) | 15 / 1.4 | 600 | -0.005em | `--text` |
+| Body | 14 / 1.6 | 400 | 0 | `--text-2` |
+| KPI number | 28 / 1 | 500 | -0.02em | `--text` |
+| Label / caption | 12 / 1.4 | 500 | 0 | `--text-3` |
+| Handles, IDs, durations | 12 / 1.4 (mono) | 400 | 0 | `--text-2` |
+
+- Two weights on a page (400, 500) plus 600 for titles. No 700/800.
+- **Every number uses tabular figures** (`tnum`), so columns and KPIs align.
+- Line length: body copy max `68ch`.
+- Sentence case everywhere. No all-caps labels, no letter-spaced eyebrows.
 
 ---
 
-## 4. Spacing System
+## 4. Spacing, radius, elevation
 
 ```css
 :root {
-  --space-0:    0;
-  --space-1:    0.25rem;    /* 4px */
-  --space-2:    0.5rem;     /* 8px */
-  --space-3:    0.75rem;    /* 12px */
-  --space-4:    1rem;       /* 16px */
-  --space-5:    1.25rem;    /* 20px */
-  --space-6:    1.5rem;     /* 24px */
-  --space-8:    2rem;       /* 32px */
-  --space-10:   2.5rem;     /* 40px */
-  --space-12:   3rem;       /* 48px */
-  --space-16:   4rem;       /* 64px */
-  --space-20:   5rem;       /* 80px */
-  --space-24:   6rem;       /* 96px */
+  /* 4px base: 4 8 12 16 24 32 48 64 96 */
+  --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem;
+  --s-6: 1.5rem; --s-8: 2rem; --s-12: 3rem; --s-16: 4rem; --s-24: 6rem;
+
+  /* Only two radii */
+  --r-control: 6px;   /* buttons, inputs, chips */
+  --r-panel:   10px;  /* panels, popovers */
+
+  --shadow-popover: 0 8px 24px rgba(0,0,0,.45), 0 0 0 1px var(--line-strong);
+  --page-max: 1200px;
+  --gutter: clamp(16px, 4vw, 32px);
 }
 ```
+No shadows on panels. Elevation is expressed by surface step (`--bg` → `--surface-1` → `--surface-2`) and borders.
 
 ---
 
-## 5. Border Radius & Shadows
+## 5. Layout
 
-```css
-:root {
-  /* Border radius */
-  --radius-sm:    6px;
-  --radius-md:    8px;
-  --radius-lg:    12px;
-  --radius-xl:    16px;
-  --radius-2xl:   24px;
-  --radius-full:  9999px;
-
-  /* Shadows */
-  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md:    0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-lg:    0 10px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.2);
-  --shadow-xl:    0 20px 25px rgba(0, 0, 0, 0.3), 0 8px 10px rgba(0, 0, 0, 0.2);
-  --shadow-glow:  0 0 20px var(--color-accent-glow), 0 0 60px rgba(124, 92, 252, 0.1);
-  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-```
-
----
-
-## 6. Component Design Specs
-
-### 6.1 Search Bar (Hero Component)
+### 5.1 Global frame (all pages)
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  🔍  Search any YouTube creator...                  [Analyze] │
-└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│ ◈ TubeSignal        [ Search a creator…            ⌘K ]   Demo ◐ │  56px, sticky, 1px bottom line
+├──────────────────────────────────────────────────────────────────┤
+│                        content, max 1200px                       │
+└──────────────────────────────────────────────────────────────────┘
 ```
+- Search lives in the header on every page (it's a command bar, like Linear/Vercel). `⌘K` / `Ctrl K` focuses it.
+- "Demo" is a small toggle switch, not a banner.
+- No footer block. One line of credit at the bottom of the page in `--text-3`.
 
-**Specs:**
-- Width: `min(640px, 90vw)`
-- Height: `56px`
-- Background: `var(--color-bg-tertiary)`
-- Border: `1px solid var(--color-surface-border)`
-- Border on focus: `1px solid var(--color-accent)`
-- Box shadow on focus: `var(--shadow-glow)`
-- Border radius: `var(--radius-xl)`
-- Font size: `var(--text-lg)`
-- Padding: `0 var(--space-4)` (with icon inset)
-- Transition: `border-color 200ms, box-shadow 200ms`
-- Button inside: gradient background, `var(--radius-lg)`, `padding: var(--space-2) var(--space-6)`
+### 5.2 Home (workspace, per decision D9)
 
-### 6.2 Dashboard Card
+Left-aligned, not centered. Centered heroes are the template default.
 
 ```
-┌─────────────────────────────────────────┐
-│  📊 Views Distribution                  │
-│─────────────────────────────────────────│
-│                                         │
-│         [Chart Content]                 │
-│                                         │
-│                                         │
-└─────────────────────────────────────────┘
-```
+Analyze any creator's channel.                       (40/1.1, 500, max 14ch per line)
+Search a name or @handle. You get a strategy brief   (16, --text-2, max 52ch)
+built from their latest uploads.
 
-**Specs:**
-- Background: `var(--color-surface-glass)`
-- Backdrop filter: `blur(12px) saturate(150%)`
-- Border: `1px solid var(--color-surface-border)`
-- Border radius: `var(--radius-xl)`
-- Padding: `var(--space-6)`
-- Transition: `transform 200ms, border-color 200ms`
-- Hover: `transform: translateY(-2px)`, `border-color: var(--color-accent-muted)`
+[ 🔍 Search a creator…                        Analyze ]  (56px, single primary action)
 
-### 6.3 Channel Overview Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│  ┌──────┐                                                │
-│  │ AVATAR│  MKBHD (@mkbhd)                               │
-│  │      │  Quality Tech Videos | 19.5M subscribers        │
-│  └──────┘                                                │
-│                                                          │
-│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐        │
-│  │ 19.5M  │  │  47    │  │ 3.2M   │  │ 3.4/wk │        │
-│  │ Subs   │  │ Videos │  │ Avg    │  │ Upload │        │
-│  │        │  │Analyzed│  │ Views  │  │ Freq.  │        │
-│  └────────┘  └────────┘  └────────┘  └────────┘        │
-└──────────────────────────────────────────────────────────┘
-```
-
-**Stat pill specs:**
-- Background: `var(--color-accent-muted)` or respective chart color muted
-- Border radius: `var(--radius-lg)`
-- Padding: `var(--space-4) var(--space-5)`
-- Number: `var(--text-2xl)`, `var(--weight-bold)`, `var(--color-text-primary)`
-- Label: `var(--text-xs)`, `var(--weight-medium)`, `var(--color-text-tertiary)`, `var(--tracking-wider)`, uppercase
-
-### 6.4 AI Brief Card
-
-```
-┌──────────────────────────────────────────────────────────┐
-│  ✨ AI Content Strategy Brief                     Gemini │
-│──────────────────────────────────────────────────────────│
-│                                                          │
-│  MKBHD is a tech review channel that has mastered the    │
-│  art of clean, product-focused content...                │
-│                                                          │
-│  🎯 Key Recommendations                                  │
-│  ┌──────────────────────────────────────────────────────┐│
-│  │ 1. Focus on review content in the 10-15 min sweet   ││
-│  │    spot for maximum engagement                       ││
-│  │ 2. Publish on Tuesdays and Thursdays...             ││
-│  └──────────────────────────────────────────────────────┘│
-│                                                          │
-│  📊 Content Themes     📝 Title Patterns                 │
-│  • Tech Reviews (35%)  • Avg Length: 42 chars            │
-│  • Commentary (20%)    • Uses "Review" in 45%            │
-│  • Comparisons (18%)   • Numbers in 23%                  │
-└──────────────────────────────────────────────────────────┘
-```
-
-**Specs:**
-- Special gradient border: `var(--gradient-brand)` as border via pseudo-element
-- Inner background: `var(--color-bg-secondary)`
-- AI badge: pill with sparkle icon, `var(--gradient-brand)` background
-- Recommendation list: numbered, slight left border accent
-
-### 6.5 Video Card (in Top Videos grid)
-
-```
-┌───────────────────────────────────┐
-│ ┌───────────────────────────────┐ │
-│ │         THUMBNAIL             │ │
-│ │              ▶                │ │
-│ │                    14:32      │ │
-│ └───────────────────────────────┘ │
-│ iPhone 16 Pro Review              │
-│ 12.4M views · 2 weeks ago        │
-│ ████████████████████░░ 89%        │
-└───────────────────────────────────┘
-```
-
-**Specs:**
-- Thumbnail: `aspect-ratio: 16/9`, `object-fit: cover`, `border-radius: var(--radius-md)`
-- Duration badge: absolute bottom-right, `var(--color-bg-primary)` background, `var(--text-xs)`
-- Title: `var(--text-sm)`, `var(--weight-semibold)`, max 2 lines with ellipsis
-- Meta: `var(--text-xs)`, `var(--color-text-tertiary)`
-- Performance bar: relative to channel's top video, gradient fill
-
-### 6.6 Loading Skeleton
-
-```
-┌──────────────────────────────────────────────┐
-│  🔄 Analyzing @mkbhd...                      │
-│──────────────────────────────────────────────│
-│  ✅ Fetching channel data          Done       │
-│  ✅ Found 47 videos                Done       │
-│  ⏳ Analyzing content themes...   Working     │
-│  ⬜ Generating recommendations    Pending     │
-│                                               │
-│  ███████████████░░░░░░░░░░░ 65%               │
-│                                               │
-│  "Analyzing title patterns across 47 videos"  │
-└──────────────────────────────────────────────┘
-```
-
-**Specs:**
-- Animated progress bar with gradient shimmer
-- Step-by-step status updates (simulate pipeline stages)
-- Pulsing glow effect on active step
-- Fun rotating tip text at the bottom
-
----
-
-## 7. Page Layouts
-
-### 7.1 Landing Page Layout
-
-```
+Recent and sample dossiers
 ┌────────────────────────────────────────────────────────────┐
-│ [Logo] TubeSignal                              [GitHub ↗]   │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│                    ✦ radial glow ✦                         │
-│                                                            │
-│              Decode Any Creator's                          │
-│              Content Strategy                              │
-│              with AI                                       │
-│                                                            │
-│        Paste a YouTube channel name and get an             │
-│        AI-powered content analysis in seconds              │
-│                                                            │
-│     ┌──────────────────────────────────────────┐           │
-│     │ 🔍  Search creator name or @handle...     │ Analyze  │
-│     └──────────────────────────────────────────┘           │
-│                                                            │
-│     Try: @mkbhd  ·  @fireship  ·  @veritasium               │
-│                                                            │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│   HOW IT WORKS                                             │
-│   ┌──────────┐  ┌──────────┐  ┌──────────┐                │
-│   │ 1. Search │  │ 2. Fetch  │  │ 3. AI    │               │
-│   │ Enter a   │  │ SerpApi   │  │ Get      │               │
-│   │ creator   │  │ pulls     │  │ strategy │               │
-│   │ name      │  │ live data │  │ insights │               │
-│   └──────────┘  └──────────┘  └──────────┘                │
-│                                                            │
-├────────────────────────────────────────────────────────────┤
-│   FEATURES                                                 │
-│   ┌─────────────────┐ ┌─────────────────┐                  │
-│   │ 📊 Visual Charts │ │ 🧠 AI Insights  │                  │
-│   │ Interactive data │ │ Content themes, │                  │
-│   │ visualizations   │ │ title analysis  │                  │
-│   └─────────────────┘ └─────────────────┘                  │
-│   ┌─────────────────┐ ┌─────────────────┐                  │
-│   │ ⚡ Real-Time     │ │ 📱 Responsive   │                  │
-│   │ Live SerpApi     │ │ Works on any    │                  │
-│   │ data, no stale   │ │ device          │                  │
-│   └─────────────────┘ └─────────────────┘                  │
-│                                                            │
-├────────────────────────────────────────────────────────────┤
-│  Built with SerpApi · Powered by AI · Made for Creators    │
+│ (avatar) Marques Brownlee   @mkbhd   19.5M   Tech reviews  │  row, 64px, hairline dividers
+│ (avatar) Fireship           @fireship 3.4M   Dev explainers│
+│ (avatar) Veritasium         @veritasium 15M  Science       │
 └────────────────────────────────────────────────────────────┘
 ```
+Sample dossiers are **table rows, not marketing cards**. Click = open. These double as demo mode entry points.
 
-### 7.2 Dashboard Layout
+### 5.3 Dashboard (the dossier)
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│ [Logo] TubeSignal     [← New Search]          [GitHub ↗]   │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│  ┌────────────────────────────────────────────────────────┐│
-│  │          CHANNEL OVERVIEW (full-width)                 ││
-│  │   Avatar | Name | Stats Row                           ││
-│  └────────────────────────────────────────────────────────┘│
-│                                                            │
-│  ┌──────────────────────┐  ┌────────────────────────────┐  │
-│  │                      │  │                            │  │
-│  │   AI STRATEGY BRIEF  │  │   CONTENT THEMES CHART     │  │
-│  │   (2/3 width)        │  │   (1/3 width)              │  │
-│  │                      │  │   Donut Chart              │  │
-│  │                      │  │                            │  │
-│  └──────────────────────┘  └────────────────────────────┘  │
-│                                                            │
-│  ┌──────────────────────┐  ┌────────────────────────────┐  │
-│  │                      │  │                            │  │
-│  │  VIEWS DISTRIBUTION  │  │  PUBLISHING TIMELINE       │  │
-│  │  (1/2 width)         │  │  (1/2 width)               │  │
-│  │  Bar Chart           │  │  Line Chart                │  │
-│  │                      │  │                            │  │
-│  └──────────────────────┘  └────────────────────────────┘  │
-│                                                            │
-│  ┌──────────────────────┐  ┌────────────────────────────┐  │
-│  │  LENGTH vs VIEWS     │  │  TITLE PATTERNS            │  │
-│  │  (1/2 width)         │  │  (1/2 width)               │  │
-│  │  Scatter Plot        │  │  Stats + Word Cloud        │  │
-│  └──────────────────────┘  └────────────────────────────┘  │
-│                                                            │
-│  ┌────────────────────────────────────────────────────────┐│
-│  │             TOP PERFORMING VIDEOS (full-width)         ││
-│  │   [Card] [Card] [Card] [Card] [Card]                  ││
-│  └────────────────────────────────────────────────────────┘│
-│                                                            │
-│  [📥 Download PDF]  [🔗 Share]                              │
-│                                                            │
-├────────────────────────────────────────────────────────────┤
-│  Built with SerpApi · Powered by AI · Made for Creators    │
-└────────────────────────────────────────────────────────────┘
+Marques Brownlee  @mkbhd                        [Share] [Export]     ← title row
+19.5M subscribers · 47 videos analyzed · updated 2 min ago
+
+┌ VERDICT ─────────────────────────────────────────────────────────┐
+│ MKBHD wins on polished 10–15 minute reviews…            (32px)   │
+│ supporting sentence(s), max 68ch                                 │
+│ [Gemini] Confidence: 47 videos                                   │
+└──────────────────────────────────────────────────────────────────┘
+
+ 19.5M        3.2M          2.1×/week      11:42          ← KPI strip, one panel,
+ Subscribers  Avg views     Upload rate    Median length    hairline dividers, sparkline each
+ ▁▂▃▅▆        ▂▅▃▆▇         ▅▅▆▅▅          ▃▃▄▃▃
+
+┌ Reviews drive 62% of views ──────┐ ┌ What to do next ────────────┐
+│ [Themes: horizontal bars]        │ │ 1. Recommendation            │
+│                                  │ │ 2. Recommendation            │
+└──────────────────────────────────┘ │ … (5, each with the evidence)│
+┌ Mid-length videos beat short ────┐ └──────────────────────────────┘
+│ [Length vs views scatter]        │ ┌ Publishes Tue and Thu ──────┐
+└──────────────────────────────────┘ │ [Weekday heat strip]         │
+                                     └──────────────────────────────┘
+┌ Top videos ──────────────────────────────────────────────────────┐
+│ #  Thumb  Title                    Views     vs median   Length  │
+│ 1  ▭▭▭   iPhone 16 Pro review     12.4M      +288%       14:32   │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
----
+Grid: 12 columns, 24px gap. Verdict and KPI strip span 12. Below, a 7/5 split. The video table spans 12.
 
-## 8. Responsive Breakpoints
+### 5.4 Breakpoints
 
-```css
-:root {
-  --breakpoint-sm:   640px;
-  --breakpoint-md:   768px;
-  --breakpoint-lg:   1024px;
-  --breakpoint-xl:   1280px;
-  --breakpoint-2xl:  1536px;
-}
-```
-
-### Layout Behavior
-
-| Breakpoint | Search Bar | Dashboard Grid | Video Cards | Charts |
-|---|---|---|---|---|
-| Mobile (< 640px) | Full width | Single column | 1 per row | Full width, stacked |
-| Tablet (640-1024px) | 80% width | 2 columns | 2 per row | 2 columns |
-| Desktop (1024px+) | 640px max | 2-3 columns | 3-5 per row | 2 columns |
-
----
-
-## 9. Animation & Motion
-
-### 9.1 Transitions
-
-```css
-:root {
-  --transition-fast:    150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal:  300ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow:    500ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-spring:  500ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-```
-
-### 9.2 Animation Catalog
-
-| Animation | Where Used | Duration | Easing |
-|---|---|---|---|
-| **Fade In Up** | Dashboard cards appearing | 500ms staggered | ease-out |
-| **Skeleton Shimmer** | Loading skeletons | 1.5s infinite | linear |
-| **Progress Fill** | Loading bar | Real-time | ease-in-out |
-| **Pulse Glow** | Active loading step | 2s infinite | ease-in-out |
-| **Scale Hover** | Cards on hover | 200ms | ease-out |
-| **Chart Draw** | Chart lines/bars appearing | 800ms | ease-out |
-| **Gradient Shift** | Hero background | 8s infinite | linear |
-| **Counter Up** | Stat numbers | 1000ms | ease-out |
-| **Slide In** | Search results appearing | 300ms | spring |
-
-### 9.3 Keyframe Definitions
-
-```css
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 var(--color-accent-glow); }
-  50%      { box-shadow: 0 0 20px 4px var(--color-accent-glow); }
-}
-
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-```
-
----
-
-## 10. Chart Styling
-
-### 10.1 Global Chart Options
-
-```javascript
-const globalChartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      labels: {
-        color: '#8888a0',           // text-secondary
-        font: { family: 'Inter', size: 12 },
-        padding: 16,
-        usePointStyle: true,
-      }
-    },
-    tooltip: {
-      backgroundColor: '#1a1a28',  // bg-tertiary
-      titleColor: '#f0f0f5',       // text-primary
-      bodyColor: '#8888a0',        // text-secondary
-      borderColor: 'rgba(255,255,255,0.08)',
-      borderWidth: 1,
-      cornerRadius: 8,
-      padding: 12,
-      titleFont: { family: 'Inter', weight: '600' },
-      bodyFont: { family: 'Inter' },
-    }
-  },
-  scales: {
-    x: {
-      grid: { color: 'rgba(255,255,255,0.04)' },
-      ticks: { color: '#55556a', font: { family: 'Inter', size: 11 } }
-    },
-    y: {
-      grid: { color: 'rgba(255,255,255,0.04)' },
-      ticks: { color: '#55556a', font: { family: 'Inter', size: 11 } }
-    }
-  }
-};
-```
-
-### 10.2 Chart-Specific Styles
-
-| Chart Type | Style | Colors |
-|---|---|---|
-| **Views Distribution** (Bar) | Rounded bars, gradient fill, 60% bar width | `chart-1` with opacity gradient |
-| **Content Themes** (Doughnut) | 75% cutout, 2px spacing, hover scale | `chart-1` through `chart-6` |
-| **Publishing Timeline** (Line) | Smooth tension 0.4, point dots on hover, fill area | `chart-2` line, `chart-2` fill at 10% opacity |
-| **Length vs Views** (Scatter) | 8px point radius, glow on hover | `chart-3` with transparent fill |
-
----
-
-## 11. Iconography
-
-### Icon Set: Lucide React
-
-| Context | Icon | Usage |
-|---|---|---|
-| Search | `Search` | Search bar |
-| Channel/Creator | `User`, `Users` | Channel overview |
-| Views | `Eye` | View counts |
-| Videos | `Play`, `Video` | Video cards |
-| Time/Date | `Clock`, `Calendar` | Publishing data |
-| Analytics | `BarChart3`, `TrendingUp` | Chart sections |
-| AI/Brain | `Sparkles`, `Brain` | AI analysis section |
-| Themes | `Tag`, `Hash` | Content themes |
-| Performance | `Zap`, `Trophy` | Top performers |
-| Export | `Download`, `Share2` | Export buttons |
-| External link | `ExternalLink` | YouTube links |
-| Error | `AlertCircle` | Error states |
-| Loading | `Loader2` (animated) | Loading spinners |
-
-**Icon sizing:**
-- Inline with text: `16px` (1rem)
-- Card headers: `20px` (1.25rem)
-- Feature icons: `24px` (1.5rem)
-- Hero/empty state: `48px` (3rem)
-
----
-
-## 12. Accessibility Design
-
-| Element | Requirement |
+| Width | Behavior |
 |---|---|
-| Text on `bg-primary` | Minimum contrast ratio 7:1 (AAA) |
-| Text on `bg-secondary` | Minimum contrast ratio 4.5:1 (AA) |
-| Interactive elements | Visible focus ring (`2px solid var(--color-accent)`, `2px offset`) |
-| Charts | Always paired with a data summary or table alternative |
-| Color-only indicators | Always supplemented with icons or text |
-| Motion | All animations respect `prefers-reduced-motion` |
-| Touch targets | Minimum `44px × 44px` on mobile |
+| < 640 | Single column. KPI strip becomes 2×2. Video table becomes stacked rows (thumb left, title + meta right). Header search collapses to an icon. |
+| 640–1024 | Single column of panels, 2-col KPI strip stays 4 across if it fits. |
+| ≥ 1024 | 7/5 split as above. |
 
 ---
 
-## 13. Favicon & Branding
+## 6. Components
 
-- **Favicon:** Lens/magnifying glass icon with purple gradient
-- **Logo text:** "TubeSignal" in Inter Bold with slight letter-spacing
-- **Logo mark:** Stylized lens icon overlapping a play button triangle
-- **OG Image:** Dark background, logo centered, tagline below, purple glow accent
-- **Color in browser tab:** `#7c5cfc` (theme-color meta tag)
+### Button
+- Height 36 (default) / 44 (mobile + hero). Radius `--r-control`.
+- **Primary:** `--accent` bg, `--accent-ink` text, weight 500. Max one per view.
+- **Secondary:** `--surface-2` bg, 1px `--line-strong`, `--text`.
+- **Ghost:** transparent, `--text-2`, hover `--surface-2`.
+- Hover: background step only (no lift, no glow). Active: `--surface-3`.
+
+### Command bar (search)
+- Height 40 in header, 56 in the home hero. `--surface-2` bg, 1px `--line-strong`.
+- Focus: border `--accent`, plus `0 0 0 3px var(--accent-soft)`. This is the only "glow" in the product.
+- Trailing `⌘K` kbd chip (`--surface-3`, mono 11px) hides on focus and on touch devices.
+- Results open in a popover (`--shadow-popover`), max 6 rows, arrow-key navigation, Enter to select.
+
+### Panel
+- `--surface-1`, 1px `--line`, `--r-panel`, padding 20 (16 on mobile).
+- Header: title (the finding) at 15/600, optional caption in `--text-3` beneath.
+- Clickable panels only get `border-color: var(--line-strong)` on hover.
+
+### Verdict block
+- No card chrome. Sits directly on `--bg`, separated from the KPI strip by 32px.
+- Left 2px amber rule (`border-left`) is the only decoration. It marks "AI output" and is the one place a structural device carries meaning.
+- Key figure in the sentence gets `color: var(--accent)`.
+- Footer line: `Generated by Gemini from 47 videos` in `--text-3` 12px. Honest provenance builds trust.
+
+### KPI strip
+- One `--surface-1` panel, four cells with 1px vertical dividers.
+- Each cell: label (12, `--text-3`), value (28, `--text`, tnum), 48×16 sparkline in `--series-base` with the last point in amber. Optional delta chip: `+12%` in `--positive` with a ▲ glyph (never color alone).
+- Count-up animation on first render only, 600ms, skipped for reduced motion.
+
+### Video table row
+- 72px row, hairline dividers, no zebra. Columns: rank (mono, `--text-3`), 16:9 thumb 96×54 at `--r-control`, title (14/500, 2-line clamp), views (tnum, right aligned), **vs median** (positive/negative with ▲▼), length (mono).
+- Row hover `--surface-2`; the whole row is a link to YouTube with an `ExternalLink` icon revealed on hover/focus.
+- Top-3 rows carry a small amber rank number. That's the entire "trophy" treatment.
+
+### Chips / badges
+- 22px tall, `--surface-2`, 1px `--line`, 12px text. Only the "Gemini" chip may use `--accent-soft`.
+
+### Loading
+Do **not** use a centered spinner card. Render the final dashboard layout as skeletons (real panel positions, shimmer at 1.6s linear, `--surface-1` → `--surface-2`). Above it, a single line of live status that updates with the pipeline: `Fetching channel… → Reading 47 videos… → Writing the brief…`, with the current step in `--text` and completed steps in `--text-3` with a ✓. No rotating tips, no progress percentage you can't measure.
+
+### Empty, error
+Plain text in a panel, one action each. Errors never apologize and say what to do.
+- No results: `No channels match "xyz". Try the exact @handle.`
+- Rate limited: `Live data is at its limit for now. Showing the saved MKBHD sample instead.` (demo fallback, per rules)
+- Few videos: `Only 4 videos found, so trends may not be reliable.`
+
+---
+
+## 7. Charts (Chart.js)
+
+**Principle:** grey by default, amber for the point. A bar chart where all bars are amber says nothing; one where the top 5 are amber and the rest grey tells the story.
+
+| Panel | Type | Encoding |
+|---|---|---|
+| Views distribution | Bar (sorted by publish date) | `--series-base` bars, top 5 videos `--series-1`; dashed median line in `--text-3` labeled "median 2.1M" |
+| Content themes | **Horizontal bars, not donut** | Sorted descending, ≤5 themes + "Other" grey; value labels at bar end. Donuts are hard to compare. |
+| Publishing timeline | Weekday strip (7 cells) or line | Cell intensity from `--accent-soft` → `--accent`; label the peak day |
+| Length vs views | Scatter | 6px `--series-base` points at 70% opacity, top performers amber; trend line dashed |
+
+```ts
+// lib/chart-theme.ts
+import { Chart } from 'chart.js';
+Chart.defaults.font.family = 'var(--font-geist-sans), sans-serif';
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#7E838D';
+Chart.defaults.borderColor = '#24262B';
+Chart.defaults.animation = { duration: 600, easing: 'easeOutQuart' };
+Chart.defaults.plugins.legend.display = false;          // label directly instead
+Chart.defaults.plugins.tooltip = {
+  backgroundColor: '#191B1F', borderColor: '#33363D', borderWidth: 1,
+  titleColor: '#ECEDEF', bodyColor: '#A0A4AD',
+  padding: 10, cornerRadius: 6, displayColors: false,
+};
+// Axes: grid lines horizontal only, no axis border, no tick marks, 4–5 y ticks max.
+```
+- Number format: `1.2M`, `340K`; never raw `1234567`.
+- Every chart has a visually hidden `<table>` alternative and an `aria-label` that states the finding.
+
+---
+
+## 8. Motion
+
+Just **one** orchestrated moment, plus feedback motion.
+
+1. **On dashboard load only:** the verdict fades in (opacity, 300ms), then the KPI strip, then the remaining panels in a single 60ms stagger. Nothing else animates on scroll.
+2. Feedback motion (150ms): button/row background, focus ring, popover open, chart tooltip.
+3. Remove: gradient shift, pulse glow, scale-on-hover, slide-in for results.
+
+Animate only `opacity` and `transform`. All motion is disabled under `prefers-reduced-motion: reduce`.
+
+---
+
+## 9. Copy
+
+- Sentence case. Plain verbs. No exclamation marks, no "Supercharge", "Unlock", "Insights at your fingertips".
+- Buttons say the outcome: **Analyze**, **Export PDF**, **Copy link**. One action, one name across the flow (Analyze button → "Analyzing…" → toast "Analysis ready").
+- Name things by what users see: "Strategy brief", "Top videos", "Upload rate", not "AI Engine 3".
+- Panel titles state findings and are generated from data, e.g. `${topTheme} drives ${pct}% of views`.
+
+---
+
+## 10. Icons
+
+Lucide, 16px inline, 1.5 stroke width (set `strokeWidth={1.5}`). No icons inside panel titles; icons only on buttons, rows, and inputs. Emoji are removed from the UI entirely.
+
+---
+
+## 11. Accessibility
+
+- Contrast: all text ≥ 4.5:1 on its surface. `--text-3` is the floor and is used only for captions.
+- Focus: `outline: 2px solid var(--accent); outline-offset: 2px` on every interactive element, never removed.
+- Touch targets ≥ 44px on mobile.
+- ▲▼ + sign accompany every color-coded delta.
+- Charts: `aria-label` with the finding, plus a hidden data table.
+- `prefers-reduced-motion` respected globally.
+
+---
+
+## 12. Brand
+
+- **Wordmark:** "TubeSignal" in Geist 600, tracking -0.02em, 16px in the header.
+- **Mark:** a 20px square with three ascending bars (signal-strength glyph), amber fill. Also the favicon.
+- **OG image:** `--bg` background, wordmark left, the MKBHD verdict sentence large. Real content beats a tagline.
+- `theme-color`: `#0C0D0F`.
+
+---
+
+## 13. Build order (about 3 hours, since the app is already built)
+
+| # | Step | Time |
+|---|---|---|
+| 1 | Replace tokens in `globals.css` (section 2–4), install Geist, delete glass/glow/gradient utilities | 30 min |
+| 2 | Restyle Header + command bar (sticky, `⌘K`), Button, Panel primitives | 30 min |
+| 3 | Add Verdict block; move the AI summary sentence to the top of the dashboard | 25 min |
+| 4 | KPI strip with sparklines; remove stat pills | 25 min |
+| 5 | `chart-theme.ts`, re-color the four charts, swap donut for horizontal bars, insight titles | 35 min |
+| 6 | Video table replaces the card carousel | 25 min |
+| 7 | Skeleton-in-layout loading + single status line | 20 min |
+| 8 | Motion cleanup, focus states, mobile pass at 375px | 20 min |
+
+Ship in this order. Steps 1–3 alone change how the product looks more than everything else combined.

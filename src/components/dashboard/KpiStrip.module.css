@@ -1,0 +1,9 @@
+.kpiPanel { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-4); }
+.kpiCard { position: relative; min-width: 0; display: flex; flex-direction: column; padding: var(--s-5); background: linear-gradient(130deg, var(--surface-2), var(--surface-1)); border: 1px solid var(--line-strong); border-radius: var(--r-panel); overflow: hidden; animation: fadeIn .45s both; }
+.kpiCard::after { content: ''; position: absolute; bottom: 0; left: var(--s-5); right: var(--s-5); height: 1px; background: linear-gradient(90deg, var(--kpi-color), transparent); opacity: .4; }
+.kpiHeader { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); color: var(--text-2); font-size: .73rem; }
+.kpiHeader svg { color: var(--kpi-color); flex-shrink: 0; }
+.value { font-size: clamp(1.45rem, 2.4vw, 2.05rem); font-weight: 500; font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: -.045em; margin-top: var(--s-4); overflow-wrap: anywhere; }
+.caption { font-size: .62rem; color: var(--text-3); margin-top: var(--s-2); line-height: 1.5; }
+@media (max-width: 900px) { .kpiPanel { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .kpiPanel { gap: var(--s-3); } .kpiCard { padding: var(--s-4); } .kpiHeader { font-size: .65rem; } .value { font-size: 1.5rem; } .caption { font-size: .6rem; } }
