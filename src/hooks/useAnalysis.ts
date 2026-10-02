@@ -44,24 +44,27 @@ export function setClientCachedAnalysis(channelId: string, isDemo = false, data:
 
 export function useAnalysis(channelId: string, isDemo = false) {
   const [attempt, setAttempt] = useState(0);
-  const [result, setResult] = useState<AnalysisResult | null>(() => {
-    // If available in cache and first attempt, initialize state immediately with 0 loading state!
-    const cached = getClientCachedAnalysis(channelId, isDemo);
-    if (cached) {
-      return {
-        key: JSON.stringify([channelId, isDemo, 0]),
-        data: cached,
-        error: null,
-      };
-    }
-    return null;
-  });
+  const [result, setResult] = useState<AnalysisResult | null>(null);
   const key = JSON.stringify([channelId, isDemo, attempt]);
 
   useEffect(() => {
-    // If not forced refresh (attempt === 0) and we already have cached data, state was already initialized.
-    if (attempt === 0 && getClientCachedAnalysis(channelId, isDemo)) {
-      return;
+    let disposed = false;
+
+    // On mount or channel switch, check client cache first if not a forced refetch
+    if (attempt === 0) {
+      const cached = getClientCachedAnalysis(channelId, isDemo);
+      if (cached) {
+        queueMicrotask(() => {
+          if (!disposed) {
+            setResult({
+              key,
+              data: cached,
+              error: null,
+            });
+          }
+        });
+        return;
+      }
     }
 
     const controller = new AbortController();
