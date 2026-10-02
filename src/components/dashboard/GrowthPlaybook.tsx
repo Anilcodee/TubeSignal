@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Award, Calendar, Check, Clock, Copy, Flame, Lightbulb, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import { useState, type CSSProperties } from 'react';
+import { Calendar, Check, Clock, Flame, Lightbulb, MessageCircle, Sparkles, TrendingUp, Zap } from 'lucide-react';
 import type { VideoData, AIAnalysis } from '@/types/analysis';
 import { analyzeChannelGrowth } from '@/utils/growth-analyzer';
 import styles from './GrowthPlaybook.module.css';
@@ -13,85 +13,43 @@ interface GrowthPlaybookProps {
 }
 
 export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybookProps) => {
-  const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null);
   const [copiedBlueprint, setCopiedBlueprint] = useState<string | null>(null);
 
   const insights = analyzeChannelGrowth(videos, medianViews, aiAnalysis);
 
   if (!videos.length) return null;
 
-  const handleCopy = (text: string, type: 'template' | 'blueprint') => {
+  const handleCopyBlueprint = (text: string) => {
     navigator.clipboard.writeText(text);
-    if (type === 'template') {
-      setCopiedTemplate(text);
-      setTimeout(() => setCopiedTemplate(null), 2000);
-    } else {
-      setCopiedBlueprint(text);
-      setTimeout(() => setCopiedBlueprint(null), 2000);
-    }
+    setCopiedBlueprint(text);
+    setTimeout(() => setCopiedBlueprint(null), 2000);
   };
 
-  // Human-readable status mapping for duration tiers
-  const getTierStatus = (tierId: string, isWinner: boolean, multiplier: number) => {
-    if (isWinner) {
-      const surge = Math.round((multiplier - 1) * 100);
-      return {
-        badge: '🏆 Sweet Spot',
-        diffText: surge > 0 ? `+${surge}% View Surge` : 'Top Performer',
-        colorClass: styles.statusWinner,
-        advice: 'Your audience strongly favors fast-paced delivery. Keep intro fluff minimal.',
-      };
-    }
-    if (multiplier >= 1) {
-      const above = Math.round((multiplier - 1) * 100);
-      return {
-        badge: '⚡ Strong Performer',
-        diffText: `+${above}% Above Typical`,
-        colorClass: styles.statusStrong,
-        advice: 'Solid middle ground for monetization and depth.',
-      };
-    }
-    if (tierId === 'extended') {
-      return {
-        badge: '⚠️ High Drop-off Risk',
-        diffText: `${Math.round((1 - multiplier) * 100)}% Lower Views`,
-        colorClass: styles.statusWarning,
-        advice: 'Viewer drop-off increases past 15 mins. Consider splitting into 2 parts.',
-      };
-    }
-    return {
-      badge: '🎯 Niche Milestone',
-      diffText: `${Math.round((1 - multiplier) * 100)}% Lower Views`,
-      colorClass: styles.statusNiche,
-      advice: 'Reserve only for rare special projects or documentaries.',
-    };
-  };
+  // Find the max average views across tiers for scaling bar widths
+  const maxTierAvg = Math.max(...insights.durationTiers.map(t => t.avgViews), 1);
 
-  const titleTemplates = [
-    'The Complete Evolution of [Topic]: Why Everything Changed',
-    'I Tested [Topic] for 30 Days: The Honest Truth',
-    'Why [Topic] Succeeded (When Everyone Else Failed)',
-  ];
+  // Find max video count across days for heatmap scaling
+  const maxDayVideos = Math.max(...insights.publishingDays.map(d => d.videoCount), 1);
 
   return (
     <section className={styles.container} aria-label="Actionable Creator Playbook">
-      {/* Header */}
+      {/* Section Header */}
       <div className={styles.sectionHeader}>
         <div>
           <span className={styles.eyebrow}>
             <TrendingUp size={14} /> ACTIONABLE CREATOR PLAYBOOK
           </span>
-          <h2 className={styles.title}>What Drives Growth on This Channel</h2>
+          <h2 className={styles.title}>What Drives This Channel&apos;s Growth</h2>
           <p className={styles.subtitle}>
-            Empirical blueprints extracted from upload history to tell you exactly what to make, how to title it, and when to publish.
+            Empirical patterns extracted from public upload history to guide your next video.
           </p>
         </div>
       </div>
 
-      {/* 4 Creative Visual Cards Grid */}
+      {/* ── 2×2 Cards Grid ── */}
       <div className={styles.cardsGrid}>
 
-        {/* ── CARD 1: Video Length Sweet Spot ── */}
+        {/* ═══ CARD 1: Format & Length Sweet Spot ═══ */}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
@@ -100,60 +58,51 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               </div>
               <div>
                 <h3 className={styles.cardTitle}>Format & Length Sweet Spot</h3>
-                <p className={styles.cardDesc}>Which duration actually gets the most views?</p>
+                <p className={styles.cardDesc}>Which video duration commands the highest views?</p>
               </div>
             </div>
             {insights.winningDuration && (
-              <span className={styles.winnerBadge}>
-                <Sparkles size={11} /> 👑 WINNER: {insights.winningDuration.label}
+              <span className={styles.bestRoiBadge}>
+                <Sparkles size={10} /> BEST ROI ({insights.winningDuration.viewMultiplier}×)
               </span>
             )}
           </div>
 
-          {/* Visual Performance Ladder */}
-          <div className={styles.ladderList}>
+          {/* Visual Duration Bars */}
+          <div className={styles.durationBars}>
             {insights.durationTiers.map((tier) => {
-              const status = getTierStatus(tier.id, tier.isWinner, tier.viewMultiplier);
+              const barWidth = tier.avgViews > 0 ? Math.max(8, (tier.avgViews / maxTierAvg) * 100) : 4;
+              const multiplierText = `${tier.viewMultiplier}× baseline`;
               return (
                 <div
                   key={tier.id}
-                  className={`${styles.ladderItem} ${tier.isWinner ? styles.ladderWinner : ''}`}
+                  className={`${styles.durationRow} ${tier.isWinner ? styles.durationRowWinner : ''}`}
                 >
-                  <div className={styles.ladderTop}>
-                    <span className={styles.ladderName}>
-                      {tier.label} <small className={styles.ladderRange}>({tier.rangeText})</small>
+                  <div className={styles.durationMeta}>
+                    <span className={styles.durationLabel}>
+                      <strong>{tier.label}</strong> <small>({tier.rangeText})</small>
                     </span>
-                    <span className={`${styles.statusPill} ${status.colorClass}`}>
-                      {status.badge} · {status.diffText}
+                    <span className={styles.durationMultiplier}>
+                      {multiplierText}
                     </span>
                   </div>
-
-                  {/* Progress Bar */}
-                  <div className={styles.ladderTrack}>
+                  <div className={styles.barTrack}>
                     <div
-                      className={`${styles.ladderFill} ${tier.isWinner ? styles.ladderFillWinner : ''}`}
-                      style={{
-                        width: `${Math.min(100, Math.max(12, Math.round(tier.viewMultiplier * 40)))}%`,
-                      }}
+                      className={`${styles.barFill} ${tier.isWinner ? styles.barFillWinner : ''}`}
+                      style={{ '--bar-width': `${barWidth}%` } as CSSProperties}
                     />
                   </div>
-
-                  <div className={styles.ladderBottom}>
-                    <span className={styles.ladderStats}>Avg: <strong>{tier.avgViewsFormatted}</strong> views ({tier.count} videos)</span>
-                    <span className={styles.ladderAdvice}>{status.advice}</span>
+                  <div className={styles.durationStats}>
+                    <span>{tier.count} uploads in sample</span>
+                    <span>Avg: {tier.avgViewsFormatted} views</span>
                   </div>
                 </div>
               );
             })}
           </div>
-
-          <div className={styles.cardActionRule}>
-            <Lightbulb size={14} style={{ color: '#ffc16e', flexShrink: 0 }} />
-            <span><strong>Creator Rule:</strong> Target <strong>sub-10 minutes</strong> for maximum YouTube recommendation momentum.</span>
-          </div>
         </div>
 
-        {/* ── CARD 2: Title Packaging Matrix ── */}
+        {/* ═══ CARD 2: Title Formula Win-Rate ═══ */}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
@@ -161,61 +110,53 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                 <Zap size={18} />
               </div>
               <div>
-                <h3 className={styles.cardTitle}>Title Packaging Secrets</h3>
-                <p className={styles.cardDesc}>What triggers clicks vs. what gets ignored?</p>
+                <h3 className={styles.cardTitle}>Title Formula Win-Rate</h3>
+                <p className={styles.cardDesc}>Which phrasing beats the channel median?</p>
               </div>
             </div>
-            <span className={styles.topFormulaPill}>
-              🥇 #1 Hook: Structured Guides
-            </span>
-          </div>
-
-          {/* Top Formula Spotlight Card */}
-          <div className={styles.winningHookBox}>
-            <div className={styles.winningHookTop}>
-              <span className={styles.winningHookBadge}>
-                <Award size={12} /> TOP CONVERTING FORMULA: +220% VIEW BOOST
+            {insights.topFormula && (
+              <span className={styles.topFormulaTag}>
+                Top: {insights.topFormula.badge}
               </span>
-              <span className={styles.winningHookMultiplier}>3.2× Above Median</span>
-            </div>
-            <p className={styles.winningHookWhy}>
-              Viewers respond strongest to <strong>Evolution & Numbered Guides</strong>. Setting an explicit promise eliminates click hesitation.
-            </p>
-            {insights.topFormula?.sampleTitles[0] && (
-              <div className={styles.provenTitleExample}>
-                <span>Real Top Performer:</span>
-                &ldquo;{insights.topFormula.sampleTitles[0]}&rdquo;
-              </div>
             )}
           </div>
 
-          {/* Click to Copy Next Title Templates */}
-          <div className={styles.templateSection}>
-            <span className={styles.templateSectionTitle}>
-              <Copy size={12} /> CLICK TO COPY PROVEN TITLE TEMPLATES:
-            </span>
-            <div className={styles.templatePills}>
-              {titleTemplates.map((tpl, i) => {
-                const isCopied = copiedTemplate === tpl;
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    className={`${styles.templateBtn} ${isCopied ? styles.templateCopied : ''}`}
-                    onClick={() => handleCopy(tpl, 'template')}
-                    title="Click to copy title template"
-                  >
-                    {isCopied ? <Check size={12} /> : <Copy size={12} />}
-                    <span>{tpl}</span>
-                    {isCopied && <span className={styles.copiedToast}>Copied!</span>}
-                  </button>
-                );
-              })}
-            </div>
+          {/* Title Formula Bars */}
+          <div className={styles.formulaList}>
+            {insights.titleFormulas.map((formula) => {
+              const barWidth = Math.max(4, formula.winRate);
+              const color = formula.accentColor;
+              return (
+                <div key={formula.id} className={styles.formulaRow}>
+                  <div className={styles.formulaHeader}>
+                    <span className={styles.formulaBadge} style={{ color, borderColor: color, background: `${color}15` }}>
+                      {formula.badge}
+                    </span>
+                    <span className={styles.formulaWinRate} style={{ color }}>
+                      {formula.winRate}% Win-Rate ({formula.avgMultiplier}×)
+                    </span>
+                  </div>
+                  <div className={styles.formulaBarTrack}>
+                    <div
+                      className={styles.formulaBarFill}
+                      style={{
+                        '--bar-width': `${barWidth}%`,
+                        '--bar-color': color,
+                      } as CSSProperties}
+                    />
+                  </div>
+                  {formula.sampleTitles[0] && (
+                    <p className={styles.formulaSample}>
+                      &ldquo;{formula.sampleTitles[0]}&rdquo;
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* ── CARD 3: Publishing Compass & Prime Upload Clock ── */}
+        {/* ═══ CARD 3: Optimal Upload Day Window ═══ */}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
@@ -223,134 +164,133 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                 <Calendar size={18} />
               </div>
               <div>
-                <h3 className={styles.cardTitle}>Publishing Compass & Best Time</h3>
-                <p className={styles.cardDesc}>Weekly viewer traffic momentum & upload timing</p>
+                <h3 className={styles.cardTitle}>Optimal Upload Day Window</h3>
+                <p className={styles.cardDesc}>Day-of-week clustering of above-median uploads</p>
               </div>
             </div>
-            <span className={styles.peakDayPill}>
-              Peak Day: {insights.peakPublishingDay}
+            <span className={styles.peakDayTag}>
+              Peak: {insights.peakPublishingDay}
             </span>
           </div>
 
-          {/* Weekly Traffic Heatmap Matrix */}
-          <div className={styles.weeklyMatrix}>
-            <div className={`${styles.matrixCol} ${styles.matrixPeak}`}>
-              <span className={styles.matrixDay}>Thu</span>
-              <span className={styles.matrixHeatBadge}>🔥 Hottest</span>
-              <span className={styles.matrixDesc}>Peak Velocity</span>
-            </div>
-            <div className={`${styles.matrixCol} ${styles.matrixStrong}`}>
-              <span className={styles.matrixDay}>Tue</span>
-              <span className={styles.matrixHeatBadge}>⚡ High</span>
-              <span className={styles.matrixDesc}>Great Reach</span>
-            </div>
-            <div className={styles.matrixCol}>
-              <span className={styles.matrixDay}>Wed</span>
-              <span className={styles.matrixHeatBadge}>📈 Steady</span>
-              <span className={styles.matrixDesc}>Baseline</span>
-            </div>
-            <div className={styles.matrixCol}>
-              <span className={styles.matrixDay}>Fri</span>
-              <span className={styles.matrixHeatBadge}>📈 Steady</span>
-              <span className={styles.matrixDesc}>Weekend Pre</span>
-            </div>
-            <div className={styles.matrixCol}>
-              <span className={styles.matrixDay}>Sat</span>
-              <span className={styles.matrixHeatBadge}>💤 Slower</span>
-              <span className={styles.matrixDesc}>Casual</span>
-            </div>
-            <div className={styles.matrixCol}>
-              <span className={styles.matrixDay}>Sun</span>
-              <span className={styles.matrixHeatBadge}>💤 Slower</span>
-              <span className={styles.matrixDesc}>Low Velocity</span>
-            </div>
-            <div className={styles.matrixCol}>
-              <span className={styles.matrixDay}>Mon</span>
-              <span className={styles.matrixHeatBadge}>💤 Slower</span>
-              <span className={styles.matrixDesc}>Distracted</span>
-            </div>
+          {/* Visual Heatmap / Bar Chart Grid */}
+          <div className={styles.dayGrid}>
+            {insights.publishingDays.map((day) => {
+              const intensity = day.videoCount / maxDayVideos;
+              const barHeight = Math.max(8, intensity * 100);
+              return (
+                <div
+                  key={day.shortName}
+                  className={`${styles.dayCol} ${day.isPeak ? styles.dayColPeak : ''}`}
+                >
+                  <div className={styles.dayBarContainer}>
+                    <div
+                      className={`${styles.dayBar} ${day.isPeak ? styles.dayBarPeak : ''}`}
+                      style={{ '--bar-height': `${barHeight}%` } as CSSProperties}
+                    />
+                  </div>
+                  <span className={`${styles.dayLabel} ${day.isPeak ? styles.dayLabelPeak : ''}`}>
+                    {day.shortName}
+                  </span>
+                  <span className={styles.dayCount}>{day.videoCount}v</span>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Visual Prime Upload Clock Widget */}
-          <div className={styles.clockWidget}>
-            <div className={styles.clockIconBox}>
-              <Clock size={20} />
-            </div>
-            <div className={styles.clockDetails}>
-              <span className={styles.clockTitle}>⏰ PRIME RELEASE WINDOW: 2:00 PM – 5:00 PM EST</span>
-              <p className={styles.clockExplanation}>
-                Uploading 2–3 hours before evening leisure peak (7:00 PM – 10:00 PM) allows YouTube’s algorithm to generate HD/4K encodes and test initial impressions on core subscribers.
-              </p>
-            </div>
+          {/* Recommended Window */}
+          <div className={styles.recommendedWindow}>
+            <Clock size={14} />
+            <span>
+              Recommended Window: <strong>{insights.peakPublishingDay}s between 2:00 PM – 5:00 PM EST</strong> for pre-evening traffic buildup.
+            </span>
           </div>
         </div>
 
-        {/* ── CARD 4: Audience Voice & Next Video Blueprints ── */}
+        {/* ═══ CARD 4: Audience Sentiment & Demands ═══ */}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
               <div className={styles.cardIcon} style={{ background: 'rgba(167, 139, 250, 0.12)', color: '#a78bfa', borderColor: 'rgba(167, 139, 250, 0.3)' }}>
-                <Flame size={18} />
+                <MessageCircle size={18} />
               </div>
               <div>
-                <h3 className={styles.cardTitle}>Audience Voice & Next Video Blueprints</h3>
-                <p className={styles.cardDesc}>Viewer praise drivers & high-demand video requests</p>
+                <h3 className={styles.cardTitle}>Audience Sentiment & Demands</h3>
+                <p className={styles.cardDesc}>Viewer praise drivers and high-demand topics</p>
               </div>
             </div>
-            <span className={styles.sentimentPill}>
-              88% Viewer Praise
+            <span className={styles.sentimentTag}>
+              {insights.audiencePulse.sentimentScore}% Positive
             </span>
           </div>
 
-          {/* Sentiment Summary */}
-          <div className={styles.sentimentBanner}>
-            <div className={styles.sentimentScore}>88%</div>
-            <div className={styles.sentimentText}>
-              <strong>Audience Love:</strong> Viewers praise <strong>immediate hook momentum</strong> with zero filler and crisp visual B-roll framing.
+          {/* Donut Gauge + Praise Summary */}
+          <div className={styles.sentimentRow}>
+            <div className={styles.donutGauge}>
+              <svg viewBox="0 0 80 80" className={styles.donutSvg}>
+                <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(167, 139, 250, 0.12)" strokeWidth="6" />
+                <circle
+                  cx="40" cy="40" r="32"
+                  fill="none"
+                  stroke="#a78bfa"
+                  strokeWidth="6"
+                  strokeDasharray={`${(insights.audiencePulse.sentimentScore / 100) * 201} 201`}
+                  strokeLinecap="round"
+                  transform="rotate(-90 40 40)"
+                  className={styles.donutFill}
+                />
+              </svg>
+              <div className={styles.donutCenter}>
+                <span className={styles.donutPercent}>{insights.audiencePulse.sentimentScore}%</span>
+                <span className={styles.donutLabel}>PRAISE</span>
+              </div>
+            </div>
+            <div className={styles.retentionSignals}>
+              <div className={styles.retentionHeader}>
+                <Sparkles size={12} /> RETENTION SIGNALS
+                <span className={styles.retentionBars}>
+                  <i /><i /><i /><i /><i />
+                </span>
+              </div>
+              <p>
+                Viewers repeatedly praise <strong>immediate hook momentum</strong> with clean pacing and high practical utility.
+              </p>
             </div>
           </div>
 
-          {/* 3 Actionable Next Video Concept Cards */}
-          <div className={styles.blueprintList}>
-            <span className={styles.blueprintSectionTitle}>
-              <Flame size={13} style={{ color: '#ef4444' }} /> TOP 3 HIGH-DEMAND VIDEO CONCEPTS TO SHOOT NEXT:
+          {/* Top Demanded Follow-up Topics */}
+          <div className={styles.demandSection}>
+            <span className={styles.demandSectionTitle}>
+              <Flame size={12} style={{ color: '#ef4444' }} /> TOP DEMANDED FOLLOW-UP TOPICS (COMMENT MINING)
             </span>
 
             {insights.audiencePulse.contentDemands.map((demand, idx) => {
               const isCopied = copiedBlueprint === demand.topic;
               return (
-                <div key={idx} className={styles.blueprintCard}>
-                  <div className={styles.blueprintHeader}>
-                    <span className={styles.blueprintTopic}>
-                      #{idx + 1}: {demand.topic}
-                    </span>
-                    <span className={styles.blueprintDemandPill}>
-                      <Flame size={11} /> {demand.demandLevel} Demand
-                    </span>
-                  </div>
-                  <p className={styles.blueprintReason}>{demand.reason}</p>
-                  <button
-                    type="button"
-                    className={`${styles.copyPromptBtn} ${isCopied ? styles.promptCopied : ''}`}
-                    onClick={() => handleCopy(`Video Concept Outline for "${demand.topic}": Focus on viewer questions, direct comparisons, and actionable pros/cons.`, 'blueprint')}
-                  >
-                    {isCopied ? <Check size={12} /> : <Copy size={12} />}
-                    <span>{isCopied ? 'Blueprint Copied!' : 'Copy Video Outline Prompt'}</span>
-                  </button>
-                </div>
+                <button
+                  key={idx}
+                  type="button"
+                  className={styles.demandRow}
+                  onClick={() => handleCopyBlueprint(`Video Concept Outline for "${demand.topic}": Focus on viewer questions, direct comparisons, and actionable pros/cons.`)}
+                >
+                  <span className={styles.demandTopic}>{demand.topic}</span>
+                  <span className={`${styles.demandLevel} ${demand.demandLevel === 'Very High' ? styles.demandVeryHigh : styles.demandHigh}`}>
+                    {isCopied ? <Check size={10} /> : <Flame size={10} />}
+                    {isCopied ? 'Copied!' : demand.demandLevel}
+                  </span>
+                </button>
               );
             })}
           </div>
         </div>
-
       </div>
 
-      {/* Strategic Takeaway Banner */}
-      <div className={styles.takeawayBanner}>
-        <Lightbulb size={22} style={{ flexShrink: 0 }} />
+      {/* ── Strategic Takeaway ── */}
+      <div className={styles.takeaway}>
+        <Lightbulb size={20} style={{ flexShrink: 0 }} />
         <span>
           <strong>Action Plan for Next Video:</strong> Keep duration <strong>sub-10 minutes</strong>, launch with a{' '}
-          <strong>Structured Evolution</strong> title formula, and publish on{' '}
+          <strong>{insights.topFormula?.badge || 'Structured'}</strong> title formula, and publish on{' '}
           <strong>{insights.peakPublishingDay} at 3:00 PM EST</strong> for maximum YouTube home feed velocity.
         </span>
       </div>

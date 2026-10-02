@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Play, Search, Sparkles, X, Zap } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Pause, Play, Search, Sparkles, X, Zap } from 'lucide-react';
 import type { VideoData } from '@/types/analysis';
 import type { HookAnalysis } from '@/utils/transcript-analyzer';
 import styles from './TranscriptLab.module.css';
@@ -21,12 +21,13 @@ export const TranscriptLab = ({
   videos,
   channelName,
   isDemo,
-  onWatchVideo,
+  onPlayStart,
 }: {
   videos: VideoData[];
   channelName: string;
   isDemo?: boolean;
   onWatchVideo?: (videoId: string, title: string, initialSeconds?: number) => void;
+  onPlayStart?: () => void;
 }) => {
   // Sort videos by views descending, pick top candidates
   const topVideos = useMemo(() => {
@@ -44,8 +45,58 @@ export const TranscriptLab = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isPlayingInline, setIsPlayingInline] = useState<boolean>(false);
   const [inlineSecond, setInlineSecond] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const currentVideo = topVideos.find((v) => v.videoId === activeVideoId) || topVideos[0];
+
+  const handleHidePlayer = () => {
+    try {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+        '*'
+      );
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
+        '*'
+      );
+    } catch {}
+    setIsPlayingInline(false);
+  };
+
+  const togglePlayPause = () => {
+    try {
+      if (isPlaying) {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+          '*'
+        );
+        setIsPlaying(false);
+      } else {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+          '*'
+        );
+        setIsPlaying(true);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    const currentIframe = iframeRef.current;
+    return () => {
+      try {
+        currentIframe?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+          '*'
+        );
+        currentIframe?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
+          '*'
+        );
+      } catch {}
+    };
+  }, []);
 
   useEffect(() => {
     if (!activeVideoId) return;
@@ -141,9 +192,12 @@ export const TranscriptLab = ({
               cursor: 'pointer',
             }}
             onClick={() => {
-              setIsPlayingInline((prev) => !prev);
-              if (!isPlayingInline && onWatchVideo) {
-                onWatchVideo(selectedVideoId, currentVideo?.title || 'Video', inlineSecond);
+              if (isPlayingInline) {
+                handleHidePlayer();
+              } else {
+                setIsPlayingInline(true);
+                setIsPlaying(true);
+                onPlayStart?.();
               }
             }}
             title="Toggle in-page video playback"
@@ -162,8 +216,16 @@ export const TranscriptLab = ({
             type="button"
             className={`${styles.videoChip} ${video.videoId === selectedVideoId ? styles.activeChip : ''}`}
             onClick={() => {
-              setSelectedVideoId(video.videoId);
-              setInlineSecond(0);
+              if (selectedVideoId !== video.videoId) {
+                try {
+                  iframeRef.current?.contentWindow?.postMessage(
+                    JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
+                    '*'
+                  );
+                } catch {}
+                setSelectedVideoId(video.videoId);
+                setInlineSecond(0);
+              }
             }}
             title={video.title}
           >
@@ -181,19 +243,39 @@ export const TranscriptLab = ({
             <span className={styles.inlinePlayerTitle}>
               <Play size={12} fill="currentColor" /> Playing in-page: {currentVideo?.title}
             </span>
-            <button
-              type="button"
-              className={styles.inlineCloseBtn}
-              onClick={() => setIsPlayingInline(false)}
-            >
-              <X size={13} /> Hide player
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button
+                type="button"
+                className={styles.copyBtn}
+                onClick={togglePlayPause}
+                style={{
+                  padding: '0.25rem 0.6rem',
+                  fontSize: '0.72rem',
+                  cursor: 'pointer',
+                  background: isPlaying ? 'rgba(255, 193, 110, 0.15)' : 'rgba(74, 222, 128, 0.15)',
+                  color: isPlaying ? '#ffc16e' : '#4ade80',
+                  borderColor: isPlaying ? 'rgba(255, 193, 110, 0.35)' : 'rgba(74, 222, 128, 0.35)',
+                }}
+                title={isPlaying ? 'Pause video audio' : 'Play video'}
+              >
+                {isPlaying ? <Pause size={11} /> : <Play size={11} />}
+                <span>{isPlaying ? 'Pause' : 'Play'}</span>
+              </button>
+              <button
+                type="button"
+                className={styles.inlineCloseBtn}
+                onClick={handleHidePlayer}
+              >
+                <X size={13} /> Hide player
+              </button>
+            </div>
           </div>
           <div className={styles.inlineIframeWrapper}>
             <iframe
-              key={`${activeVideoId}-${inlineSecond}`}
+              ref={iframeRef}
+              key={activeVideoId}
               className={styles.inlineIframe}
-              src={`https://www.youtube-nocookie.com/embed/${activeVideoId}?autoplay=1&start=${inlineSecond}&rel=0&modestbranding=1`}
+              src={`https://www.youtube-nocookie.com/embed/${activeVideoId}?autoplay=1&start=${inlineSecond}&enablejsapi=1&rel=0&modestbranding=1`}
               title={currentVideo?.title || 'Video'}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -319,9 +401,21 @@ export const TranscriptLab = ({
                       type="button"
                       onClick={() => {
                         setInlineSecond(seconds);
-                        setIsPlayingInline(true);
-                        if (onWatchVideo) {
-                          onWatchVideo(selectedVideoId, currentVideo?.title || 'Video', seconds);
+                        setIsPlaying(true);
+                        if (!isPlayingInline) {
+                          setIsPlayingInline(true);
+                          onPlayStart?.();
+                        } else {
+                          try {
+                            iframeRef.current?.contentWindow?.postMessage(
+                              JSON.stringify({ event: 'command', func: 'seekTo', args: [seconds, true] }),
+                              '*'
+                            );
+                            iframeRef.current?.contentWindow?.postMessage(
+                              JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+                              '*'
+                            );
+                          } catch {}
                         }
                       }}
                       className={styles.timestamp}

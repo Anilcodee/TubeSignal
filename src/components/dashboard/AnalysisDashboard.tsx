@@ -52,8 +52,12 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
     </div>
   );
   const sample = data.meta.dataSource === 'sample';
+  const handleTabChange = (targetTab: ReportTab) => {
+    setActiveTab(targetTab);
+    setActiveModalVideo(null);
+  };
   const nextView = () => {
-    setActiveTab('patterns');
+    handleTabChange('patterns');
     document.getElementById('tab-patterns')?.focus();
     document.getElementById('report-tabs')?.scrollIntoView({ block: 'start' });
   };
@@ -74,14 +78,14 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
         <div id="report-tabs" className={`${styles.tabBar} no-print`}>
           <div role="tablist" aria-label="Report views" className={styles.tabs}>
             {TABS.map(({ id, label, Icon }, index) => <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={activeTab === id} aria-controls={`panel-${id}`} tabIndex={activeTab === id ? 0 : -1}
-              onClick={() => setActiveTab(id)} onKeyDown={(event) => {
+              onClick={() => handleTabChange(id)} onKeyDown={(event) => {
                 let target = index;
                 if (event.key === 'ArrowRight') target = (index + 1) % TABS.length;
                 else if (event.key === 'ArrowLeft') target = (index + TABS.length - 1) % TABS.length;
                 else if (event.key === 'Home') target = 0;
                 else if (event.key === 'End') target = TABS.length - 1;
                 else return;
-                event.preventDefault(); setActiveTab(TABS[target].id); document.getElementById(`tab-${TABS[target].id}`)?.focus();
+                event.preventDefault(); handleTabChange(TABS[target].id); document.getElementById(`tab-${TABS[target].id}`)?.focus();
               }}><Icon size={15} /><span>{label}</span>{id === 'uploads' && <span className={styles.tabCount}>{data.videos.length}</span>}</button>)}
           </div>
           <span className={styles.tabHint}>The overview first. The details when you need them.</span>
@@ -90,9 +94,7 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           {activeTab === 'overview' && <>
             <Verdict
               data={data}
-              onWatchVideo={(videoId, title) =>
-                setActiveModalVideo({ videoId, title, initialSeconds: 0 })
-              }
+              onPlayStart={() => setActiveModalVideo(null)}
             />
             <KpiStrip channel={data.channel} analytics={data.analytics} videos={data.videos} />
             {data.videos.length > 0 && (
@@ -116,13 +118,19 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
               videos={data.videos}
               channelName={data.channel.name}
               isDemo={sample}
-              onWatchVideo={(videoId, title, initialSeconds) =>
-                setActiveModalVideo({ videoId, title, initialSeconds: initialSeconds || 0 })
-              }
+              onPlayStart={() => setActiveModalVideo(null)}
             />
           )}
           {activeTab === 'uploads' && <>
             <div className={styles.viewHeading}><span>THE SOURCE MATERIAL</span><h2>Every upload. In perspective.</h2><p>Compare the videos behind the numbers, ranked by public views.</p></div>
+            {activeModalVideo && (
+              <InPageVideoTheater
+                videoId={activeModalVideo.videoId}
+                videoTitle={activeModalVideo.title}
+                initialSeconds={activeModalVideo.initialSeconds || 0}
+                onClose={() => setActiveModalVideo(null)}
+              />
+            )}
             <VideoTable
               videos={data.videos}
               medianViews={data.analytics.medianViews}
@@ -134,14 +142,6 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           </>}
           {data.videos.length === 0 && <section className={styles.emptyPanel}><h2>No public uploads were returned</h2><p>There isn’t enough data to compare videos. Try another channel or return later.</p><Link href="/" className={styles.backLink}><ArrowLeft size={13} /> Find another creator</Link></section>}
         </div>
-        {activeModalVideo && (
-          <InPageVideoTheater
-            videoId={activeModalVideo.videoId}
-            videoTitle={activeModalVideo.title}
-            initialSeconds={activeModalVideo.initialSeconds || 0}
-            onClose={() => setActiveModalVideo(null)}
-          />
-        )}
         <details className={styles.methodNote}>
           <summary>ℹ️ How TubeSignal Analyzes Public Channel Data</summary>
           <p>

@@ -1,22 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { ArrowUpRight, Eye, Play, Sparkles, X, Zap } from 'lucide-react';
+import { ArrowUpRight, Eye, Pause, Play, Sparkles, X, Zap } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
 import styles from './Verdict.module.css';
 
 export const Verdict = ({
   data,
-  onWatchVideo,
+  onPlayStart,
 }: {
   data: FullAnalysisResponse;
   onWatchVideo?: (videoId: string, title: string) => void;
+  onPlayStart?: () => void;
 }) => {
   const { videos, analytics, aiAnalysis, meta } = data;
   const [isPlayingInline, setIsPlayingInline] = useState(false);
   const [seekSecond, setSeekSecond] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const observed = videos.filter((video) => video.viewsAvailable !== false && Number.isFinite(video.views) && video.views >= 0);
   const top = [...observed].sort((a, b) => b.views - a.views)[0];
@@ -30,10 +33,72 @@ export const Verdict = ({
 
   const handleStartInlinePlay = () => {
     setIsPlayingInline(true);
-    if (onWatchVideo && top) {
-      onWatchVideo(top.videoId, top.title);
-    }
+    setIsPlaying(true);
+    onPlayStart?.();
   };
+
+  const handleHidePlayer = () => {
+    try {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+        '*'
+      );
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
+        '*'
+      );
+    } catch {}
+    setIsPlayingInline(false);
+  };
+
+  const handleJump = (sec: number) => {
+    setSeekSecond(sec);
+    setIsPlaying(true);
+    try {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'seekTo', args: [sec, true] }),
+        '*'
+      );
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+        '*'
+      );
+    } catch {}
+  };
+
+  const togglePlayPause = () => {
+    try {
+      if (isPlaying) {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+          '*'
+        );
+        setIsPlaying(false);
+      } else {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+          '*'
+        );
+        setIsPlaying(true);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    const currentIframe = iframeRef.current;
+    return () => {
+      try {
+        currentIframe?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+          '*'
+        );
+        currentIframe?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
+          '*'
+        );
+      } catch {}
+    };
+  }, []);
 
   return (
     <section className={styles.verdict} aria-label="Your 60-second brief">
@@ -58,9 +123,10 @@ export const Verdict = ({
           <div className={styles.inlinePlayerBox}>
             <div className={styles.inlinePlayerWrapper}>
               <iframe
-                key={`${top.videoId}-${seekSecond}`}
+                ref={iframeRef}
+                key={top.videoId}
                 className={styles.inlineIframe}
-                src={`https://www.youtube-nocookie.com/embed/${top.videoId}?autoplay=1&start=${seekSecond}&rel=0&modestbranding=1`}
+                src={`https://www.youtube-nocookie.com/embed/${top.videoId}?autoplay=1&start=${seekSecond}&enablejsapi=1&rel=0&modestbranding=1`}
                 title={top.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -68,15 +134,47 @@ export const Verdict = ({
             </div>
             <div className={styles.inlineControls}>
               <div className={styles.jumpRow}>
+                <button
+                  type="button"
+                  className={styles.playToggleBtn}
+                  onClick={togglePlayPause}
+                  title={isPlaying ? 'Pause video audio' : 'Play video'}
+                  style={{
+                    background: isPlaying ? 'rgba(255, 193, 110, 0.15)' : 'rgba(74, 222, 128, 0.15)',
+                    border: isPlaying ? '1px solid rgba(255, 193, 110, 0.35)' : '1px solid rgba(74, 222, 128, 0.35)',
+                    color: isPlaying ? '#ffc16e' : '#4ade80',
+                  }}
+                >
+                  {isPlaying ? <Pause size={10} /> : <Play size={10} />}
+                  <span>{isPlaying ? 'Pause' : 'Play'}</span>
+                </button>
                 <span className={styles.jumpLabel}><Zap size={11} /> Jump:</span>
-                <button type="button" className={styles.jumpPill} onClick={() => setSeekSecond(0)}>0:00 Hook</button>
-                <button type="button" className={styles.jumpPill} onClick={() => setSeekSecond(15)}>0:15 Promise</button>
-                <button type="button" className={styles.jumpPill} onClick={() => setSeekSecond(35)}>0:35 Core</button>
+                <button
+                  type="button"
+                  className={`${styles.jumpPill} ${seekSecond === 0 ? styles.jumpActive : ''}`}
+                  onClick={() => handleJump(0)}
+                >
+                  0:00 Hook
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.jumpPill} ${seekSecond === 15 ? styles.jumpActive : ''}`}
+                  onClick={() => handleJump(15)}
+                >
+                  0:15 Promise
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.jumpPill} ${seekSecond === 35 ? styles.jumpActive : ''}`}
+                  onClick={() => handleJump(35)}
+                >
+                  0:35 Core
+                </button>
               </div>
               <button
                 type="button"
                 className={styles.closePlayerBtn}
-                onClick={() => setIsPlayingInline(false)}
+                onClick={handleHidePlayer}
               >
                 <X size={12} /> Hide Player
               </button>

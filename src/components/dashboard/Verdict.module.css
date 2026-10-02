@@ -30,8 +30,10 @@
 .inlineControls { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.4rem; background: rgba(255, 255, 255, 0.03); border-radius: 0.4rem; }
 .jumpRow { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
 .jumpLabel { font-size: 0.65rem; color: var(--text-3); display: inline-flex; align-items: center; gap: 0.2rem; }
-.jumpPill { font-size: 0.62rem; padding: 0.2rem 0.45rem; border-radius: 0.3rem; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-2); cursor: pointer; transition: all 0.15s ease; }
+.jumpPill { font-size: 0.62rem; padding: 0.2rem 0.45rem; border-radius: 0.3rem; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-2); cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 0.25rem; }
 .jumpPill:hover { background: rgba(255, 193, 110, 0.15); color: var(--accent); border-color: var(--accent-line); }
+.jumpActive { background: rgba(255, 193, 110, 0.22); color: var(--accent); border-color: rgba(255, 193, 110, 0.45); font-weight: 600; }
+.playToggleBtn { font-size: 0.62rem; padding: 0.2rem 0.5rem; border-radius: 0.3rem; font-weight: 600; cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 0.25rem; }
 .closePlayerBtn { align-self: flex-end; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.62rem; color: var(--text-3); background: none; border: none; cursor: pointer; padding: 0.2rem 0.3rem; transition: color 0.15s ease; }
 .closePlayerBtn:hover { color: #ef4444; }
 @media (max-width: 760px) { .verdict { grid-template-columns: minmax(0, 1fr); padding: var(--s-5); gap: var(--s-6); } .headline { max-width: 25ch; } .spotlight { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: var(--s-2) var(--s-3); } .spotlightLabel { grid-column: 1 / -1; margin: 0 0 var(--s-1); } .videoArt { grid-row: 2 / 5; height: 100%; min-height: 5rem; } .spotlight h3, .spotlightStats, .scope { margin: 0; } .spotlightStats { font-size: .65rem; } }

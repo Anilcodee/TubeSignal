@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { ExternalLink, Play, Sparkles, X, Zap } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ExternalLink, Pause, Play, Sparkles, X, Zap } from 'lucide-react';
 import styles from './InPageVideoTheater.module.css';
 
 interface InPageVideoTheaterProps {
@@ -18,6 +18,9 @@ export const InPageVideoTheater = ({
   onClose,
 }: InPageVideoTheaterProps) => {
   const [currentSeconds, setCurrentSeconds] = useState<number>(initialSeconds);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
 
   const jumpTimestamps = [
     { label: 'Opening Hook', seconds: 0 },
@@ -26,10 +29,79 @@ export const InPageVideoTheater = ({
     { label: 'Full Breakdown', seconds: 50 },
   ];
 
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&start=${currentSeconds}&rel=0&modestbranding=1`;
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&start=${initialSeconds}&enablejsapi=1&rel=0&modestbranding=1`;
+
+  // Smooth scroll into view when opened
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [videoId]);
+
+  // Audio cleanup on unmount
+  useEffect(() => {
+    const currentIframe = iframeRef.current;
+    return () => {
+      try {
+        currentIframe?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+          '*'
+        );
+        currentIframe?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
+          '*'
+        );
+      } catch {}
+    };
+  }, []);
+
+  const togglePlayPause = () => {
+    try {
+      if (isPlaying) {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+          '*'
+        );
+        setIsPlaying(false);
+      } else {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+          '*'
+        );
+        setIsPlaying(true);
+      }
+    } catch {}
+  };
+
+  const handleJump = (seconds: number) => {
+    setCurrentSeconds(seconds);
+    setIsPlaying(true);
+    try {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'seekTo', args: [seconds, true] }),
+        '*'
+      );
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+        '*'
+      );
+    } catch {}
+  };
+
+  const handleClose = () => {
+    try {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+        '*'
+      );
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
+        '*'
+      );
+    } catch {}
+    onClose();
+  };
 
   return (
-    <section className={styles.theaterContainer} aria-label={`In-page video player for ${videoTitle}`}>
+    <section ref={containerRef} className={styles.theaterContainer} aria-label={`In-page video player for ${videoTitle}`}>
       {/* Header Bar */}
       <div className={styles.header}>
         <div className={styles.titleInfo}>
@@ -42,6 +114,15 @@ export const InPageVideoTheater = ({
         </div>
 
         <div className={styles.actions}>
+          <button
+            type="button"
+            className={styles.playPauseBtn}
+            onClick={togglePlayPause}
+            title={isPlaying ? 'Pause video audio' : 'Play video'}
+          >
+            {isPlaying ? <Pause size={13} /> : <Play size={13} />}
+            <span>{isPlaying ? 'Pause Audio' : 'Play Audio'}</span>
+          </button>
           <a
             href={`https://www.youtube.com/watch?v=${videoId}`}
             target="_blank"
@@ -53,7 +134,7 @@ export const InPageVideoTheater = ({
           <button
             type="button"
             className={styles.closeBtn}
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close in-page video player"
           >
             <X size={15} />
@@ -65,7 +146,8 @@ export const InPageVideoTheater = ({
       {/* 16:9 In-Page Responsive Embed */}
       <div className={styles.playerWrapper}>
         <iframe
-          key={`${videoId}-${currentSeconds}`}
+          ref={iframeRef}
+          key={videoId}
           className={styles.iframe}
           src={embedUrl}
           title={videoTitle}
@@ -88,7 +170,7 @@ export const InPageVideoTheater = ({
                 key={item.seconds}
                 type="button"
                 className={`${styles.jumpBtn} ${active ? styles.active : ''}`}
-                onClick={() => setCurrentSeconds(item.seconds)}
+                onClick={() => handleJump(item.seconds)}
               >
                 <Sparkles size={11} />
                 <span>{item.label}</span>

@@ -1,174 +1,201 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUp, AudioLines, CheckCircle2, ExternalLink, Sparkles, Zap } from 'lucide-react';
+import { ArrowUp, AudioLines, CheckCircle2, Code2, ExternalLink, Heart, Sparkles, Zap } from 'lucide-react';
 import styles from './Footer.module.css';
 
 export const Footer = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+      { threshold: 0.1 }
+    );
+    const el = document.getElementById('tubesignal-footer');
+    if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <footer className={`${styles.footer} no-print`} role="contentinfo">
-      {/* Radiant Top Glow Line */}
-      <div className={styles.radiantGlow} aria-hidden="true" />
+    <footer id="tubesignal-footer" className={`${styles.footer} ${isVisible ? styles.visible : ''} no-print`} role="contentinfo">
+      {/* Animated Gradient Border */}
+      <div className={styles.gradientBorder} aria-hidden="true" />
 
       <div className={styles.container}>
-        {/* Top Grid: Brand + 3 Nav Columns */}
-        <div className={styles.topGrid}>
-          {/* Brand Info */}
+        {/* Top Section: Brand + Navigation */}
+        <div className={styles.topSection}>
+          {/* Brand Column */}
           <div className={styles.brandCol}>
             <Link href="/" className={styles.logo} aria-label="TubeSignal Home">
               <span className={styles.logoMark}>
                 <AudioLines size={20} aria-hidden="true" />
               </span>
-              <span>
-                TubeSignal<span className={styles.logoPeriod}>.</span>
+              <span className={styles.logoText}>
+                TubeSignal<span className={styles.logoDot}>.</span>
               </span>
             </Link>
-            <p className={styles.brandTagline}>
-              The competitive intelligence instrument for high-growth YouTube creators.
-              Reverse-engineer packaging, duration sweet spots, and spoken hooks with SerpApi & Gemini.
+            <p className={styles.brandDescription}>
+              The competitive intelligence platform for high-growth YouTube creators. Reverse-engineer what works — packaging, timing, and spoken hooks.
             </p>
 
-            <div className={styles.statusBadge}>
-              <span className={styles.statusDot} />
-              <span>SerpApi & Gemini 2.5: Operational</span>
+            {/* Engine Status */}
+            <div className={styles.engineStatus}>
+              <div className={styles.statusRow}>
+                <span className={styles.statusIndicator}>
+                  <span className={styles.statusDot} />
+                  <span className={styles.statusRing} />
+                </span>
+                <span>All systems operational</span>
+              </div>
+              <div className={styles.enginesList}>
+                <span className={styles.engineTag}>
+                  <Zap size={10} /> SerpApi
+                </span>
+                <span className={styles.engineTag}>
+                  <Sparkles size={10} /> Gemini 2.5
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Column 1: Intelligence Tools */}
-          <div className={styles.navCol}>
-            <h4 className={styles.colTitle}>Intelligence Suite</h4>
-            <ul className={styles.linkList}>
-              <li>
-                <Link href="/analyze/mkbhd?demo=true" className={styles.link}>
-                  <span>Channel Deep Audit</span>
-                  <span className={styles.badgeNew}>Core</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/compare" className={styles.link}>
-                  <span>Creator Head-to-Head</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/analyze/mkbhd?demo=true" className={styles.link}>
-                  <span>Hook & Script Studio</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/analyze/mkbhd?demo=true" className={styles.link}>
-                  <span>Actionable Growth Playbook</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/analyze/mkbhd?demo=true" className={styles.link}>
-                  <span>In-Page Video Theater</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Navigation Columns */}
+          <div className={styles.navColumns}>
+            {/* Column 1: Intelligence */}
+            <div className={styles.navCol}>
+              <h4 className={styles.colHeading}>Intelligence</h4>
+              <ul className={styles.navList}>
+                <li>
+                  <Link href="/analyze/mkbhd?demo=true" className={styles.navLink}>
+                    <span>Channel Audit</span>
+                    <span className={styles.coreBadge}>Core</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/compare" className={styles.navLink}>
+                    Creator Comparison
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/analyze/mkbhd?demo=true" className={styles.navLink}>
+                    Hook & Script Lab
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/analyze/mkbhd?demo=true" className={styles.navLink}>
+                    Growth Playbook
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Column 2: Sample Reports */}
-          <div className={styles.navCol}>
-            <h4 className={styles.colTitle}>Sample Dossiers</h4>
-            <ul className={styles.linkList}>
-              <li>
-                <Link href="/analyze/mkbhd?demo=true" className={styles.link}>
-                  <span>MKBHD</span>
-                  <small className={styles.subtext}>Tech Reviews</small>
-                </Link>
-              </li>
-              <li>
-                <Link href="/analyze/fireship?demo=true" className={styles.link}>
-                  <span>Fireship</span>
-                  <small className={styles.subtext}>Code & Fast Takes</small>
-                </Link>
-              </li>
-              <li>
-                <Link href="/analyze/veritasium?demo=true" className={styles.link}>
-                  <span>Veritasium</span>
-                  <small className={styles.subtext}>Science & Education</small>
-                </Link>
-              </li>
-            </ul>
-          </div>
+            {/* Column 2: Explore */}
+            <div className={styles.navCol}>
+              <h4 className={styles.colHeading}>Explore</h4>
+              <ul className={styles.navList}>
+                <li>
+                  <Link href="/analyze/mkbhd?demo=true" className={styles.navLink}>
+                    MKBHD <small className={styles.subLabel}>Tech</small>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/analyze/fireship?demo=true" className={styles.navLink}>
+                    Fireship <small className={styles.subLabel}>Dev</small>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/analyze/veritasium?demo=true" className={styles.navLink}>
+                    Veritasium <small className={styles.subLabel}>Science</small>
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Column 3: Trust & Methodology */}
-          <div className={styles.navCol}>
-            <h4 className={styles.colTitle}>Data & Technology</h4>
-            <ul className={styles.linkList}>
-              <li>
-                <a
-                  href="https://serpapi.com/youtube-api"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.link}
-                >
-                  <span>SerpApi YouTube Engine</span>
-                  <ExternalLink size={11} className={styles.extIcon} />
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://ai.google.dev/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.link}
-                >
-                  <span>Google Gemini 2.5 Flash</span>
-                  <ExternalLink size={11} className={styles.extIcon} />
-                </a>
-              </li>
-              <li>
-                <span className={styles.staticLink}>
-                  <CheckCircle2 size={12} style={{ color: '#34d399' }} />
-                  <span>Zero-Storage Privacy Protocol</span>
-                </span>
-              </li>
-              <li>
-                <span className={styles.staticLink}>
-                  <CheckCircle2 size={12} style={{ color: '#34d399' }} />
-                  <span>No Passwords or Logins Needed</span>
-                </span>
-              </li>
-            </ul>
+            {/* Column 3: Technology */}
+            <div className={styles.navCol}>
+              <h4 className={styles.colHeading}>Powered By</h4>
+              <ul className={styles.navList}>
+                <li>
+                  <a
+                    href="https://serpapi.com/youtube-api"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.navLink}
+                  >
+                    SerpApi YouTube Engine
+                    <ExternalLink size={10} className={styles.extIcon} />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://ai.google.dev/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.navLink}
+                  >
+                    Google Gemini AI
+                    <ExternalLink size={10} className={styles.extIcon} />
+                  </a>
+                </li>
+                <li>
+                  <span className={styles.trustItem}>
+                    <CheckCircle2 size={11} />
+                    <span>Zero data stored</span>
+                  </span>
+                </li>
+                <li>
+                  <span className={styles.trustItem}>
+                    <CheckCircle2 size={11} />
+                    <span>No login required</span>
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className={styles.divider} />
+        {/* Divider with gradient fade */}
+        <div className={styles.divider}>
+          <div className={styles.dividerLine} />
+        </div>
 
-        {/* Bottom Bar: Copyright, Badges, and Back to Top */}
+        {/* Bottom Bar */}
         <div className={styles.bottomBar}>
-          <div className={styles.copyrightArea}>
-            <span>© 2026 TubeSignal. Built for the SerpApi Hackathon.</span>
-            <span className={styles.bullet}>•</span>
-            <span className={styles.disclaimerText}>
-              Public channel analysis based on observable video metadata.
+          <div className={styles.copyrightSection}>
+            <span className={styles.copyright}>
+              © 2026 TubeSignal
+            </span>
+            <span className={styles.separator}>·</span>
+            <span className={styles.madeWith}>
+              Built with <Heart size={11} className={styles.heartIcon} /> for the SerpApi Hackathon
             </span>
           </div>
 
-          <div className={styles.bottomRight}>
-            <div className={styles.badges}>
-              <span className={styles.pillBadge}>
-                <Zap size={11} style={{ color: '#ffc16e' }} /> SerpApi Fast Data
-              </span>
-              <span className={styles.pillBadge}>
-                <Sparkles size={11} style={{ color: '#60a5fa' }} /> Gemini AI Synthesis
-              </span>
-            </div>
+          <div className={styles.bottomActions}>
+            <a
+              href="https://github.com/Anilcodee/TubeSignal"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.githubLink}
+              aria-label="View source on GitHub"
+            >
+              <Code2 size={14} />
+              <span>Source</span>
+            </a>
 
             <button
               type="button"
-              className={styles.backToTopBtn}
+              className={styles.backToTop}
               onClick={scrollToTop}
               aria-label="Back to top of page"
             >
-              <span>Back to top</span>
-              <ArrowUp size={13} />
+              <span>Top</span>
+              <ArrowUp size={12} />
             </button>
           </div>
         </div>
