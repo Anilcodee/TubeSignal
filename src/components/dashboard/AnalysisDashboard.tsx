@@ -15,6 +15,8 @@ import { ContentThemes } from '@/components/charts/ContentThemes';
 import { ViewsDistribution } from '@/components/charts/ViewsDistribution';
 import { PublishingTimeline } from '@/components/charts/PublishingTimeline';
 import { LengthVsViews } from '@/components/charts/LengthVsViews';
+import { VideoPlayerModal } from './VideoPlayerModal';
+import { GrowthPlaybook } from './GrowthPlaybook';
 import Loading from '@/app/analyze/[channelId]/loading';
 import styles from '@/app/analyze/[channelId]/page.module.css';
 
@@ -29,6 +31,11 @@ type ReportTab = typeof TABS[number]['id'];
 export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; isDemo: boolean }) => {
   const { data, isLoading, error, refetch } = useAnalysis(channelId, isDemo);
   const [activeTab, setActiveTab] = useState<ReportTab>('overview');
+  const [activeModalVideo, setActiveModalVideo] = useState<{
+    videoId: string;
+    title: string;
+    initialSeconds?: number;
+  } | null>(null);
   if (isLoading) return <Loading />;
   if (error || !data) return (
     <div className={styles.pageContainer}>
@@ -81,8 +88,20 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
         </div>
         <div key={activeTab} id={`panel-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`} tabIndex={0} className={styles.view}>
           {activeTab === 'overview' && <>
-            <Verdict data={data} />
+            <Verdict
+              data={data}
+              onWatchVideo={(videoId, title) =>
+                setActiveModalVideo({ videoId, title, initialSeconds: 0 })
+              }
+            />
             <KpiStrip channel={data.channel} analytics={data.analytics} videos={data.videos} />
+            {data.videos.length > 0 && (
+              <GrowthPlaybook
+                videos={data.videos}
+                medianViews={data.analytics.medianViews}
+                aiAnalysis={data.aiAnalysis}
+              />
+            )}
             {data.videos.length > 0 && <div className={styles.grid7_5}><ViewsDistribution data={data.chartData.viewsDistribution} medianViews={data.analytics.medianViews} /><Recommendations analysis={data.aiAnalysis} source={data.meta.analysisSource} /></div>}
             {data.videos.length > 0 && <button type="button" className={`${styles.continueButton} no-print`} onClick={nextView}><span><ChartNoAxesCombined size={18} /><span>Curious about the pattern?<small>Explore titles, video length and publishing pace.</small></span></span><ArrowRight size={18} /></button>}
           </>}
@@ -93,15 +112,38 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
             {data.aiAnalysis.contentThemes.length > 0 && <ContentThemes data={data.chartData.contentThemes} />}
           </>}
           {activeTab === 'transcripts' && (
-            <TranscriptLab videos={data.videos} channelName={data.channel.name} isDemo={sample} />
+            <TranscriptLab
+              videos={data.videos}
+              channelName={data.channel.name}
+              isDemo={sample}
+              onWatchVideo={(videoId, title, initialSeconds) =>
+                setActiveModalVideo({ videoId, title, initialSeconds: initialSeconds || 0 })
+              }
+            />
           )}
           {activeTab === 'uploads' && <>
             <div className={styles.viewHeading}><span>THE SOURCE MATERIAL</span><h2>Every upload. In perspective.</h2><p>Compare the videos behind the numbers, ranked by public views.</p></div>
-            <VideoTable videos={data.videos} medianViews={data.analytics.medianViews} isSample={sample} />
+            <VideoTable
+              videos={data.videos}
+              medianViews={data.analytics.medianViews}
+              isSample={sample}
+              onWatchVideo={(videoId, title) =>
+                setActiveModalVideo({ videoId, title, initialSeconds: 0 })
+              }
+            />
           </>}
           {data.videos.length === 0 && <section className={styles.emptyPanel}><h2>No public uploads were returned</h2><p>There isn’t enough data to compare videos. Try another channel or return later.</p><Link href="/" className={styles.backLink}><ArrowLeft size={13} /> Find another creator</Link></section>}
         </div>
         <details className={styles.methodNote}><summary>What this report can (and can’t) tell you</summary><p>Comparisons apply only to these {data.videos.length} uploads. Views are not adjusted for video age. Public metadata cannot establish retention, click-through rate, revenue, or why a video performed well. {data.meta.analysisSource === 'gemini' ? 'Gemini suggestions are interpretations, not proven causes.' : 'This report uses calculated observations, not an AI-generated analysis.'}</p></details>
+
+        {activeModalVideo && (
+          <VideoPlayerModal
+            videoId={activeModalVideo.videoId}
+            videoTitle={activeModalVideo.title}
+            initialSeconds={activeModalVideo.initialSeconds || 0}
+            onClose={() => setActiveModalVideo(null)}
+          />
+        )}
       </div>
     </div>
   );

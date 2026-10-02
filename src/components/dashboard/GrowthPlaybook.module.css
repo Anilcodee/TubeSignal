@@ -1,0 +1,644 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffc16e;
+  margin-bottom: 0.35rem;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ecedef;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #8d949a;
+  margin: 0.25rem 0 0;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+/* Base Card Style */
+.card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(26, 29, 32, 0.95), rgba(18, 21, 24, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: rgba(255, 193, 110, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 24px rgba(255, 193, 110, 0.06);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+  background: rgba(255, 193, 110, 0.12);
+  color: #ffc16e;
+  border: 1px solid rgba(255, 193, 110, 0.25);
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ecedef;
+  margin: 0;
+}
+
+.cardDesc {
+  font-size: 0.75rem;
+  color: #8d949a;
+  margin: 0.15rem 0 0;
+}
+
+/* Badges */
+.roiBadge {
+  font-size: 0.65rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: #ffc16e;
+  background: rgba(255, 193, 110, 0.12);
+  border: 1px solid rgba(255, 193, 110, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+.topFormulaBadge {
+  font-size: 0.65rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.peakDayBadge {
+  font-size: 0.65rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.positiveBadge {
+  font-size: 0.65rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+/* ── 1. Duration Tiers Visualizer ── */
+.durationList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tierRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tierRow:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(2px);
+}
+
+.tierRow.winner {
+  background: linear-gradient(90deg, rgba(255, 193, 110, 0.14), rgba(255, 193, 110, 0.03));
+  border-color: rgba(255, 193, 110, 0.4);
+  box-shadow: 0 4px 16px rgba(255, 193, 110, 0.08);
+}
+
+.tierTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tierName {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ecedef;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tierRange {
+  color: #8d949a;
+  font-weight: 400;
+  font-size: 0.72rem;
+}
+
+.winnerCrown {
+  color: #ffc16e;
+  animation: pulseRotate 3s ease-in-out infinite;
+}
+
+.tierMultiplier {
+  font-size: 0.8rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: #a0a4ad;
+}
+
+.tierRow.winner .tierMultiplier {
+  color: #ffc16e;
+}
+
+.barTrack {
+  position: relative;
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 9999px;
+  background: #697985;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tierRow.winner .barFill {
+  background: linear-gradient(90deg, #b47432, #ffc16e, #ffe3b3, #ffc16e);
+  background-size: 200% 100%;
+  animation: shimmerSweep 3s linear infinite;
+  box-shadow: 0 0 12px rgba(255, 193, 110, 0.5);
+}
+
+.tierBottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #8d949a;
+}
+
+/* ── 2. Title Formula Battle ── */
+.formulaList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.formulaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.75rem;
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
+}
+
+.formulaItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.formulaItemTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.formulaBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.formulaWinRate {
+  font-size: 0.82rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.formulaMeterTrack {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.formulaMeterFill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sampleTitleSnippet {
+  font-size: 0.72rem;
+  color: #a0a4ad;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
+/* ── 3. Publishing Day Visualizer ── */
+.dayRadar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.45rem;
+}
+
+.dayCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.25rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dayCol:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dayCol.peak {
+  background: linear-gradient(180deg, rgba(255, 193, 110, 0.16), rgba(255, 193, 110, 0.04));
+  border-color: rgba(255, 193, 110, 0.45);
+  box-shadow: 0 4px 18px rgba(255, 193, 110, 0.12);
+}
+
+.dayName {
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  color: #a0a4ad;
+}
+
+.dayCol.peak .dayName {
+  color: #ffc16e;
+}
+
+.dayPillar {
+  position: relative;
+  width: 1.15rem;
+  height: 4.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.35rem;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.dayPillarFill {
+  width: 100%;
+  border-radius: 0.35rem;
+  background: #505a63;
+  transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dayCol.peak .dayPillarFill {
+  background: linear-gradient(0deg, #b47432, #ffc16e);
+  box-shadow: 0 0 10px rgba(255, 193, 110, 0.4);
+}
+
+.dayCount {
+  font-size: 0.65rem;
+  color: #8d949a;
+  font-family: var(--font-mono, monospace);
+}
+
+.radarTiming {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  font-size: 0.75rem;
+  color: #34d399;
+  line-height: 1.4;
+}
+
+.radarTiming strong {
+  color: #ffffff;
+}
+
+/* ── 4. Audience Voice & Comment Pulse ── */
+.sentimentRingRow {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(52, 211, 153, 0.06);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+}
+
+/* SVG Radial Meter */
+.gaugeBox {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gaugeSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.gaugeTrack {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.gaugeFill {
+  fill: none;
+  stroke: #34d399;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(52, 211, 153, 0.5));
+  animation: gaugeFillAnim 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.gaugeCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gaugeNumber {
+  font-size: 1.15rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 800;
+  color: #34d399;
+  line-height: 1;
+}
+
+.gaugeLabel {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a0a4ad;
+  margin-top: 0.15rem;
+}
+
+.sentimentPulseDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.sentimentVoiceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.pulsePraiseBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #34d399;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Sound Wave Bars */
+.soundWave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 1.1rem;
+}
+
+.waveBar {
+  width: 2.5px;
+  height: 6px;
+  background: #34d399;
+  border-radius: 9999px;
+  animation: soundWave 1.2s ease-in-out infinite alternate;
+}
+
+.sentimentSummary {
+  font-size: 0.78rem;
+  color: #ced2d6;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.sentimentSummary strong {
+  color: #ffffff;
+}
+
+.demandSectionTitle {
+  font-size: 0.68rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8d949a;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.demandList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.demandItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.76rem;
+  color: #ecedef;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.demandItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.demandTopic {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.demandBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.18rem 0.5rem;
+  border-radius: 9999px;
+  background: rgba(239, 68, 68, 0.14);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Strategic Takeaway Banner */
+.takeawayBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(90deg, rgba(255, 193, 110, 0.12), rgba(255, 193, 110, 0.03));
+  border: 1px solid rgba(255, 193, 110, 0.3);
+  font-size: 0.85rem;
+  color: #ffc16e;
+  line-height: 1.5;
+  box-shadow: 0 4px 20px rgba(255, 193, 110, 0.06);
+}
+
+.takeawayBanner strong {
+  color: #ffffff;
+}
+
+/* ── Keyframe Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseRotate {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.15) rotate(6deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 rgba(255, 193, 110, 0); }
+  50% { box-shadow: 0 0 12px rgba(255, 193, 110, 0.4); }
+}
+
+@keyframes shimmerSweep {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@keyframes soundWave {
+  0% { height: 4px; }
+  50% { height: 16px; }
+  100% { height: 6px; }
+}
+
+@keyframes gaugeFillAnim {
+  from { stroke-dashoffset: 176; }
+  to { stroke-dashoffset: 21; }
+}
+
+@media (max-width: 900px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+}

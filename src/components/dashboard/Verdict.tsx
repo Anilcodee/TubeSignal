@@ -4,7 +4,13 @@ import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
 import styles from './Verdict.module.css';
 
-export const Verdict = ({ data }: { data: FullAnalysisResponse }) => {
+export const Verdict = ({
+  data,
+  onWatchVideo,
+}: {
+  data: FullAnalysisResponse;
+  onWatchVideo?: (videoId: string, title: string) => void;
+}) => {
   const { videos, analytics, aiAnalysis, meta } = data;
   const observed = videos.filter((video) => video.viewsAvailable !== false && Number.isFinite(video.views) && video.views >= 0);
   const top = [...observed].sort((a, b) => b.views - a.views)[0];
@@ -37,6 +43,15 @@ export const Verdict = ({ data }: { data: FullAnalysisResponse }) => {
         <h3>{top.title}</h3>
         <div className={styles.spotlightStats}><span><Eye size={14} /> {formatViews(top.views)} views</span>{share !== null && <span>{share}% of total</span>}</div>
         <p className={styles.scope}>Highest views among these uploads · not age-adjusted</p>
+        {onWatchVideo && (
+          <button
+            type="button"
+            className={styles.watchBtn}
+            onClick={() => onWatchVideo(top.videoId, top.title)}
+          >
+            <Play size={12} fill="currentColor" /> Watch & Dissect In-App
+          </button>
+        )}
       </div>}
     </section>
   );

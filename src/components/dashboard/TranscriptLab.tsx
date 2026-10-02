@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Search, Sparkles, Zap } from 'lucide-react';
+import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Play, Search, Sparkles, Zap } from 'lucide-react';
 import type { VideoData } from '@/types/analysis';
 import type { HookAnalysis } from '@/utils/transcript-analyzer';
 import styles from './TranscriptLab.module.css';
@@ -17,7 +17,17 @@ interface TranscriptResponse {
 
 const transcriptClientCache = new Map<string, TranscriptResponse>();
 
-export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoData[]; channelName: string; isDemo?: boolean }) => {
+export const TranscriptLab = ({
+  videos,
+  channelName,
+  isDemo,
+  onWatchVideo,
+}: {
+  videos: VideoData[];
+  channelName: string;
+  isDemo?: boolean;
+  onWatchVideo?: (videoId: string, title: string, initialSeconds?: number) => void;
+}) => {
   // Sort videos by views descending, pick top candidates
   const topVideos = useMemo(() => {
     return [...videos].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
@@ -114,9 +124,23 @@ export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoDa
           <h2>Hook & Script Breakdown</h2>
           <p>Analyze how {channelName} hooks viewers in the first 40 seconds of their top uploads.</p>
         </div>
-        <div className={styles.serpBadge}>
-          <Mic size={13} />
-          <span>SerpApi youtube_video_transcript</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div className={styles.serpBadge}>
+            <Mic size={13} />
+            <span>SerpApi youtube_video_transcript</span>
+          </div>
+          {onWatchVideo && (
+            <button
+              type="button"
+              className={styles.copyBtn}
+              style={{ background: 'rgba(255, 193, 110, 0.15)', color: '#ffc16e', borderColor: 'rgba(255, 193, 110, 0.35)', cursor: 'pointer' }}
+              onClick={() => onWatchVideo(selectedVideoId, currentVideo?.title || 'Video', 0)}
+              title="Open in-app video theater"
+            >
+              <Play size={12} fill="currentColor" />
+              <span>Watch In-App Theater</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -251,15 +275,22 @@ export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoDa
                     key={`${segment.startMs}-${index}`}
                     className={`${styles.segmentItem} ${isHook ? styles.highlightHook : ''}`}
                   >
-                    <a
-                      href={jumpUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (onWatchVideo) {
+                          onWatchVideo(selectedVideoId, currentVideo?.title || 'Video', seconds);
+                        } else {
+                          window.open(jumpUrl, '_blank', 'noopener,noreferrer');
+                        }
+                      }}
                       className={styles.timestamp}
-                      title={`Jump to ${segment.timestampText} in YouTube`}
+                      title={`Jump to ${segment.timestampText} in theater`}
+                      style={{ cursor: 'pointer', border: 'none', background: 'none' }}
                     >
+                      <Play size={10} fill="currentColor" style={{ marginRight: 4 }} />
                       {segment.timestampText}
-                    </a>
+                    </button>
                     <span className={styles.segmentText}>{segment.text}</span>
                   </div>
                 );
