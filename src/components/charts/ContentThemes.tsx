@@ -12,7 +12,7 @@ export const ContentThemes = ({ data }: { data: FullAnalysisResponse['chartData'
   const entries = data.labels.map((label, index) => ({ label, value: data.datasets[0]?.data[index] ?? 0 })).sort((a, b) => b.value - a.value);
   const grouped = entries.length > 5 ? [...entries.slice(0, 5), { label: 'Other themes', value: entries.slice(5).reduce((sum, entry) => sum + entry.value, 0) }] : entries;
   const chartData = { labels: grouped.map((entry) => entry.label), datasets: [{ data: grouped.map((entry) => entry.value), backgroundColor: grouped.map((_, index) => index === 0 ? chartColors.accent : chartColors.base), borderRadius: 3, maxBarThickness: 22 }] };
-  const options: ChartOptions<'bar'> = { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: (item) => `${item.raw}% of categorized uploads` } } }, scales: { x: { beginAtZero: true, max: 100, ticks: { callback: (value) => `${value}%` } }, y: { grid: { display: false } } } };
+  const options: ChartOptions<'bar'> = { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: false, plugins: { tooltip: { callbacks: { label: (item) => `${item.raw}% of categorized uploads` } } }, scales: { x: { beginAtZero: true, max: 100, ticks: { callback: (value) => `${value}%` } }, y: { grid: { display: false } } } };
   return (
     <ChartWrapper title="Topics in this sample" caption="AI-estimated share of categorized uploads—not share of views. Categories can be imperfect."
       emptyMessage={!grouped.length ? 'Topic classification is unavailable for this report.' : undefined}

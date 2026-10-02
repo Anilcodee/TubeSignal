@@ -13,7 +13,7 @@ export const ViewsDistribution = ({ data, medianViews }: { data: FullAnalysisRes
   const entries = data.labels.map((label, index) => ({ label, value: data.datasets[0]?.data[index] ?? 0 })).sort((a, b) => b.value - a.value).slice(0, 8);
   const chartData = { labels: entries.map((entry) => entry.label.length > 26 ? `${entry.label.slice(0, 25)}…` : entry.label), datasets: [{ data: entries.map((entry) => entry.value), backgroundColor: entries.map((entry) => medianViews > 0 && entry.value >= medianViews * 1.5 ? chartColors.accent : chartColors.base), borderRadius: 3, maxBarThickness: 22 }] };
   const options: ChartOptions<'bar'> = {
-    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false, indexAxis: 'y', animation: false,
     plugins: { tooltip: { callbacks: { title: (items) => entries[items[0]?.dataIndex]?.label || '', label: (item) => `${formatViews(Number(item.raw))} views` } } },
     scales: { x: { beginAtZero: true, ticks: { callback: (value) => formatViews(Number(value)), maxTicksLimit: 5 } }, y: { grid: { display: false }, ticks: { font: { size: 10 } } } },
   };

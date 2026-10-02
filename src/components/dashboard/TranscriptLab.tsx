@@ -15,6 +15,8 @@ interface TranscriptResponse {
   notice?: string;
 }
 
+const transcriptClientCache = new Map<string, TranscriptResponse>();
+
 export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoData[]; channelName: string; isDemo?: boolean }) => {
   // Sort videos by views descending, pick top candidates
   const topVideos = useMemo(() => {
@@ -37,6 +39,13 @@ export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoDa
 
   useEffect(() => {
     if (!selectedVideoId) return;
+
+    if (transcriptClientCache.has(selectedVideoId)) {
+      setData(transcriptClientCache.get(selectedVideoId)!);
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     setData(null);
@@ -49,6 +58,7 @@ export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoDa
       .then((res) => res.json())
       .then((resData: TranscriptResponse) => {
         if (!cancelled) {
+          transcriptClientCache.set(selectedVideoId, resData);
           setData(resData);
           setLoading(false);
         }

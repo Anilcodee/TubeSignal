@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serpApiService } from '@/services/serpapi';
 import { aiAnalyzerService } from '@/services/ai-analyzer';
+import { cacheService } from '@/services/cache';
 import { DataTransformerService } from '@/services/data-transformer';
 import { buildSampleAnalysis, resolveSampleName } from '@/services/sample-analysis';
 import { readRequestObject, ServiceError } from '@/services/request-guard';
@@ -37,6 +38,14 @@ export async function POST(request: NextRequest) {
       }
     }
     if (!channelId) throw new ServiceError(400, 'Enter a YouTube @handle, UC channel ID, or channel URL. Search by name to discover a channel, or choose a sample report.');
+
+    // 1. Cache hit check: Return instantly with 0 SerpApi/AI quota usage
+    const fullCacheKey = `full_analysis:${channelId.toLowerCase()}:${Boolean(body.isDemo)}`;
+    const cachedAnalysis = cacheService.get<FullAnalysisResponse>(fullCacheKey);
+    if (cachedAnalysis) {
+      return NextResponse.json(cachedAnalysis);
+    }
+
     if (!process.env.SERPAPI_API_KEY?.trim()) {
       throw new ServiceError(503, 'Live analysis is unavailable because SerpApi is not configured. Try the MKBHD, Fireship, or Veritasium sample report.');
     }
@@ -66,6 +75,8 @@ export async function POST(request: NextRequest) {
         notice: ['Observed public video sample, not the full channel history. Relative publication dates are approximate; lifetime views do not measure growth.', notice].filter(Boolean).join(' '),
       },
     };
+    // Cache the full assembled analysis for 1 hour to preserve API quota across refreshes & comparisons
+    cacheService.set(fullCacheKey, response, 60 * 60 * 1000);
     return NextResponse.json(response);
   } catch (error) {
     // Do not expose SDK errors, upstream payloads, or API-key-bearing URLs.

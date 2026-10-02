@@ -14,7 +14,7 @@ export const LengthVsViews = ({ data }: { data: FullAnalysisResponse['chartData'
   const maxViews = Math.max(0, ...points.map((point) => point.y));
   const chartData = { datasets: [{ data: points, backgroundColor: points.map((point) => point.y === maxViews ? chartColors.accent : chartColors.base), pointRadius: 5, pointHoverRadius: 7 }] };
   const options: ChartOptions<'scatter'> = {
-    responsive: true, maintainAspectRatio: false,
+    responsive: true, maintainAspectRatio: false, animation: false,
     plugins: { tooltip: { callbacks: { label: (item) => `${item.parsed.x} min · ${formatViews(Number(item.parsed.y ?? 0))} views` } } },
     scales: { x: { title: { display: true, text: 'Duration (minutes)' }, ticks: { maxTicksLimit: 6 } }, y: { beginAtZero: true, ticks: { callback: (value) => formatViews(Number(value)), maxTicksLimit: 5 } } },
   };

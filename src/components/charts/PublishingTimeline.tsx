@@ -12,7 +12,7 @@ export const PublishingTimeline = ({ data }: { data: FullAnalysisResponse['chart
   const values = data.datasets[0]?.data ?? [];
   const chartData = { labels: data.labels, datasets: [{ data: values, backgroundColor: chartColors.base, borderRadius: 3, maxBarThickness: 28 }] };
   const options: ChartOptions<'bar'> = {
-    responsive: true, maintainAspectRatio: false,
+    responsive: true, maintainAspectRatio: false, animation: false,
     plugins: { tooltip: { callbacks: { label: (item) => `${item.raw} uploads in this sample` } } },
     scales: { x: { grid: { display: false }, ticks: { maxRotation: 0, maxTicksLimit: 6 } }, y: { beginAtZero: true, ticks: { precision: 0 }, title: { display: true, text: 'Uploads' } } },
   };

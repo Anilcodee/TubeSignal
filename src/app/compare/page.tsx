@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { AlertCircle, ArrowLeft, ArrowRight, ArrowRightLeft, Award, Clock, ExternalLink, Eye, Flame, Loader2, Sparkles, TrendingUp, Users, Video } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
+import { getClientCachedAnalysis, setClientCachedAnalysis } from '@/hooks/useAnalysis';
 import styles from './page.module.css';
 
 interface ChannelComparisonState {
@@ -40,7 +41,6 @@ function CompareContent() {
 
   const runComparison = async (c1: string, c2: string, demo?: boolean) => {
     if (!c1.trim() || !c2.trim()) return;
-    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     const sampleList = ['mkbhd', 'fireship', 'veritasium'];
     const isSample1 = sampleList.includes(c1.trim().toLowerCase().replace(/^@/, ''));
@@ -48,28 +48,47 @@ function CompareContent() {
     const useDemo1 = demo !== undefined ? (demo && isSample1) : isSample1;
     const useDemo2 = demo !== undefined ? (demo && isSample2) : isSample2;
 
+    const cached1 = getClientCachedAnalysis(c1, useDemo1);
+    const cached2 = getClientCachedAnalysis(c2, useDemo2);
+
+    if (cached1 && cached2) {
+      setState({
+        c1Data: cached1,
+        c2Data: cached2,
+        loading: false,
+        error: null,
+      });
+      return;
+    }
+
+    setState((prev) => ({ ...prev, loading: true, error: null }));
+
     try {
-      const [res1, res2] = await Promise.all([
-        fetch('/api/analyze', {
+      const fetchC1 = cached1 ? Promise.resolve(cached1) : (async () => {
+        const res = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ channelId: c1.trim(), isDemo: useDemo1 }),
-        }),
-        fetch('/api/analyze', {
+        });
+        const d = await res.json();
+        if (!res.ok || d.error) throw new Error(d.error || `Could not load data for ${c1}`);
+        setClientCachedAnalysis(c1, useDemo1, d);
+        return d as FullAnalysisResponse;
+      })();
+
+      const fetchC2 = cached2 ? Promise.resolve(cached2) : (async () => {
+        const res = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ channelId: c2.trim(), isDemo: useDemo2 }),
-        }),
-      ]);
+        });
+        const d = await res.json();
+        if (!res.ok || d.error) throw new Error(d.error || `Could not load data for ${c2}`);
+        setClientCachedAnalysis(c2, useDemo2, d);
+        return d as FullAnalysisResponse;
+      })();
 
-      const [data1, data2] = await Promise.all([res1.json(), res2.json()]);
-
-      if (!res1.ok || data1.error) {
-        throw new Error(data1.error || `Could not load data for ${c1}`);
-      }
-      if (!res2.ok || data2.error) {
-        throw new Error(data2.error || `Could not load data for ${c2}`);
-      }
+      const [data1, data2] = await Promise.all([fetchC1, fetchC2]);
 
       setState({
         c1Data: data1,
