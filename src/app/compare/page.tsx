@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { AlertCircle, ArrowLeft, ArrowRight, ArrowRightLeft, Award, Clock, ExternalLink, Eye, Flame, Loader2, Sparkles, TrendingUp, Users, Video } from 'lucide-react';
+import { AlertCircle, ArrowRightLeft, Award, Clock, ExternalLink, Eye, Flame, Loader2, Sparkles, TrendingUp, Users, Video } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
 import { getClientCachedAnalysis, setClientCachedAnalysis } from '@/hooks/useAnalysis';

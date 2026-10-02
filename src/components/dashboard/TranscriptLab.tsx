@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Check, Copy, ExternalLink, FileText, Loader2, MessageSquare, Mic, Search, Sparkles, Zap } from 'lucide-react';
+import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Search, Sparkles, Zap } from 'lucide-react';
 import type { VideoData } from '@/types/analysis';
 import type { HookAnalysis } from '@/utils/transcript-analyzer';
 import styles from './TranscriptLab.module.css';
@@ -24,56 +24,66 @@ export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoDa
   }, [videos]);
 
   const [selectedVideoId, setSelectedVideoId] = useState<string>(topVideos[0]?.videoId || '');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<TranscriptResponse | null>(null);
+  const activeVideoId = (selectedVideoId && topVideos.some((v) => v.videoId === selectedVideoId))
+    ? selectedVideoId
+    : (topVideos[0]?.videoId || '');
+
+  const [loading, setLoading] = useState<boolean>(() => !transcriptClientCache.has(activeVideoId));
+  const [data, setData] = useState<TranscriptResponse | null>(() => transcriptClientCache.get(activeVideoId) ?? null);
   const [copied, setCopied] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const currentVideo = topVideos.find((v) => v.videoId === selectedVideoId) || topVideos[0];
+  const currentVideo = topVideos.find((v) => v.videoId === activeVideoId) || topVideos[0];
 
   useEffect(() => {
-    if (topVideos[0]?.videoId && (!selectedVideoId || !topVideos.some((v) => v.videoId === selectedVideoId))) {
-      setSelectedVideoId(topVideos[0].videoId);
-    }
-  }, [topVideos, selectedVideoId]);
-
-  useEffect(() => {
-    if (!selectedVideoId) return;
-
-    if (transcriptClientCache.has(selectedVideoId)) {
-      setData(transcriptClientCache.get(selectedVideoId)!);
-      setLoading(false);
-      return;
-    }
+    if (!activeVideoId) return;
 
     let cancelled = false;
-    setLoading(true);
-    setData(null);
-
-    fetch('/api/transcript', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ videoId: selectedVideoId, isDemo }),
-    })
-      .then((res) => res.json())
-      .then((resData: TranscriptResponse) => {
+    const cached = transcriptClientCache.get(activeVideoId);
+    if (cached) {
+      queueMicrotask(() => {
         if (!cancelled) {
-          transcriptClientCache.set(selectedVideoId, resData);
-          setData(resData);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setData({ success: false, error: err.message || 'Failed to load transcript.' });
+          setData(cached);
           setLoading(false);
         }
       });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const runFetch = async () => {
+      await Promise.resolve();
+      if (cancelled) return;
+      setLoading(true);
+      setData(null);
+
+      try {
+        const res = await fetch('/api/transcript', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ videoId: activeVideoId, isDemo }),
+        });
+        const resData = (await res.json()) as TranscriptResponse;
+        if (!cancelled) {
+          transcriptClientCache.set(activeVideoId, resData);
+          setData(resData);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setData({ success: false, error: err instanceof Error ? err.message : 'Failed to load transcript.' });
+          setLoading(false);
+        }
+      }
+    };
+
+    void runFetch();
 
     return () => {
       cancelled = true;
     };
-  }, [selectedVideoId, isDemo]);
+  }, [activeVideoId, isDemo]);
 
   const handleCopyTranscript = () => {
     if (!data?.analysis?.fullTranscriptText) return;
@@ -82,12 +92,13 @@ export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoDa
     setTimeout(() => setCopied(false), 2500);
   };
 
+  const segments = data?.analysis?.segments;
   const filteredSegments = useMemo(() => {
-    if (!data?.analysis?.segments) return [];
-    if (!searchQuery.trim()) return data.analysis.segments;
+    if (!segments) return [];
+    if (!searchQuery.trim()) return segments;
     const q = searchQuery.toLowerCase();
-    return data.analysis.segments.filter((s) => s.text.toLowerCase().includes(q));
-  }, [data?.analysis?.segments, searchQuery]);
+    return segments.filter((s) => s.text.toLowerCase().includes(q));
+  }, [segments, searchQuery]);
 
   if (topVideos.length === 0) {
     return null;

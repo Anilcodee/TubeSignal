@@ -59,13 +59,9 @@ export function useAnalysis(channelId: string, isDemo = false) {
   const key = JSON.stringify([channelId, isDemo, attempt]);
 
   useEffect(() => {
-    // If not forced refresh (attempt === 0) and we already have cached data, don't make network call!
-    if (attempt === 0) {
-      const cached = getClientCachedAnalysis(channelId, isDemo);
-      if (cached) {
-        setResult({ key, data: cached, error: null });
-        return;
-      }
+    // If not forced refresh (attempt === 0) and we already have cached data, state was already initialized.
+    if (attempt === 0 && getClientCachedAnalysis(channelId, isDemo)) {
+      return;
     }
 
     const controller = new AbortController();
