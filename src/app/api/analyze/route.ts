@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       if (sample) {
         return NextResponse.json(buildSampleAnalysis(sample));
       }
-      // If channel is not one of the sample fixtures, proceed to live analysis
+      throw new ServiceError(404, 'This sample report is not available. Try the MKBHD, Fireship, or Veritasium sample report.');
     }
 
     let channelId = normalizeChannelInput(body.channelId);

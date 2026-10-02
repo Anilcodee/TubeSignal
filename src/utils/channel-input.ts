@@ -8,10 +8,6 @@ export function normalizeChannelInput(raw: string): string | null {
   if (!input || input.length > 512 || /[\\\u0000-\u001f\u007f]/.test(input)) return null;
   if (CHANNEL_ID.test(input)) return input;
   if (HANDLE.test(input) && !input.includes('..')) return input;
-  // If user entered a plain handle without @ (e.g. "mkbhd", "veritasium"), normalize to @handle
-  if (!input.includes('/') && !input.includes(' ') && !input.includes('?') && HANDLE.test(`@${input}`) && !input.includes('..')) {
-    return `@${input}`;
-  }
 
   try {
     const candidate = /^(?:www\.|m\.)?youtube\.com\//i.test(input) ? `https://${input}` : input;
