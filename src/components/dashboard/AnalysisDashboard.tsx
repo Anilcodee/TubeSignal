@@ -15,7 +15,7 @@ import { ContentThemes } from '@/components/charts/ContentThemes';
 import { ViewsDistribution } from '@/components/charts/ViewsDistribution';
 import { PublishingTimeline } from '@/components/charts/PublishingTimeline';
 import { LengthVsViews } from '@/components/charts/LengthVsViews';
-import { VideoPlayerModal } from './VideoPlayerModal';
+import { InPageVideoTheater } from './InPageVideoTheater';
 import { GrowthPlaybook } from './GrowthPlaybook';
 import Loading from '@/app/analyze/[channelId]/loading';
 import styles from '@/app/analyze/[channelId]/page.module.css';
@@ -134,16 +134,22 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           </>}
           {data.videos.length === 0 && <section className={styles.emptyPanel}><h2>No public uploads were returned</h2><p>There isn’t enough data to compare videos. Try another channel or return later.</p><Link href="/" className={styles.backLink}><ArrowLeft size={13} /> Find another creator</Link></section>}
         </div>
-        <details className={styles.methodNote}><summary>What this report can (and can’t) tell you</summary><p>Comparisons apply only to these {data.videos.length} uploads. Views are not adjusted for video age. Public metadata cannot establish retention, click-through rate, revenue, or why a video performed well. {data.meta.analysisSource === 'gemini' ? 'Gemini suggestions are interpretations, not proven causes.' : 'This report uses calculated observations, not an AI-generated analysis.'}</p></details>
-
         {activeModalVideo && (
-          <VideoPlayerModal
+          <InPageVideoTheater
             videoId={activeModalVideo.videoId}
             videoTitle={activeModalVideo.title}
             initialSeconds={activeModalVideo.initialSeconds || 0}
             onClose={() => setActiveModalVideo(null)}
           />
         )}
+        <details className={styles.methodNote}>
+          <summary>ℹ️ How TubeSignal Analyzes Public Channel Data</summary>
+          <p>
+            This report analyzes the latest <strong>{data.videos.length} public uploads</strong> to extract packaging, duration, and publishing patterns.
+            Public YouTube metadata reflects observable cumulative views and release dates; private internal metrics like retention curve drop-offs and revenue remain protected in YouTube Studio.
+            {data.meta.analysisSource === 'gemini' ? ' Narrative insights are synthesized by Gemini AI.' : ' Insights are generated via deterministic calculations.'}
+          </p>
+        </details>
       </div>
     </div>
   );

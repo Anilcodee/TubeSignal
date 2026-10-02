@@ -1,5 +1,8 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
-import { ArrowUpRight, Eye, Play, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Eye, Play, Sparkles, X, Zap } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
 import styles from './Verdict.module.css';
@@ -12,6 +15,9 @@ export const Verdict = ({
   onWatchVideo?: (videoId: string, title: string) => void;
 }) => {
   const { videos, analytics, aiAnalysis, meta } = data;
+  const [isPlayingInline, setIsPlayingInline] = useState(false);
+  const [seekSecond, setSeekSecond] = useState(0);
+
   const observed = videos.filter((video) => video.viewsAvailable !== false && Number.isFinite(video.views) && video.views >= 0);
   const top = [...observed].sort((a, b) => b.views - a.views)[0];
   const ratio = top && analytics.medianViews > 0 ? top.views / analytics.medianViews : null;
@@ -21,6 +27,14 @@ export const Verdict = ({
   const headline = hasComparison
     ? <>The top upload gets <em>{ratio.toFixed(1)}×</em> the typical views.</>
     : top ? <>Every channel has a story.<br /><em>Start with this upload.</em></> : <>Your channel,<br /><em>in perspective.</em></>;
+
+  const handleStartInlinePlay = () => {
+    setIsPlayingInline(true);
+    if (onWatchVideo && top) {
+      onWatchVideo(top.videoId, top.title);
+    }
+  };
+
   return (
     <section className={styles.verdict} aria-label="Your 60-second brief">
       <div className={styles.content}>
@@ -33,23 +47,79 @@ export const Verdict = ({
         </details>
         <div className={styles.meta}><span className={styles.metaDot} /> {videos.length} uploads in this report<span aria-hidden="true">/</span><span>Cumulative views, not growth</span></div>
       </div>
+
       {top && <div className={styles.spotlight}>
-        <div className={styles.spotlightLabel}><span>THE STANDOUT UPLOAD</span><ArrowUpRight size={15} /></div>
-        <div className={styles.videoArt} aria-hidden="true">
-          <div className={styles.artGrid} /><Play size={25} className={styles.playIcon} fill="currentColor" />
-          {!isSample && top.thumbnail && <Image unoptimized src={top.thumbnail} fill sizes="320px" alt="" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}
-          <span className={styles.duration}>{top.lengthSeconds > 0 ? top.length : 'Video'}</span>
+        <div className={styles.spotlightLabel}>
+          <span>THE STANDOUT UPLOAD</span>
+          <ArrowUpRight size={15} />
         </div>
+
+        {isPlayingInline ? (
+          <div className={styles.inlinePlayerBox}>
+            <div className={styles.inlinePlayerWrapper}>
+              <iframe
+                key={`${top.videoId}-${seekSecond}`}
+                className={styles.inlineIframe}
+                src={`https://www.youtube-nocookie.com/embed/${top.videoId}?autoplay=1&start=${seekSecond}&rel=0&modestbranding=1`}
+                title={top.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <div className={styles.inlineControls}>
+              <div className={styles.jumpRow}>
+                <span className={styles.jumpLabel}><Zap size={11} /> Jump:</span>
+                <button type="button" className={styles.jumpPill} onClick={() => setSeekSecond(0)}>0:00 Hook</button>
+                <button type="button" className={styles.jumpPill} onClick={() => setSeekSecond(15)}>0:15 Promise</button>
+                <button type="button" className={styles.jumpPill} onClick={() => setSeekSecond(35)}>0:35 Core</button>
+              </div>
+              <button
+                type="button"
+                className={styles.closePlayerBtn}
+                onClick={() => setIsPlayingInline(false)}
+              >
+                <X size={12} /> Hide Player
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div
+            className={styles.videoArt}
+            aria-hidden="true"
+            onClick={handleStartInlinePlay}
+            style={{ cursor: 'pointer' }}
+            title="Click to play in-page"
+          >
+            <div className={styles.artGrid} />
+            <Play size={25} className={styles.playIcon} fill="currentColor" />
+            {!isSample && top.thumbnail && (
+              <Image
+                unoptimized
+                src={top.thumbnail}
+                fill
+                sizes="320px"
+                alt=""
+                onError={(event) => { event.currentTarget.style.display = 'none'; }}
+              />
+            )}
+            <span className={styles.duration}>{top.lengthSeconds > 0 ? top.length : 'Video'}</span>
+          </div>
+        )}
+
         <h3>{top.title}</h3>
-        <div className={styles.spotlightStats}><span><Eye size={14} /> {formatViews(top.views)} views</span>{share !== null && <span>{share}% of total</span>}</div>
+        <div className={styles.spotlightStats}>
+          <span><Eye size={14} /> {formatViews(top.views)} views</span>
+          {share !== null && <span>{share}% of total</span>}
+        </div>
         <p className={styles.scope}>Highest views among these uploads · not age-adjusted</p>
-        {onWatchVideo && (
+
+        {!isPlayingInline && (
           <button
             type="button"
             className={styles.watchBtn}
-            onClick={() => onWatchVideo(top.videoId, top.title)}
+            onClick={handleStartInlinePlay}
           >
-            <Play size={12} fill="currentColor" /> Watch & Dissect In-App
+            <Play size={12} fill="currentColor" /> Watch In-Page
           </button>
         )}
       </div>}

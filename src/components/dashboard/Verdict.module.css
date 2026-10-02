@@ -24,5 +24,15 @@
 .scope { font-size: .59rem; color: var(--text-3); margin-top: var(--s-2); line-height: 1.6; }
 .watchBtn { display: inline-flex; align-items: center; gap: var(--s-2); width: 100%; justify-content: center; margin-top: var(--s-3); padding: 0.45rem 0.75rem; font-size: 0.72rem; font-weight: 600; color: #121518; background: var(--accent); border: 1px solid var(--accent); border-radius: var(--r-control, 0.4rem); cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 .watchBtn:hover { background: var(--color-accent-hover, #ffce8a); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255, 193, 110, 0.35); }
+.inlinePlayerBox { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; animation: fadeIn 0.3s ease-out; }
+.inlinePlayerWrapper { position: relative; width: 100%; padding-top: 56.25%; border-radius: 0.5rem; overflow: hidden; background: #000; border: 1px solid var(--accent-line); }
+.inlineIframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.inlineControls { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.4rem; background: rgba(255, 255, 255, 0.03); border-radius: 0.4rem; }
+.jumpRow { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+.jumpLabel { font-size: 0.65rem; color: var(--text-3); display: inline-flex; align-items: center; gap: 0.2rem; }
+.jumpPill { font-size: 0.62rem; padding: 0.2rem 0.45rem; border-radius: 0.3rem; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-2); cursor: pointer; transition: all 0.15s ease; }
+.jumpPill:hover { background: rgba(255, 193, 110, 0.15); color: var(--accent); border-color: var(--accent-line); }
+.closePlayerBtn { align-self: flex-end; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.62rem; color: var(--text-3); background: none; border: none; cursor: pointer; padding: 0.2rem 0.3rem; transition: color 0.15s ease; }
+.closePlayerBtn:hover { color: #ef4444; }
 @media (max-width: 760px) { .verdict { grid-template-columns: minmax(0, 1fr); padding: var(--s-5); gap: var(--s-6); } .headline { max-width: 25ch; } .spotlight { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: var(--s-2) var(--s-3); } .spotlightLabel { grid-column: 1 / -1; margin: 0 0 var(--s-1); } .videoArt { grid-row: 2 / 5; height: 100%; min-height: 5rem; } .spotlight h3, .spotlightStats, .scope { margin: 0; } .spotlightStats { font-size: .65rem; } }
 @media print { .verdict { break-inside: avoid; } .summary > p { display: block; } }

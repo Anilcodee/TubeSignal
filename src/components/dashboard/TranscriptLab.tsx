@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Play, Search, Sparkles, Zap } from 'lucide-react';
+import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Play, Search, Sparkles, X, Zap } from 'lucide-react';
 import type { VideoData } from '@/types/analysis';
 import type { HookAnalysis } from '@/utils/transcript-analyzer';
 import styles from './TranscriptLab.module.css';
@@ -42,6 +42,8 @@ export const TranscriptLab = ({
   const [data, setData] = useState<TranscriptResponse | null>(() => transcriptClientCache.get(activeVideoId) ?? null);
   const [copied, setCopied] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isPlayingInline, setIsPlayingInline] = useState<boolean>(false);
+  const [inlineSecond, setInlineSecond] = useState<number>(0);
 
   const currentVideo = topVideos.find((v) => v.videoId === activeVideoId) || topVideos[0];
 
@@ -129,18 +131,26 @@ export const TranscriptLab = ({
             <Mic size={13} />
             <span>SerpApi youtube_video_transcript</span>
           </div>
-          {onWatchVideo && (
-            <button
-              type="button"
-              className={styles.copyBtn}
-              style={{ background: 'rgba(255, 193, 110, 0.15)', color: '#ffc16e', borderColor: 'rgba(255, 193, 110, 0.35)', cursor: 'pointer' }}
-              onClick={() => onWatchVideo(selectedVideoId, currentVideo?.title || 'Video', 0)}
-              title="Open in-app video theater"
-            >
-              <Play size={12} fill="currentColor" />
-              <span>Watch In-App Theater</span>
-            </button>
-          )}
+          <button
+            type="button"
+            className={styles.copyBtn}
+            style={{
+              background: isPlayingInline ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 193, 110, 0.15)',
+              color: isPlayingInline ? '#ef4444' : '#ffc16e',
+              borderColor: isPlayingInline ? 'rgba(239, 68, 68, 0.35)' : 'rgba(255, 193, 110, 0.35)',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              setIsPlayingInline((prev) => !prev);
+              if (!isPlayingInline && onWatchVideo) {
+                onWatchVideo(selectedVideoId, currentVideo?.title || 'Video', inlineSecond);
+              }
+            }}
+            title="Toggle in-page video playback"
+          >
+            <Play size={12} fill="currentColor" />
+            <span>{isPlayingInline ? 'Hide In-Page Video' : 'Watch In-Page Video'}</span>
+          </button>
         </div>
       </div>
 
@@ -151,7 +161,10 @@ export const TranscriptLab = ({
             key={video.videoId}
             type="button"
             className={`${styles.videoChip} ${video.videoId === selectedVideoId ? styles.activeChip : ''}`}
-            onClick={() => setSelectedVideoId(video.videoId)}
+            onClick={() => {
+              setSelectedVideoId(video.videoId);
+              setInlineSecond(0);
+            }}
             title={video.title}
           >
             <span>#{idx + 1}</span>
@@ -160,6 +173,34 @@ export const TranscriptLab = ({
           </button>
         ))}
       </div>
+
+      {/* Inline In-Page Video Player */}
+      {isPlayingInline && activeVideoId && (
+        <div className={styles.inlinePlayerContainer}>
+          <div className={styles.inlinePlayerHeader}>
+            <span className={styles.inlinePlayerTitle}>
+              <Play size={12} fill="currentColor" /> Playing in-page: {currentVideo?.title}
+            </span>
+            <button
+              type="button"
+              className={styles.inlineCloseBtn}
+              onClick={() => setIsPlayingInline(false)}
+            >
+              <X size={13} /> Hide player
+            </button>
+          </div>
+          <div className={styles.inlineIframeWrapper}>
+            <iframe
+              key={`${activeVideoId}-${inlineSecond}`}
+              className={styles.inlineIframe}
+              src={`https://www.youtube-nocookie.com/embed/${activeVideoId}?autoplay=1&start=${inlineSecond}&rel=0&modestbranding=1`}
+              title={currentVideo?.title || 'Video'}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
 
       {loading && (
         <div className={styles.loadingBox}>
@@ -268,7 +309,6 @@ export const TranscriptLab = ({
               {filteredSegments.map((segment, index) => {
                 const isHook = segment.startMs <= 40_000;
                 const seconds = Math.floor(segment.startMs / 1000);
-                const jumpUrl = currentVideo?.url ? `${currentVideo.url}&t=${seconds}s` : `https://www.youtube.com/watch?v=${selectedVideoId}&t=${seconds}s`;
 
                 return (
                   <div
@@ -278,14 +318,14 @@ export const TranscriptLab = ({
                     <button
                       type="button"
                       onClick={() => {
+                        setInlineSecond(seconds);
+                        setIsPlayingInline(true);
                         if (onWatchVideo) {
                           onWatchVideo(selectedVideoId, currentVideo?.title || 'Video', seconds);
-                        } else {
-                          window.open(jumpUrl, '_blank', 'noopener,noreferrer');
                         }
                       }}
                       className={styles.timestamp}
-                      title={`Jump to ${segment.timestampText} in theater`}
+                      title={`Play at ${segment.timestampText} in-page`}
                       style={{ cursor: 'pointer', border: 'none', background: 'none' }}
                     >
                       <Play size={10} fill="currentColor" style={{ marginRight: 4 }} />
