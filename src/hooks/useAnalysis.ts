@@ -68,7 +68,6 @@ export function useAnalysis(channelId: string, isDemo = false) {
     }
 
     const controller = new AbortController();
-    let disposed = false;
     const timeout = setTimeout(() => controller.abort(), 65000);
     const load = async () => {
       try {
