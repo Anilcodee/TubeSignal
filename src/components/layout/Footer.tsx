@@ -82,21 +82,15 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/analyze/%40marvel?demo=true" className={styles.link}>
-                  <span>Marvel Entertainment</span>
-                  <small className={styles.subtext}>Studios</small>
+                <Link href="/analyze/fireship?demo=true" className={styles.link}>
+                  <span>Fireship</span>
+                  <small className={styles.subtext}>Code & Fast Takes</small>
                 </Link>
               </li>
               <li>
                 <Link href="/analyze/veritasium?demo=true" className={styles.link}>
                   <span>Veritasium</span>
-                  <small className={styles.subtext}>Education</small>
-                </Link>
-              </li>
-              <li>
-                <Link href="/analyze/mrbeast?demo=true" className={styles.link}>
-                  <span>MrBeast</span>
-                  <small className={styles.subtext}>Viral Format</small>
+                  <small className={styles.subtext}>Science & Education</small>
                 </Link>
               </li>
             </ul>
