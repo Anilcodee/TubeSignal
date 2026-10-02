@@ -39,6 +39,7 @@ export const TranscriptLab = ({ videos, channelName, isDemo }: { videos: VideoDa
     if (!selectedVideoId) return;
     let cancelled = false;
     setLoading(true);
+    setData(null);
 
     fetch('/api/transcript', {
       method: 'POST',
