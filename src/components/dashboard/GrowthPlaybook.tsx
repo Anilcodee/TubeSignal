@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { 
   Clock, 
@@ -10,8 +10,7 @@ import {
   Check, 
   Flame, 
   TrendingUp, 
-  ArrowRight,
-  Info
+  ArrowRight
 } from 'lucide-react';
 import type { VideoData, AIAnalysis } from '@/types/analysis';
 import { analyzeChannelGrowth } from '@/utils/growth-analyzer';
@@ -25,7 +24,6 @@ interface GrowthPlaybookProps {
 
 export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybookProps) => {
   const [copiedTopic, setCopiedTopic] = useState<string | null>(null);
-  const [activeFormulaTooltip, setActiveFormulaTooltip] = useState<string | null>(null);
 
   const insights = analyzeChannelGrowth(videos, medianViews, aiAnalysis);
 
@@ -226,14 +224,11 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
           <div className={styles.formulaRankList}>
             {activeFormulas.map((formula) => {
               const color = formula.accentColor;
-              const isHovered = activeFormulaTooltip === formula.id;
 
               return (
                 <div 
                   key={formula.id} 
                   className={styles.formulaItem}
-                  onMouseEnter={() => setActiveFormulaTooltip(formula.id)}
-                  onMouseLeave={() => setActiveFormulaTooltip(null)}
                 >
                   <div className={styles.formulaItemHeader}>
                     <span className={styles.formulaBadge} style={{ color, borderColor: color, background: `${color}18` }}>
