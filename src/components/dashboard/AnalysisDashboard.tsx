@@ -109,7 +109,11 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           </>}
           {activeTab === 'patterns' && <>
             <div className={styles.viewHeading}><span>CONNECT THE DOTS</span><h2>A closer look at the craft.</h2><p>How this channel packages and publishes its content.</p></div>
-            <TitleLab patterns={data.aiAnalysis.titlePatterns} />
+            <TitleLab
+              patterns={data.aiAnalysis.titlePatterns}
+              videos={data.videos}
+              medianViews={data.analytics.medianViews}
+            />
             <div className={styles.chartGrid}><LengthVsViews data={data.chartData.lengthVsViews} /><PublishingTimeline data={data.chartData.publishingTimeline} /></div>
             {data.aiAnalysis.contentThemes.length > 0 && <ContentThemes data={data.chartData.contentThemes} />}
           </>}

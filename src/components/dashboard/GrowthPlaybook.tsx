@@ -169,7 +169,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               </div>
             </div>
             <span className={styles.peakDayTag}>
-              Peak: {insights.peakPublishingDay}
+              Peak: {insights.peakPublishingDay} {insights.peakLiftMultiplier > 1 ? `(${insights.peakLiftMultiplier}× lift)` : ''}
             </span>
           </div>
 
@@ -182,6 +182,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                 <div
                   key={day.shortName}
                   className={`${styles.dayCol} ${day.isPeak ? styles.dayColPeak : ''}`}
+                  title={`${day.dayName}: ${day.videoCount} uploads, ${day.liftMultiplier}× median views`}
                 >
                   <div className={styles.dayBarContainer}>
                     <div
@@ -192,7 +193,9 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                   <span className={`${styles.dayLabel} ${day.isPeak ? styles.dayLabelPeak : ''}`}>
                     {day.shortName}
                   </span>
-                  <span className={styles.dayCount}>{day.videoCount}v</span>
+                  <span className={styles.dayCount}>
+                    {day.videoCount > 0 ? `${day.liftMultiplier}×` : '0v'}
+                  </span>
                 </div>
               );
             })}
@@ -202,7 +205,8 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
           <div className={styles.recommendedWindow}>
             <Clock size={14} />
             <span>
-              Recommended Window: <strong>{insights.peakPublishingDay}s between 2:00 PM – 5:00 PM EST</strong> for pre-evening traffic buildup.
+              Recommended Window: <strong>{insights.peakPublishingDay}s between 2:00 PM – 5:00 PM EST</strong>
+              {insights.peakLiftMultiplier > 1 ? ` (${Math.round((insights.peakLiftMultiplier - 1) * 100)}% lift over channel baseline)` : ''} for pre-evening traffic buildup.
             </span>
           </div>
         </div>

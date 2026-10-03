@@ -33,6 +33,8 @@ export interface PublishingDayInsight {
   standoutCount: number; // videos >= median
   winRate: number; // percentage
   isPeak: boolean;
+  meanViews: number;
+  liftMultiplier: number; // vs channel median
 }
 
 export interface AudiencePulse {
@@ -50,6 +52,7 @@ export interface ChannelGrowthInsights {
   topFormula: TitleFormula | null;
   publishingDays: PublishingDayInsight[];
   peakPublishingDay: string;
+  peakLiftMultiplier: number;
   audiencePulse: AudiencePulse;
 }
 
@@ -217,7 +220,7 @@ export function analyzeChannelGrowth(
   const daysMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  const dayCounts = Array.from({ length: 7 }, () => ({ total: 0, standouts: 0 }));
+  const dayCounts = Array.from({ length: 7 }, () => ({ total: 0, standouts: 0, viewsSum: 0 }));
 
   validVideos.forEach((v) => {
     // If published date is parseable
@@ -225,6 +228,7 @@ export function analyzeChannelGrowth(
     if (!isNaN(d.getTime())) {
       const dayIndex = d.getUTCDay();
       dayCounts[dayIndex].total++;
+      dayCounts[dayIndex].viewsSum += v.views;
       if (v.views >= baselineMedian) {
         dayCounts[dayIndex].standouts++;
       }
@@ -238,33 +242,43 @@ export function analyzeChannelGrowth(
       // Simulate natural weekly spread (e.g., tech channels favour Tue/Thu/Sun)
       const dayIndex = [4, 2, 0, 5, 3, 1, 6][index % 7];
       dayCounts[dayIndex].total++;
+      dayCounts[dayIndex].viewsSum += v.views;
       if (v.views >= baselineMedian) dayCounts[dayIndex].standouts++;
     });
   }
 
-  let peakDayIndex = 0;
-  let maxStandouts = -1;
-
   const publishingDays: PublishingDayInsight[] = dayCounts.map((item, idx) => {
     const winRate = item.total ? Math.round((item.standouts / item.total) * 100) : 0;
-    if (item.standouts > maxStandouts) {
-      maxStandouts = item.standouts;
-      peakDayIndex = idx;
-    }
+    const meanViews = item.total ? Math.round(item.viewsSum / item.total) : 0;
+    const liftMultiplier = Number((meanViews / baselineMedian).toFixed(1));
     return {
       dayName: daysMap[idx],
       shortName: shortDays[idx],
       videoCount: item.total,
       standoutCount: item.standouts,
       winRate,
+      meanViews,
+      liftMultiplier,
       isPeak: false,
     };
+  });
+
+  let peakDayIndex = 0;
+  let maxScore = -1;
+  publishingDays.forEach((d, idx) => {
+    const score = d.videoCount > 0 ? d.liftMultiplier * 10 + d.standoutCount : 0;
+    if (score > maxScore) {
+      maxScore = score;
+      peakDayIndex = idx;
+    }
   });
 
   if (publishingDays[peakDayIndex]) {
     publishingDays[peakDayIndex].isPeak = true;
   }
-  const peakPublishingDay = publishingDays[peakDayIndex]?.dayName || 'Thursday';
+  const peakDayObj = publishingDays[peakDayIndex];
+  const peakPublishingDay = peakDayObj?.dayName || 'Thursday';
+  const peakLiftMultiplier = peakDayObj?.liftMultiplier || 1.0;
 
   // ── 4. Audience Voice & Comment Sentiment Pulse ──
   const topUpload = [...validVideos].sort((a, b) => b.views - a.views)[0];
@@ -336,6 +350,7 @@ export function analyzeChannelGrowth(
     topFormula,
     publishingDays,
     peakPublishingDay,
+    peakLiftMultiplier,
     audiencePulse: {
       sentimentScore,
       praisePoints,

@@ -1,7 +1,12 @@
 .tablePanel { min-width: 0; padding: var(--s-5); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--r-panel); }
-.panelHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-5); }
+.panelHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-5); flex-wrap: wrap; }
 .panelHeader h3 { font-size: 15px; font-weight: 500; line-height: 1.5; }
 .panelHeader p { font-size: 12px; color: var(--text-3); line-height: 1.6; margin-top: var(--s-1); }
+.headerControls { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.sortToggleGroup { display: inline-flex; padding: 2px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-control, 0.4rem); }
+.sortBtn { display: inline-flex; align-items: center; gap: 4px; padding: 0.25rem 0.55rem; font-size: 11px; font-weight: 500; color: var(--text-3); background: transparent; border: none; border-radius: calc(var(--r-control, 0.4rem) - 2px); cursor: pointer; transition: all 0.15s ease; }
+.sortBtn:hover { color: var(--text); }
+.sortBtnActive { background: var(--surface-1); color: var(--accent); font-weight: 600; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25); }
 .sampleLabel { font-size: 11px; color: var(--text-3); white-space: nowrap; }
 .tableWrapper { width: 100%; overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; table-layout: auto; text-align: left; }
@@ -19,8 +24,10 @@
 .title { color: var(--text); font-size: 13px; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
 a.title:hover { color: var(--accent); }
 .title svg { display: inline; margin-left: 5px; color: var(--text-3); }
-.videoMeta { color: var(--text-3); font-size: 11px; line-height: 1.5; }
+.videoMeta { color: var(--text-3); font-size: 11px; line-height: 1.5; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.breakoutBadge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; color: #ff9800; background: rgba(255, 152, 0, 0.12); border: 1px solid rgba(255, 152, 0, 0.35); padding: 1px 5px; border-radius: 4px; letter-spacing: 0.02em; }
 .numeric { text-align: right; white-space: nowrap; font-family: var(--font-mono); }
+.velocityVal { color: #ffc16e; display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-mono); font-size: 12px; }
 .positive { color: var(--positive); }
 .neutral { color: var(--text-2); }
 .empty { padding: var(--s-6); color: var(--text-3); font-size: 13px; text-align: center; }
