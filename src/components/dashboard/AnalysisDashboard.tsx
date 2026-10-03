@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, ArrowLeft, ArrowRight, ChartNoAxesCombined, ChevronDown, Info, LayoutGrid, Mic, Play, RefreshCw, TrendingUp } from 'lucide-react';
 import { useAnalysis } from '@/hooks/useAnalysis';
 import { ChannelOverview } from './ChannelOverview';
@@ -90,8 +91,20 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           </div>
           <span className={styles.tabHint}>The overview first. The details when you need them.</span>
         </div>
-        <div key={activeTab} id={`panel-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`} tabIndex={0} className={styles.view}>
-          {activeTab === 'overview' && <>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={activeTab} 
+            id={`panel-${activeTab}`} 
+            role="tabpanel" 
+            aria-labelledby={`tab-${activeTab}`} 
+            tabIndex={0} 
+            className={styles.view}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+          >
+            {activeTab === 'overview' && <>
             <Verdict
               data={data}
               onPlayStart={() => setActiveModalVideo(null)}
@@ -144,8 +157,9 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
               }
             />
           </>}
-          {data.videos.length === 0 && <section className={styles.emptyPanel}><h2>No public uploads were returned</h2><p>There isn’t enough data to compare videos. Try another channel or return later.</p><Link href="/" className={styles.backLink}><ArrowLeft size={13} /> Find another creator</Link></section>}
-        </div>
+            {data.videos.length === 0 && <section className={styles.emptyPanel}><h2>No public uploads were returned</h2><p>There isn’t enough data to compare videos. Try another channel or return later.</p><Link href="/" className={styles.backLink}><ArrowLeft size={13} /> Find another creator</Link></section>}
+          </motion.div>
+        </AnimatePresence>
         <details className={styles.methodNote}>
           <summary>ℹ️ How TubeSignal Analyzes Public Channel Data</summary>
           <p>

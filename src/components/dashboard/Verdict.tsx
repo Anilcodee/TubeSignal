@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, Eye, Pause, Play, Sparkles, X, Zap } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
@@ -102,18 +103,31 @@ export const Verdict = ({
 
   return (
     <section className={styles.verdict} aria-label="Your 60-second brief">
-      <div className={styles.content}>
-        <div className={styles.tag}><Sparkles size={14} /><span>YOUR 60-SECOND BRIEF</span></div>
-        <h2 className={styles.headline}>{headline}</h2>
-        <p className={styles.supporting}>{hasComparison ? `A typical upload in this report has ${formatViews(analytics.medianViews)} views. Compare the leading upload, then explore the patterns.` : 'A snapshot of the public uploads available. More videos and view counts make comparisons more useful.'}</p>
-        <details className={styles.summary}>
+      <motion.div 
+        className={styles.content}
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: { opacity: 1, transition: { staggerChildren: 0.15 } }
+        }}
+      >
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.tag}><Sparkles size={14} /><span>YOUR 60-SECOND BRIEF</span></motion.div>
+        <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.headline}>{headline}</motion.h2>
+        <motion.p variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.supporting}>{hasComparison ? `A typical upload in this report has ${formatViews(analytics.medianViews)} views. Compare the leading upload, then explore the patterns.` : 'A snapshot of the public uploads available. More videos and view counts make comparisons more useful.'}</motion.p>
+        <motion.details variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.summary}>
           <summary>{meta.analysisSource === 'gemini' ? 'Read the AI interpretation' : 'Read the calculated summary'}</summary>
           <p>{aiAnalysis.summary}</p>
-        </details>
-        <div className={styles.meta}><span className={styles.metaDot} /> {videos.length} uploads in this report<span aria-hidden="true">/</span><span>Cumulative views, not growth</span></div>
-      </div>
+        </motion.details>
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.meta}><span className={styles.metaDot} /> {videos.length} uploads in this report<span aria-hidden="true">/</span><span>Cumulative views, not growth</span></motion.div>
+      </motion.div>
 
-      {top && <div className={styles.spotlight}>
+      {top && <motion.div 
+        className={styles.spotlight}
+        initial={{ opacity: 0, scale: 0.95, x: 20 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
+      >
         <div className={styles.spotlightLabel}>
           <span>THE STANDOUT UPLOAD</span>
           <ArrowUpRight size={15} />
@@ -220,7 +234,7 @@ export const Verdict = ({
             <Play size={12} fill="currentColor" /> Watch In-Page
           </button>
         )}
-      </div>}
+      </motion.div>}
     </section>
   );
 };

@@ -117,7 +117,7 @@ export const VideoTable = ({
                         style={{ cursor: onWatchVideo ? 'pointer' : 'default' }}
                         title={onWatchVideo ? 'Click to watch in-app theater' : undefined}
                       >
-                        <Play size={17} />
+                        <Play size={17} className={styles.playIcon} />
                         {!isSample && video.thumbnail && (
                           <Image
                             unoptimized

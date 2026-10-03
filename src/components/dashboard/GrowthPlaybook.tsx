@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, type CSSProperties } from 'react';
-import { Calendar, Check, Clock, Flame, Lightbulb, MessageCircle, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { Calendar, Check, Clock, Flame, Lightbulb, MessageCircle, Sparkles, TrendingUp, Zap, BarChart2, Eye } from 'lucide-react';
 import type { VideoData, AIAnalysis } from '@/types/analysis';
 import { analyzeChannelGrowth } from '@/utils/growth-analyzer';
 import styles from './GrowthPlaybook.module.css';
@@ -14,6 +15,7 @@ interface GrowthPlaybookProps {
 
 export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybookProps) => {
   const [copiedBlueprint, setCopiedBlueprint] = useState<string | null>(null);
+  const [showData, setShowData] = useState(false);
 
   const insights = analyzeChannelGrowth(videos, medianViews, aiAnalysis);
 
@@ -31,6 +33,19 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
   // Find max video count across days for heatmap scaling
   const maxDayVideos = Math.max(...insights.publishingDays.map(d => d.videoCount), 1);
 
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
     <section className={styles.container} aria-label="Actionable Creator Playbook">
       {/* Section Header */}
@@ -44,13 +59,65 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             Empirical patterns extracted from public upload history to guide your next video.
           </p>
         </div>
+        <button type="button" className={styles.toggleBtn} onClick={() => setShowData(!showData)}>
+          {showData ? <><Eye size={14} /> The Winning Formula</> : <><BarChart2 size={14} /> View Raw Analytics</>}
+        </button>
       </div>
 
-      {/* ── 2×2 Cards Grid ── */}
-      <div className={styles.cardsGrid}>
+      {/* ── Visual Blueprint vs Data Grid ── */}
+      <AnimatePresence mode="wait">
+        {!showData ? (
+          <motion.div 
+            key="formula"
+            className={styles.formulaContainer}
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+          >
+            <motion.div className={styles.formulaCard} variants={itemVariants}>
+              <Clock size={20} color="#ffc16e" />
+              <span className={styles.formulaStep}>Step 1</span>
+              <span className={styles.formulaValue}>{insights.winningDuration?.label || "Flexible"}</span>
+              <span className={styles.formulaLabel}>Duration</span>
+              <span className={styles.formulaDesc}>Highest performing length</span>
+            </motion.div>
+            <motion.div className={styles.formulaCard} variants={itemVariants}>
+              <Zap size={20} color="#60a5fa" />
+              <span className={styles.formulaStep}>Step 2</span>
+              <span className={styles.formulaValue}>{insights.topFormula?.badge || "Varies"}</span>
+              <span className={styles.formulaLabel}>Hook</span>
+              <span className={styles.formulaDesc}>Top phrasing pattern</span>
+            </motion.div>
+            <motion.div className={styles.formulaCard} variants={itemVariants}>
+              <Calendar size={20} color="#34d399" />
+              <span className={styles.formulaStep}>Step 3</span>
+              <span className={styles.formulaValue}>{insights.peakPublishingDay || "Any Day"}</span>
+              <span className={styles.formulaLabel}>Timing</span>
+              <span className={styles.formulaDesc}>Optimal upload window</span>
+            </motion.div>
+            <motion.div className={styles.formulaCard} variants={itemVariants}>
+              <MessageCircle size={20} color="#a78bfa" />
+              <span className={styles.formulaStep}>Step 4</span>
+              <span className={styles.formulaValue} style={{ fontSize: "1.05rem", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", maxWidth: "100%" }} title={insights.audiencePulse.contentDemands[0]?.topic || "General Topic"}>
+                {insights.audiencePulse.contentDemands[0]?.topic || "General"}
+              </span>
+              <span className={styles.formulaLabel}>Content</span>
+              <span className={styles.formulaDesc}>Top audience request</span>
+            </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="grid"
+            className={styles.cardsGrid}
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
+          >
 
         {/* ═══ CARD 1: Format & Length Sweet Spot ═══ */}
-        <div className={styles.card}>
+        <motion.div className={styles.card} variants={itemVariants}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
               <div className={styles.cardIcon}>
@@ -100,10 +167,10 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               );
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* ═══ CARD 2: Title Formula Win-Rate ═══ */}
-        <div className={styles.card}>
+        <motion.div className={styles.card} variants={itemVariants}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
               <div className={styles.cardIcon} style={{ background: 'rgba(96, 165, 250, 0.12)', color: '#60a5fa', borderColor: 'rgba(96, 165, 250, 0.3)' }}>
@@ -154,10 +221,10 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               );
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* ═══ CARD 3: Optimal Upload Day Window ═══ */}
-        <div className={styles.card}>
+        <motion.div className={styles.card} variants={itemVariants}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
               <div className={styles.cardIcon} style={{ background: 'rgba(52, 211, 153, 0.12)', color: '#34d399', borderColor: 'rgba(52, 211, 153, 0.3)' }}>
@@ -209,10 +276,10 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               {insights.peakLiftMultiplier > 1 ? ` (${Math.round((insights.peakLiftMultiplier - 1) * 100)}% lift over channel baseline)` : ''} for pre-evening traffic buildup.
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* ═══ CARD 4: Audience Sentiment & Demands ═══ */}
-        <div className={styles.card}>
+        <motion.div className={styles.card} variants={itemVariants}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
               <div className={styles.cardIcon} style={{ background: 'rgba(167, 139, 250, 0.12)', color: '#a78bfa', borderColor: 'rgba(167, 139, 250, 0.3)' }}>
@@ -286,18 +353,26 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               );
             })}
           </div>
-        </div>
-      </div>
+        </motion.div>
+        </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Strategic Takeaway ── */}
-      <div className={styles.takeaway}>
+      <motion.div 
+        className={styles.takeaway}
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 300, damping: 24 }}
+      >
         <Lightbulb size={20} style={{ flexShrink: 0 }} />
         <span>
           <strong>Action Plan for Next Video:</strong> Keep duration <strong>sub-10 minutes</strong>, launch with a{' '}
           <strong>{insights.topFormula?.badge || 'Structured'}</strong> title formula, and publish on{' '}
           <strong>{insights.peakPublishingDay} at 3:00 PM EST</strong> for maximum YouTube home feed velocity.
         </span>
-      </div>
+      </motion.div>
     </section>
   );
 };
