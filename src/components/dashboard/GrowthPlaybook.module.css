@@ -1,21 +1,18 @@
 /* ═══════════════════════════════════════════════════════════════ */
-/* Growth Playbook — Data-Driven Visual Dashboard                 */
+/* Growth Playbook — Graphic-First Creator Intelligence Dashboard  */
 /* ═══════════════════════════════════════════════════════════════ */
 
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   margin-top: 1.5rem;
-  animation: fadeIn 0.4s ease-out;
 }
 
 .sectionHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
 }
 
 .eyebrow {
@@ -28,7 +25,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #ffc16e;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .title {
@@ -40,41 +37,91 @@
 }
 
 .subtitle {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: #8d949a;
-  margin: 0.25rem 0 0;
-  line-height: 1.5;
+  margin: 0.2rem 0 0;
+  line-height: 1.4;
+}
+
+/* ── Integrated Winning Formula Flow Strip ── */
+.formulaStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(18, 21, 26, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  gap: 0.75rem;
+}
+
+.formulaStepCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.formulaStepIcon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.formulaStepMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.formulaStepLabel {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8d949a;
+}
+
+.formulaStepVal {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.flowArrow {
+  color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 /* ── Cards Grid ── */
 .cardsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+  gap: 1.15rem;
 }
 
-/* Base Card */
 .card {
-  position: relative;
-  background: linear-gradient(135deg, rgba(22, 25, 28, 0.96), rgba(14, 16, 19, 0.98));
+  background: linear-gradient(135deg, rgba(20, 23, 28, 0.95), rgba(12, 14, 18, 0.98));
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  border-radius: 14px;
+  padding: 1.35rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  gap: 1.1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .card:hover {
   border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* Card Header */
 .cardHeader {
   display: flex;
   align-items: flex-start;
@@ -85,16 +132,16 @@
 .cardHeaderLeft {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.65rem;
 }
 
 .cardIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.15rem;
-  height: 2.15rem;
-  border-radius: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
   background: rgba(255, 193, 110, 0.12);
   color: #ffc16e;
   border: 1px solid rgba(255, 193, 110, 0.25);
@@ -102,7 +149,7 @@
 }
 
 .cardTitle {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #ecedef;
   margin: 0;
@@ -110,192 +157,205 @@
 
 .cardDesc {
   font-size: 0.72rem;
-  color: #6b737b;
+  color: #717d8a;
   margin: 0.1rem 0 0;
 }
 
-/* ═══ Badges / Tags ═══ */
-.bestRoiBadge {
-  font-size: 0.6rem;
-  font-family: var(--font-mono, monospace);
+/* ── Badges ── */
+.winnerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
   font-weight: 700;
   color: #ffc16e;
   background: rgba(255, 193, 110, 0.12);
-  border: 1px solid rgba(255, 193, 110, 0.35);
-  padding: 0.2rem 0.5rem;
-  border-radius: 9999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  white-space: nowrap;
-  animation: pulseGlow 3s infinite ease-in-out;
+  border: 1px solid rgba(255, 193, 110, 0.3);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
 }
 
-.topFormulaTag {
-  font-size: 0.6rem;
-  font-family: var(--font-mono, monospace);
+.formulaPill {
+  font-size: 0.68rem;
   font-weight: 700;
   color: #60a5fa;
-  background: rgba(96, 165, 250, 0.1);
+  background: rgba(96, 165, 250, 0.12);
   border: 1px solid rgba(96, 165, 250, 0.3);
-  padding: 0.2rem 0.5rem;
-  border-radius: 9999px;
-  white-space: nowrap;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
 }
 
-.peakDayTag {
-  font-size: 0.6rem;
-  font-family: var(--font-mono, monospace);
+.peakDayBadge {
+  font-size: 0.68rem;
   font-weight: 700;
   color: #34d399;
-  background: rgba(52, 211, 153, 0.1);
+  background: rgba(52, 211, 153, 0.12);
   border: 1px solid rgba(52, 211, 153, 0.3);
-  padding: 0.2rem 0.5rem;
-  border-radius: 9999px;
-  white-space: nowrap;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
 }
 
-.sentimentTag {
-  font-size: 0.6rem;
-  font-family: var(--font-mono, monospace);
+.sentimentPill {
+  font-size: 0.68rem;
   font-weight: 700;
   color: #a78bfa;
-  background: rgba(167, 139, 250, 0.1);
+  background: rgba(167, 139, 250, 0.12);
   border: 1px solid rgba(167, 139, 250, 0.3);
-  padding: 0.2rem 0.5rem;
-  border-radius: 9999px;
-  white-space: nowrap;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
 }
 
-/* ═══ CARD 1: Duration Bars ═══ */
-.durationBars {
+/* ═══ CARD 1: Segmented Spectrum ═══ */
+.spectrumTrack {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.spectrumSegment {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.25rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  gap: 2px;
 }
 
-.durationRow {
+.spectrumSegment span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8d949a;
+}
+
+.spectrumSegment small {
+  font-size: 0.6rem;
+  color: #555e68;
+}
+
+.spectrumWinner {
+  background: rgba(255, 193, 110, 0.14);
+  border-color: rgba(255, 193, 110, 0.4);
+  box-shadow: 0 0 12px rgba(255, 193, 110, 0.15);
+}
+
+.spectrumWinner span {
+  color: #ffc16e;
+  font-weight: 700;
+}
+
+.spectrumWinner small {
+  color: #ffc16e;
+  font-weight: 600;
+}
+
+.activeTierList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.tierRow {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: 0.6rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background 0.2s ease;
 }
 
-.durationRow:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.durationRowWinner {
-  background: linear-gradient(90deg, rgba(255, 193, 110, 0.08) 0%, rgba(255, 193, 110, 0.02) 100%);
-  border-color: rgba(255, 193, 110, 0.25);
-}
-
-.durationMeta {
+.tierMeta {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
 }
 
-.durationLabel {
-  font-size: 0.78rem;
-  color: #ecedef;
+.tierName {
+  color: #d1d5db;
+  font-weight: 500;
 }
 
-.durationLabel small {
-  color: #6b737b;
-  font-weight: 400;
-  font-size: 0.7rem;
+.tierName small {
+  color: #717d8a;
 }
 
-.durationMultiplier {
-  font-size: 0.76rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  color: #a0a4ad;
+.tierStats {
+  color: #9ca3af;
+  font-size: 0.72rem;
 }
 
-.durationRowWinner .durationMultiplier {
-  color: #ffc16e;
+.tierStats strong {
+  color: #f3f4f6;
 }
 
-/* Horizontal Bar Track */
 .barTrack {
-  width: 100%;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.04);
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 9999px;
   overflow: hidden;
 }
 
 .barFill {
   height: 100%;
+  background: #60a5fa;
   border-radius: 9999px;
-  background: #3d454d;
-  width: 0;
-  animation: growBar 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .barFillWinner {
-  background: linear-gradient(90deg, #b47432, #ffc16e, #ffe3b3, #ffc16e);
-  background-size: 200% 100%;
-  animation: growBar 1s cubic-bezier(0.16, 1, 0.3, 1) forwards, shimmerSweep 3s linear 1s infinite;
+  background: linear-gradient(90deg, #ffc16e, #f59e0b);
   box-shadow: 0 0 8px rgba(255, 193, 110, 0.4);
 }
 
-@keyframes growBar {
-  from { width: 0; }
-  to { width: var(--bar-width, 50%); }
-}
-
-.durationStats {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.65rem;
-  color: #5a646e;
-}
-
-/* ═══ CARD 2: Title Formulas ═══ */
-.formulaList {
+/* ═══ CARD 2: Title Formula ═══ */
+.formulaRankList {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
-.formulaRow {
+.formulaItem {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.15s ease;
 }
 
-.formulaHeader {
+.formulaItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.formulaItemHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 .formulaBadge {
-  font-size: 0.62rem;
-  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
   font-weight: 700;
-  padding: 0.12rem 0.4rem;
-  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   border: 1px solid;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
 }
 
-.formulaWinRate {
-  font-size: 0.72rem;
-  font-family: var(--font-mono, monospace);
+.formulaRate {
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
 .formulaBarTrack {
-  width: 100%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.04);
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 9999px;
   overflow: hidden;
 }
@@ -303,437 +363,231 @@
 .formulaBarFill {
   height: 100%;
   border-radius: 9999px;
-  background: var(--bar-color, #60a5fa);
-  width: 0;
-  animation: growBar 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
 }
 
-.formulaSample {
-  font-size: 0.68rem;
-  color: #5a646e;
-  margin: 0;
+.formulaSampleLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0.15rem;
+}
+
+.sampleDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sampleText {
+  font-size: 0.7rem;
+  color: #94a3b8;
   font-style: italic;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ═══ CARD 3: Day Grid Heatmap ═══ */
-.dayGrid {
+/* ═══ CARD 3: Weekly Heatwave Equalizer ═══ */
+.heatwaveContainer {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.35rem;
-  align-items: end;
+  gap: 0.5rem;
+  align-items: flex-end;
+  height: 100px;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.dayCol {
+.heatwaveCol {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
 }
 
-.dayBarContainer {
+.heatwaveBarBox {
+  position: relative;
   width: 100%;
-  height: 80px;
+  height: 75px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
-.dayBar {
-  width: 60%;
-  max-width: 28px;
-  border-radius: 0.3rem 0.3rem 0 0;
-  background: rgba(255, 255, 255, 0.08);
-  height: 0;
-  animation: growBarVertical 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-  transition: background 0.2s ease;
-}
-
-.dayBarPeak {
-  background: linear-gradient(180deg, #ffc16e, #b47432);
-  box-shadow: 0 0 12px rgba(255, 193, 110, 0.25);
-}
-
-@keyframes growBarVertical {
-  from { height: 0; }
-  to { height: var(--bar-height, 20%); }
-}
-
-.dayLabel {
+.peakTag {
+  position: absolute;
+  top: -18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   font-size: 0.62rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 600;
-  color: #5a646e;
+  font-weight: 700;
+  color: #ffc16e;
+  background: rgba(255, 193, 110, 0.2);
+  border: 1px solid rgba(255, 193, 110, 0.4);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
 }
 
-.dayLabelPeak {
+.heatwaveBar {
+  width: 18px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.heatwaveBarPeak {
+  background: linear-gradient(180deg, #ffc16e, #f59e0b);
+  box-shadow: 0 0 12px rgba(255, 193, 110, 0.35);
+}
+
+.heatwaveLabel {
+  font-size: 0.68rem;
+  color: #6b737b;
+  font-weight: 500;
+}
+
+.heatwaveLabelPeak {
   color: #ffc16e;
   font-weight: 700;
 }
 
-.dayCount {
-  font-size: 0.55rem;
-  color: #3d454d;
-  font-family: var(--font-mono, monospace);
-}
-
-.dayColPeak .dayCount {
-  color: #b47432;
-}
-
-/* Recommended Window */
-.recommendedWindow {
+.goldenWindowPill {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: 0.5rem;
-  background: rgba(52, 211, 153, 0.06);
-  border: 1px solid rgba(52, 211, 153, 0.2);
+  gap: 8px;
   font-size: 0.72rem;
+  color: #d1d5db;
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+}
+
+.goldenWindowPill strong {
   color: #34d399;
-  line-height: 1.4;
 }
 
-.recommendedWindow strong {
-  color: #ecedef;
-}
-
-/* ═══ CARD 4: Audience Sentiment ═══ */
-.sentimentRow {
+/* ═══ CARD 4: Sentiment & Demands ═══ */
+.sentimentHeaderBox {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
-/* SVG Donut Gauge */
-.donutGauge {
+.miniGauge {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.donutSvg {
+.gaugeSvg {
   width: 100%;
   height: 100%;
 }
 
-.donutFill {
-  transition: stroke-dasharray 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+.gaugeValue {
+  position: absolute;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #a78bfa;
 }
 
-.donutCenter {
-  position: absolute;
-  inset: 0;
+.sentimentTags {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: 4px;
 }
 
-.donutPercent {
-  font-size: 1.1rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 800;
-  color: #a78bfa;
-  line-height: 1;
-}
-
-.donutLabel {
-  font-size: 0.45rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  color: #6b737b;
-  letter-spacing: 0.15em;
-  margin-top: 2px;
-}
-
-/* Retention Signals */
-.retentionSignals {
-  flex: 1;
-}
-
-.retentionHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.65rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #a78bfa;
-  margin-bottom: 0.4rem;
-}
-
-.retentionBars {
+.signalPill {
   display: inline-flex;
-  align-items: flex-end;
-  gap: 2px;
-  margin-left: auto;
+  align-items: center;
+  font-size: 0.68rem;
+  color: #d1d5db;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
 }
 
-.retentionBars i {
-  display: block;
-  width: 3px;
-  border-radius: 1px;
-  background: #a78bfa;
-}
-
-.retentionBars i:nth-child(1) { height: 6px; opacity: 0.4; }
-.retentionBars i:nth-child(2) { height: 10px; opacity: 0.55; }
-.retentionBars i:nth-child(3) { height: 14px; opacity: 0.7; }
-.retentionBars i:nth-child(4) { height: 11px; opacity: 0.85; }
-.retentionBars i:nth-child(5) { height: 16px; opacity: 1; animation: barPulse 2s ease-in-out infinite; }
-
-@keyframes barPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.retentionSignals p {
-  font-size: 0.76rem;
-  color: #a0a4ad;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.retentionSignals p strong {
-  color: #ecedef;
-}
-
-/* Demand Section */
-.demandSection {
+.demandsBox {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.65rem;
 }
 
-.demandSectionTitle {
-  font-size: 0.6rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #5a646e;
+.demandsTitle {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  margin-bottom: 0.15rem;
+  gap: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #8d949a;
+  letter-spacing: 0.04em;
 }
 
-.demandRow {
+.demandChipsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.demandChip {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.5rem 0.65rem;
-  border-radius: 0.45rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
+  transition: all 0.15s ease;
   text-align: left;
-  color: inherit;
-  font-family: inherit;
-  font-size: inherit;
 }
 
-.demandRow:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
+.demandChip:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-.demandTopic {
-  font-size: 0.74rem;
-  color: #d1d5db;
+.chipText {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #e2e8f0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 220px;
 }
 
-.demandLevel {
+.demandBadge {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
-  font-size: 0.58rem;
-  font-family: var(--font-mono, monospace);
+  gap: 3px;
+  font-size: 0.62rem;
   font-weight: 700;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
   padding: 0.15rem 0.4rem;
-  border-radius: 9999px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  border-radius: 4px;
 }
 
-.demandVeryHigh {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.demandHigh {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-/* ═══ Strategic Takeaway ═══ */
-.takeaway {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(90deg, rgba(255, 193, 110, 0.1), rgba(255, 193, 110, 0.02));
-  border: 1px solid rgba(255, 193, 110, 0.25);
-  font-size: 0.82rem;
-  color: #ffc16e;
-  line-height: 1.55;
-}
-
-.takeaway strong {
-  color: #ffffff;
-}
-
-/* ═══ Keyframes ═══ */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 rgba(255, 193, 110, 0); }
-  50% { box-shadow: 0 0 12px rgba(255, 193, 110, 0.3); }
-}
-
-@keyframes shimmerSweep {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
-}
-
-/* ═══ Responsive ═══ */
 @media (max-width: 900px) {
   .cardsGrid {
     grid-template-columns: 1fr;
   }
-  .dayGrid {
-    grid-template-columns: repeat(7, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .dayBarContainer {
-    height: 56px;
-  }
-  .sentimentRow {
+  .formulaStrip {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
   }
-}
-
-/* ═══ The Winning Formula ═══ */
-.formulaContainer {
-  position: relative;
-  display: flex;
-  gap: 1.25rem;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-  padding: 1rem 0;
-}
-.formulaContainer::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(255,193,110,0.3), rgba(96,165,250,0.4), rgba(52,211,153,0.4), rgba(167,139,250,0.3));
-  z-index: 0;
-  transform: translateY(-50%);
-}
-.formulaCard {
-  flex: 1;
-  position: relative;
-  z-index: 1;
-  background: rgba(14, 16, 19, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-.formulaCard:nth-child(1) { border-color: rgba(255, 193, 110, 0.35); box-shadow: 0 0 25px rgba(255, 193, 110, 0.15); }
-.formulaCard:nth-child(2) { border-color: rgba(96, 165, 250, 0.35); box-shadow: 0 0 25px rgba(96, 165, 250, 0.15); }
-.formulaCard:nth-child(3) { border-color: rgba(52, 211, 153, 0.35); box-shadow: 0 0 25px rgba(52, 211, 153, 0.15); }
-.formulaCard:nth-child(4) { border-color: rgba(167, 139, 250, 0.35); box-shadow: 0 0 25px rgba(167, 139, 250, 0.15); }
-
-.formulaStep {
-  font-size: 0.6rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #6b737b;
-}
-.formulaValue {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.1;
-  margin-top: 0.2rem;
-}
-.formulaLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-.formulaCard:nth-child(1) .formulaLabel { color: #ffc16e; }
-.formulaCard:nth-child(2) .formulaLabel { color: #60a5fa; }
-.formulaCard:nth-child(3) .formulaLabel { color: #34d399; }
-.formulaCard:nth-child(4) .formulaLabel { color: #a78bfa; }
-
-.formulaDesc {
-  font-size: 0.7rem;
-  color: #8d949a;
-  line-height: 1.4;
-  margin-top: 0.25rem;
-}
-
-.toggleBtn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ecedef;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.toggleBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-@media (max-width: 900px) {
-  .formulaContainer {
-    flex-direction: column;
-  }
-  .formulaContainer::before {
-    top: 0; bottom: 0; left: 50%; right: auto; width: 2px; height: auto;
-    transform: translateX(-50%);
-    background: linear-gradient(180deg, rgba(255,193,110,0.3), rgba(96,165,250,0.4), rgba(52,211,153,0.4), rgba(167,139,250,0.3));
+  .flowArrow {
+    display: none;
   }
 }
