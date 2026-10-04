@@ -30,8 +30,12 @@ export const Verdict = ({
   const isSample = meta.dataSource === 'sample';
   const hasComparison = ratio !== null && observed.length > 1;
   const headline = hasComparison
-    ? <>The top upload gets <em>{ratio.toFixed(1)}×</em> the typical views.</>
+    ? <>The top upload gets <em>{ratio.toFixed(1)}×</em> typical views <span className={styles.ageCaveat}>(not age-adjusted)</span></>
     : top ? <>Every channel has a story.<br /><em>Start with this upload.</em></> : <>Your channel,<br /><em>in perspective.</em></>;
+
+  const summarySentences = (aiAnalysis.summary || '').match(/[^.!?]+[.!?]+(\s|$)/g) || [aiAnalysis.summary || ''];
+  const inlineSummary = summarySentences.slice(0, 2).join('').trim();
+  const remainingSummary = summarySentences.slice(2).join('').trim();
 
   const handleStartInlinePlay = () => {
     setIsPlayingInline(true);
@@ -112,12 +116,30 @@ export const Verdict = ({
       >
         <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.tag}><Sparkles size={14} /><span>YOUR 60-SECOND BRIEF</span></motion.div>
         <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.headline}>{headline}</motion.h2>
-        <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.supporting}>{hasComparison ? `A typical upload in this report has ${formatViews(analytics.medianViews)} views. Compare the leading upload, then explore the patterns.` : 'A snapshot of the public uploads available. More videos and view counts make comparisons more useful.'}</motion.p>
-        <motion.details variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.summary}>
-          <summary>{meta.analysisSource === 'gemini' ? 'Read the AI interpretation' : 'Read the calculated summary'}</summary>
-          <p>{aiAnalysis.summary}</p>
-        </motion.details>
-        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.meta}><span className={styles.metaDot} /> {videos.length} uploads in this report<span aria-hidden="true">/</span><span>Cumulative views, not growth</span></motion.div>
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.baselineRow}>
+          <span>Typical: <strong>{formatViews(analytics.medianViews)}</strong></span>
+          <span className={styles.baselineSep}>•</span>
+          <span>Top: <strong>{top ? formatViews(top.views) : '—'}</strong></span>
+          <span className={styles.baselineSep}>•</span>
+          <span>n={videos.length} uploads</span>
+          <span className={styles.baselineSep}>•</span>
+          <span style={{ color: 'var(--text-3)' }}>Cumulative views, not growth</span>
+        </motion.div>
+        {inlineSummary ? (
+          <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.inlineSummary}>
+            {inlineSummary}
+          </motion.p>
+        ) : (
+          <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.supporting}>
+            {hasComparison ? `A typical upload in this report has ${formatViews(analytics.medianViews)} views. Compare the leading upload, then explore the patterns.` : 'A snapshot of the public uploads available.'}
+          </motion.p>
+        )}
+        {remainingSummary && (
+          <motion.details variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.summary}>
+            <summary>{meta.analysisSource === 'gemini' ? 'Read full AI interpretation' : 'Read full calculated summary'}</summary>
+            <p>{remainingSummary}</p>
+          </motion.details>
+        )}
 
       </motion.div>
 
@@ -220,6 +242,11 @@ export const Verdict = ({
         <h3>{top.title}</h3>
         <div className={styles.spotlightStats}>
           <span><Eye size={14} /> {formatViews(top.views)} views</span>
+          {ratio !== null && (
+            <span className={styles.spotlightChip}>
+              <Zap size={11} /> {ratio.toFixed(1)}× typical
+            </span>
+          )}
           {share !== null && <span>{share}% of total</span>}
         </div>
         <p className={styles.scope}>Highest views among these uploads · not age-adjusted</p>

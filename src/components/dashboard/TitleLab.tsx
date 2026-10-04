@@ -47,28 +47,47 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
             <div className={styles.bucketSection}>
               <div className={styles.bucketTitle}>Length Performance Brackets</div>
               {bucketAnalysis.buckets.map((b) => {
-                const maxAvg = Math.max(...bucketAnalysis.buckets.map((x) => x.avgViews), 1);
-                const pct = Math.round((b.avgViews / maxAvg) * 100);
-                return (
-                  <div key={b.id} className={styles.bucketRow}>
-                    <div className={styles.bucketMeta}>
-                      <span className={styles.bucketLabel}>
-                        {b.label} <small style={{ color: 'var(--text-3)' }}>({b.rangeText})</small>
-                        {b.isWinner && b.count >= 2 && <span className={styles.bucketWinnerTag}>SWEET SPOT</span>}
-                      </span>
-                      <span className={styles.bucketMultiplier}>
-                        {b.count > 0 ? `${b.liftMultiplier}× vs median` : '0 uploads'}
-                      </span>
+                  const maxAvg = Math.max(...bucketAnalysis.buckets.map((x) => x.avgViews), 1);
+                  const pct = Math.round((b.avgViews / maxAvg) * 100);
+                  const exampleVideo = videos.find((v) => {
+                    const len = (v.title || '').length;
+                    if (b.id === 'short') return len <= 35;
+                    if (b.id === 'medium') return len > 35 && len <= 65;
+                    return len > 65;
+                  });
+
+                  return (
+                    <div key={b.id} className={styles.bucketRow}>
+                      <div className={styles.bucketMeta}>
+                        <span className={styles.bucketLabel}>
+                          {b.label} <small style={{ color: 'var(--text-3)' }}>({b.rangeText})</small>
+                          {b.isWinner && b.count >= 4 && (
+                            <span className={styles.bucketWinnerTag}>SWEET SPOT</span>
+                          )}
+                          {b.isWinner && b.count >= 2 && b.count < 4 && (
+                            <span className={styles.bucketWinnerTag} style={{ background: 'rgba(255, 178, 36, 0.1)', color: '#FFB224' }}>
+                              EARLY SIGNAL
+                            </span>
+                          )}
+                        </span>
+                        <span className={styles.bucketMultiplier}>
+                          {b.count > 0 ? `${b.liftMultiplier}× typical (n=${b.count})` : '0 uploads'}
+                        </span>
+                      </div>
+                      <div className={styles.bucketTrack}>
+                        <div
+                          className={`${styles.bucketFill} ${b.isWinner && b.count >= 2 ? styles.bucketFillWinner : ''}`}
+                          style={{ width: `${b.count > 0 ? Math.max(8, pct) : 0}%` }}
+                        />
+                      </div>
+                      {exampleVideo && (
+                        <p style={{ fontSize: '0.68rem', color: 'var(--text-3)', margin: '0.2rem 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={exampleVideo.title}>
+                          e.g. &ldquo;{exampleVideo.title}&rdquo;
+                        </p>
+                      )}
                     </div>
-                    <div className={styles.bucketTrack}>
-                      <div
-                        className={`${styles.bucketFill} ${b.isWinner && b.count >= 2 ? styles.bucketFillWinner : ''}`}
-                        style={{ width: `${b.count > 0 ? Math.max(8, pct) : 0}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
               {bucketAnalysis.insight && (
                 <div className={styles.bucketInsight}>
                   💡 {bucketAnalysis.insight}

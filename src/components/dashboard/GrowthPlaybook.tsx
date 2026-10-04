@@ -109,8 +109,8 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             <Calendar size={16} />
           </div>
           <div className={styles.formulaStepMeta}>
-            <span className={styles.formulaStepLabel}>3. Best Timing</span>
-            <span className={styles.formulaStepVal}>{insights.peakPublishingDay} Afternoons</span>
+            <span className={styles.formulaStepLabel}>3. Peak Release Day</span>
+            <span className={styles.formulaStepVal}>{insights.hasExactDates ? insights.peakPublishingDay : 'Varies'}</span>
           </div>
         </div>
 
@@ -122,8 +122,8 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
           </div>
           <div className={styles.formulaStepMeta}>
             <span className={styles.formulaStepLabel}>4. Demanded Topic</span>
-            <span className={styles.formulaStepVal} style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={insights.audiencePulse.contentDemands[0]?.topic || "Comparisons"}>
-              {insights.audiencePulse.contentDemands[0]?.topic.split(' ')[0] || "Reviews"} Focus
+            <span className={styles.formulaStepVal} style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={insights.audiencePulse.contentDemands[0]?.topic || "Comparisons"}>
+              {insights.audiencePulse.contentDemands[0]?.topic || "Reviews"}
             </span>
           </div>
         </div>
@@ -145,12 +145,12 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               </div>
               <div>
                 <h3 className={styles.cardTitle}>Format & Length Spectrum</h3>
-                <p className={styles.cardDesc}>Which video duration commands highest velocity?</p>
+                <p className={styles.cardDesc}>Which video duration commands highest average views?</p>
               </div>
             </div>
             {insights.winningDuration && (
               <span className={styles.winnerBadge}>
-                <Sparkles size={11} /> {insights.winningDuration.rangeText} ({insights.winningDuration.viewMultiplier}×)
+                <Sparkles size={11} /> {insights.winningDuration.rangeText} (n={insights.winningDuration.count}, {insights.winningDuration.viewMultiplier}× typical)
               </span>
             )}
           </div>
@@ -182,9 +182,9 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               return (
                 <div key={tier.id} className={styles.tierRow}>
                   <div className={styles.tierMeta}>
-                    <span className={styles.tierName}>{tier.label} <small>({tier.rangeText})</small></span>
+                    <span className={styles.tierName}>{tier.label} <small>({tier.rangeText}, n={tier.count})</small></span>
                     <span className={styles.tierStats}>
-                      <strong>{tier.avgViewsFormatted}</strong> views ({tier.viewMultiplier}× baseline)
+                      <strong>{tier.avgViewsFormatted}</strong> views ({tier.viewMultiplier}× typical)
                     </span>
                   </div>
                   <div className={styles.barTrack}>
@@ -201,7 +201,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
           </div>
         </motion.div>
 
-        {/* ═══ CARD 2: Title Formula Win-Rate ═══ */}
+        {/* ═══ CARD 2: Title Formula Beat Typical ═══ */}
         <motion.div className={styles.card} variants={itemVariants}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
@@ -209,13 +209,13 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                 <Zap size={16} />
               </div>
               <div>
-                <h3 className={styles.cardTitle}>Title Formula Win-Rate</h3>
+                <h3 className={styles.cardTitle}>Title Patterns That Beat Typical</h3>
                 <p className={styles.cardDesc}>Phrasing styles that outperform the channel median</p>
               </div>
             </div>
             {insights.topFormula && (
               <span className={styles.formulaPill}>
-                Top: {insights.topFormula.badge} ({insights.topFormula.winRate}% Win)
+                Top: {insights.topFormula.badge} ({insights.topFormula.winRate}% beat typical)
               </span>
             )}
           </div>
@@ -235,7 +235,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                       {formula.badge}
                     </span>
                     <span className={styles.formulaRate} style={{ color }}>
-                      {formula.winRate}% Win-Rate <small style={{ color: '#8d949a' }}>({formula.avgMultiplier}× views)</small>
+                      {formula.winRate}% beat typical <small style={{ color: '#8d949a' }}>(n={formula.count}, {formula.avgMultiplier}× typical)</small>
                     </span>
                   </div>
 
@@ -274,7 +274,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               </div>
             </div>
             <span className={styles.peakDayBadge}>
-              {insights.hasExactDates ? `Peak: ${insights.peakPublishingDay} (${insights.peakLiftMultiplier}×)` : 'Dates relative'}
+              {insights.hasExactDates ? `Peak: ${insights.peakPublishingDay} (${insights.peakLiftMultiplier}× typical)` : 'Dates relative'}
             </span>
           </div>
 
@@ -322,7 +322,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             <Clock size={13} style={{ color: '#34d399', flexShrink: 0 }} />
             <span>
               {insights.hasExactDates ? (
-                <>Most frequent upload day: <strong>{insights.peakPublishingDay}</strong> ({insights.peakLiftMultiplier}× median views)</>
+                <>Most frequent upload day: <strong>{insights.peakPublishingDay}</strong> ({insights.peakLiftMultiplier}× typical views)</>
               ) : (
                 <>Observed release day breakdown: <strong>Unavailable for relative date samples</strong></>
               )}
@@ -343,7 +343,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               </div>
             </div>
             <span className={styles.sentimentPill} title="Percentage of sample uploads meeting or beating channel median views">
-              {insights.audiencePulse.sentimentScore}% Standout Rate
+              {insights.audiencePulse.sentimentScore}% above typical
             </span>
           </div>
 

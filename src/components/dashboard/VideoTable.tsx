@@ -53,7 +53,7 @@ export const VideoTable = ({
         <div>
           <h3 id="videos-title">The uploads behind the report</h3>
           <p>
-            {sortMode === 'views' ? 'Ranked by cumulative views' : 'Ranked by pace (views/day velocity)'} · Median: {medianLabel} · {videos.length} uploads
+            {sortMode === 'views' ? 'Ranked by total views (favors older uploads)' : 'Ranked by daily pace (~views/day momentum)'} · Median: {medianLabel} · {videos.length} uploads
           </p>
         </div>
         <div className={styles.headerControls}>
@@ -62,6 +62,7 @@ export const VideoTable = ({
               type="button"
               className={`${styles.sortBtn} ${sortMode === 'views' ? styles.sortBtnActive : ''}`}
               onClick={() => setSortMode('views')}
+              title="Ranked by cumulative lifetime views (older uploads accumulate more)"
             >
               Total Views
             </button>
@@ -69,7 +70,7 @@ export const VideoTable = ({
               type="button"
               className={`${styles.sortBtn} ${sortMode === 'velocity' ? styles.sortBtnActive : ''}`}
               onClick={() => setSortMode('velocity')}
-              title="Views accumulated per day since publish date"
+              title="Ranked by daily view velocity since publish date (~views/day)"
             >
               <Zap size={11} /> Views / Day
             </button>
@@ -81,17 +82,18 @@ export const VideoTable = ({
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <caption className="sr-only">
-            Analyzed videos ranked by views or velocity, with percentage difference from the sample median
+            Analyzed videos ranked by views or velocity, with publication age and percentage difference from sample median
           </caption>
           <thead>
             <tr>
               <th scope="col" className={styles.rank}>#</th>
               <th scope="col">Video</th>
+              <th scope="col" className={styles.numeric} title="Time elapsed since publication">Age</th>
               <th scope="col" className={styles.numeric}>Views</th>
               <th scope="col" className={styles.numeric} title="Average views gained per day since publication">
                 Velocity (Pace)
               </th>
-              <th scope="col" className={styles.numeric}>vs median</th>
+              <th scope="col" className={styles.numeric} title="Percentage difference from channel median views">vs typical</th>
             </tr>
           </thead>
           <motion.tbody
@@ -119,15 +121,16 @@ export const VideoTable = ({
                   <td className={styles.rank}>{String(index + 1).padStart(2, '0')}</td>
                   <td>
                     <div className={styles.videoCell}>
-                      <div
+                      <button
+                        type="button"
                         className={styles.thumb}
-                        aria-hidden="true"
                         onClick={() => onWatchVideo?.(video.videoId, video.title)}
-                        style={{ cursor: onWatchVideo ? 'pointer' : 'default' }}
+                        style={{ cursor: onWatchVideo ? 'pointer' : 'default', background: 'transparent', border: 'none', padding: 0 }}
                         title={onWatchVideo ? 'Click to watch in-app theater' : undefined}
+                        aria-label={`Watch ${video.title} in theater`}
                       >
                         <Play size={17} className={styles.playIcon} />
-                        {!isSample && video.thumbnail && (
+                        {video.thumbnail && (
                           <Image
                             unoptimized
                             src={video.thumbnail}
@@ -139,10 +142,10 @@ export const VideoTable = ({
                             }}
                           />
                         )}
-                      </div>
+                      </button>
                       <div className={styles.videoInfo}>
                         <div>
-                          {validLink && !isSample ? (
+                          {validLink ? (
                             <a
                               href={video.url}
                               target="_blank"
@@ -157,8 +160,8 @@ export const VideoTable = ({
                             <span className={styles.title}>{video.title}</span>
                           )}
                           {isOutlier && (
-                            <span className={styles.breakoutBadge} title="Statistical breakout upload (exceeds 2x MAD threshold)">
-                              <Flame size={10} /> Breakout
+                            <span className={styles.breakoutBadge} title="Outlier: far above typical for this sample (exceeds 2× median absolute deviation)">
+                              <Flame size={10} /> Outlier
                             </span>
                           )}
                         </div>
@@ -169,6 +172,15 @@ export const VideoTable = ({
                         </span>
                       </div>
                     </div>
+                  </td>
+                  <td className={`${styles.numeric} tabular-nums`} style={{ color: 'var(--text-3)', fontSize: '12px' }}>
+                    {vel ? (
+                      <span title={`Published ${vel.daysSince} days ago${vel.isApproximate ? ' (approximate date)' : ''}`}>
+                        {vel.isApproximate ? '~' : ''}{vel.daysSince < 30 ? `${vel.daysSince}d` : vel.daysSince < 365 ? `${Math.round(vel.daysSince / 30)}mo` : `${(vel.daysSince / 365).toFixed(1)}y`}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
                   </td>
                   <td className={`${styles.numeric} tabular-nums`}>
                     {hasViews(video) ? formatViews(video.views) : 'Unavailable'}
