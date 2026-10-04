@@ -130,7 +130,7 @@
       "datasets": [
         {
           "data": [42, 32, 16, 10],
-          "backgroundColor": ["#fbbf24", "#06b6d4", "#7c5cfc", "#f472b6"]
+          "backgroundColor": ["#fbbf24", "#666B77", "#7E838D", "#A0A4AD"]
         }
       ]
     },
@@ -144,7 +144,7 @@
             { "x": 4.83, "y": 3.1 },
             { "x": 5.2, "y": 2.8 }
           ],
-          "backgroundColor": "#34d399"
+          "backgroundColor": "#fbbf24"
         }
       ]
     }

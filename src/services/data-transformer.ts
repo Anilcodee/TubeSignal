@@ -130,12 +130,12 @@ export class DataTransformerService {
     const top = videos.filter(this.hasViews).sort((a, b) => b.views - a.views).slice(0, 6);
     return {
       labels: top.map((video) => video.title.length > 25 ? `${video.title.substring(0, 22)}...` : video.title),
-      datasets: [{ label: 'Observed views', data: top.map((video) => video.views), backgroundColor: '#7c5cfc', borderRadius: 8 }],
+      datasets: [{ label: 'Observed views', data: top.map((video) => video.views), backgroundColor: '#FFB224', borderRadius: 8 }],
     };
   }
 
   public static toContentThemes(themes: ContentTheme[]): NumericChartData {
-    const palette = ['#7c5cfc', '#06b6d4', '#f472b6', '#34d399', '#fbbf24', '#fb923c'];
+    const palette = ['#FFB224', '#666B77', '#7E838D', '#A0A4AD', '#525760', '#3D414A'];
     return {
       labels: themes.map((theme) => theme.theme),
       datasets: [{ data: themes.map((theme) => theme.percentage), backgroundColor: themes.map((_, i) => palette[i % palette.length]), borderWidth: 0 }],
@@ -156,7 +156,7 @@ export class DataTransformerService {
     return {
       labels,
       datasets: [{ label: approximate ? 'Observed uploads (approximate dates)' : 'Observed uploads (dated sample)',
-        data: labels.map((month) => counts.get(month)!), borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.1)', fill: false, tension: 0 }],
+        data: labels.map((month) => counts.get(month)!), borderColor: '#FFB224', backgroundColor: 'rgba(255, 178, 36, 0.12)', fill: false, tension: 0 }],
     };
   }
 
@@ -164,7 +164,7 @@ export class DataTransformerService {
     const observed = videos.filter((video) => this.hasViews(video) && Number.isFinite(video.lengthSeconds) && video.lengthSeconds > 0);
     return { labels: observed.map((video) => video.title), datasets: [{
       label: 'Observed duration (min) vs views', data: observed.map((video) => ({ x: Math.round(video.lengthSeconds / 6) / 10, y: video.views })),
-      backgroundColor: '#f472b6', pointRadius: 6, pointHoverRadius: 9,
+      backgroundColor: '#FFB224', pointRadius: 6, pointHoverRadius: 9,
     }] };
   }
 }

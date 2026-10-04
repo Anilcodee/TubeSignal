@@ -18,19 +18,23 @@ export function validateAIAnalysis(value: unknown, baseline: AIAnalysis): AIAnal
   if (!isObject(value) || !exactKeys(value, ['summary', 'contentThemes', 'titlePatterns', 'publishingStrategy', 'performanceInsights', 'recommendations'])) return null;
   if (!string(value.summary, 2000) || !strings(value.recommendations) || value.recommendations.length < 1 || value.recommendations.length > 8) return null;
   let validatedThemes: import('@/types/analysis').ContentTheme[] = baseline.contentThemes;
-  if (Array.isArray(value.contentThemes) && value.contentThemes.length > 0) {
-    const valid = value.contentThemes.every(
-      (t) => isObject(t) && string(t.theme, 80) && typeof t.percentage === 'number' && Number.isFinite(t.percentage)
-    );
-    if (valid) {
-      validatedThemes = value.contentThemes.map((t) => ({
-        theme: (t.theme as string).trim(),
-        percentage: Math.min(100, Math.max(0, Math.round(t.percentage as number))),
-        videoCount: typeof t.videoCount === 'number' && Number.isFinite(t.videoCount) && t.videoCount > 0
-          ? Math.round(t.videoCount)
-          : Math.max(1, Math.round(((t.percentage as number) / 100) * (baseline.contentThemes[0]?.videoCount ? 20 : 10))),
-      }));
+  if (!Array.isArray(value.contentThemes)) return null;
+  if (value.contentThemes.length > 0) {
+    for (const t of value.contentThemes) {
+      if (!isObject(t) || !string(t.theme, 80) || typeof t.percentage !== 'number' || !Number.isFinite(t.percentage) || t.percentage < 0 || t.percentage > 100) {
+        return null;
+      }
+      if (t.videoCount !== undefined && (typeof t.videoCount !== 'number' || !Number.isFinite(t.videoCount) || t.videoCount < 0)) {
+        return null;
+      }
     }
+    validatedThemes = value.contentThemes.map((t) => ({
+      theme: (t.theme as string).trim(),
+      percentage: Math.round(t.percentage as number),
+      videoCount: typeof t.videoCount === 'number' && Number.isFinite(t.videoCount) && t.videoCount > 0
+        ? Math.round(t.videoCount)
+        : Math.max(1, Math.round(((t.percentage as number) / 100) * (baseline.contentThemes[0]?.videoCount ? 20 : 10))),
+    }));
   }
   const titles = value.titlePatterns;
   if (!isObject(titles) || !exactKeys(titles, ['avgLength', 'commonPatterns', 'emotionalTriggers', 'useOfNumbers'])

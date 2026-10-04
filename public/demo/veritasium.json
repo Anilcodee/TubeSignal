@@ -110,7 +110,7 @@
         {
           "label": "Views (Millions)",
           "data": [22.1, 18.4, 9.8],
-          "backgroundColor": "#06b6d4",
+          "backgroundColor": "#FFB224",
           "borderRadius": 8
         }
       ]
@@ -121,8 +121,8 @@
         {
           "label": "Uploads per Month",
           "data": [3, 4, 3, 4, 3, 3],
-          "borderColor": "#7c5cfc",
-          "backgroundColor": "rgba(124, 92, 252, 0.1)",
+          "borderColor": "#FFB224",
+          "backgroundColor": "rgba(255, 178, 36, 0.12)",
           "fill": true,
           "tension": 0.4
         }
@@ -133,7 +133,7 @@
       "datasets": [
         {
           "data": [40, 30, 18, 12],
-          "backgroundColor": ["#06b6d4", "#7c5cfc", "#f472b6", "#34d399"]
+          "backgroundColor": ["#FFB224", "#666B77", "#7E838D", "#A0A4AD"]
         }
       ]
     },
@@ -147,7 +147,7 @@
             { "x": 18.4, "y": 18.4 },
             { "x": 21.25, "y": 9.8 }
           ],
-          "backgroundColor": "#fbbf24"
+          "backgroundColor": "#FFB224"
         }
       ]
     }

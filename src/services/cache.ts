@@ -29,7 +29,7 @@ export class CacheService {
     while (this.cache.size >= this.maxEntries) {
       this.cache.delete(this.cache.keys().next().value!);
     }
-    this.cache.set(key, { data, expiry: Date.now() + Math.max(1000, ttlMs) });
+    this.cache.set(key, { data, expiry: Date.now() + ttlMs });
   }
 
   public has(key: string): boolean { return this.get(key) !== null; }

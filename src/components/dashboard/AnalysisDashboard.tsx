@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, ArrowLeft, ArrowRight, ChartNoAxesCombined, ChevronDown, Info, LayoutGrid, Mic, Play, RefreshCw, TrendingUp } from 'lucide-react';
@@ -32,11 +32,11 @@ type ReportTab = typeof TABS[number]['id'];
 export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; isDemo: boolean }) => {
   const { data, isLoading, error, refetch } = useAnalysis(channelId, isDemo);
   const [activeTab, setActiveTab] = useState<ReportTab>('overview');
-  const [prevChannelId, setPrevChannelId] = useState(channelId);
-  if (channelId !== prevChannelId) {
-    setPrevChannelId(channelId);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveTab('overview');
-  }
+  }, [channelId]);
   const [activeModalVideo, setActiveModalVideo] = useState<{
     videoId: string;
     title: string;

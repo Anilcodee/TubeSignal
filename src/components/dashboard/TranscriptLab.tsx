@@ -59,6 +59,11 @@ export const TranscriptLab = ({
 
   const currentVideo = topVideos.find((v) => v.videoId === activeVideoId) || topVideos[0];
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedVideoId(topVideos[0]?.videoId || '');
+  }, [channelName, topVideos]);
+
   const handleHidePlayer = () => {
     try {
       iframeRef.current?.contentWindow?.postMessage(

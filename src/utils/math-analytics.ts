@@ -134,7 +134,7 @@ export function analyzeTitleLengthBuckets(
   winningBucket: TitleLengthBucket | null;
   insight: string;
 } {
-  const valid = videos.filter((v) => Number.isFinite(v.views) && v.views >= 0);
+  const valid = videos.filter((v) => Number.isFinite(v.views) && v.views >= 0 && v.viewsAvailable !== false);
   const baseline = Math.max(1, medianViews);
 
   const rawBuckets = {
@@ -186,7 +186,7 @@ export function analyzeTitleLengthBuckets(
     };
   });
 
-  const winningBucket = buckets.find((b) => b.id === winnerId) || buckets.find((b) => b.count > 0) || null;
+  const winningBucket = winnerId ? (buckets.find((b) => b.id === winnerId) || null) : null;
   if (winningBucket) {
     winningBucket.isWinner = true;
   }
