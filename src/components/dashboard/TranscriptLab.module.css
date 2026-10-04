@@ -96,6 +96,18 @@
   color: var(--text-3);
 }
 
+.standoutChipBadge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 178, 36, 0.15);
+  border: 1px solid rgba(255, 178, 36, 0.4);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
 /* ═══ Hook Hero Card ═══ */
 .hookCard {
   background: var(--surface-1);
@@ -126,6 +138,17 @@
   color: var(--accent);
   font-size: 12px;
   font-weight: 600;
+}
+
+.archetypeWhy {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+.archetypeWhy strong {
+  color: var(--text);
+  font-weight: 500;
 }
 
 .archetypeDesc {
@@ -170,6 +193,18 @@
   border: 1px solid var(--line-subtle);
   border-radius: var(--r-control);
   padding: var(--s-3);
+  display: flex;
+  flex-direction: column;
+}
+
+.pacingTile {
+  grid-column: span 1;
+}
+
+@media (min-width: 900px) {
+  .pacingTile {
+    grid-column: span 2;
+  }
 }
 
 .metricLabel {
@@ -191,6 +226,62 @@
   font-size: 11px;
   color: var(--text-3);
   margin-top: 2px;
+}
+
+.wpmScaleBar {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wpmTrack {
+  position: relative;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 3px;
+  display: flex;
+  gap: 2px;
+  overflow: visible;
+}
+
+.wpmSegment {
+  flex: 1;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+
+.wpmSegmentActive {
+  background: rgba(255, 178, 36, 0.35);
+}
+
+.wpmPip {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(255, 178, 36, 0.6);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.wpmScaleLabels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-3);
+  gap: 4px;
+}
+
+.wpmScaleLabels .activeLabel {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 /* ═══ Power Words Pill List ═══ */

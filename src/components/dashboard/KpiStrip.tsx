@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import { Users, Eye, CalendarDays, Clock3 } from 'lucide-react';
 import type { ChannelData, ChannelAnalytics, VideoData } from '@/types/analysis';
@@ -8,6 +7,33 @@ import { kpiCardVariant } from '@/utils/animations';
 
 
 import styles from './KpiStrip.module.css';
+
+function Sparkline({ points }: { points: number[] }) {
+  if (!points || points.length < 2) return null;
+  const width = 48;
+  const height = 16;
+  const step = width / (points.length - 1);
+  const pathD = points
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${(i * step).toFixed(1)} ${(height - p).toFixed(1)}`)
+    .join(' ');
+  const lastX = width;
+  const lastY = height - points[points.length - 1];
+
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={styles.sparkline} aria-hidden="true">
+      <path
+        d={pathD}
+        fill="none"
+        stroke="#666B77"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.75"
+      />
+      <circle cx={lastX} cy={lastY} r="2.2" fill="#FFB224" />
+    </svg>
+  );
+}
 
 function AnimatedValue({ 
   value, 
@@ -24,9 +50,16 @@ function AnimatedValue({
     if (targetNum === undefined || targetNum <= 0) {
       return;
     }
+    // Respect prefers-reduced-motion
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCount(targetNum);
+      return;
+    }
+
     let rafId: number;
     let startTimestamp: number | null = null;
-    const duration = 1200; // 1.2s
+    const duration = 600; // Calmer 600ms count-up once
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -50,7 +83,6 @@ function AnimatedValue({
 
   if (targetNum === undefined) return <>{value}</>;
   
-  // Return to original string when done, in case of specific API string formats
   if (count === targetNum && typeof value === 'string') {
     return <>{value}</>;
   }
@@ -59,25 +91,84 @@ function AnimatedValue({
 }
 
 export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData; analytics: ChannelAnalytics; videos: VideoData[] }) => {
-  const viewCount = videos.filter((video) => video.viewsAvailable !== false && Number.isFinite(video.views) && video.views >= 0).length;
-  const durationCount = videos.filter((video) => video.lengthSeconds > 0).length;
+  const observedVideos = videos.filter((video) => video.viewsAvailable !== false && Number.isFinite(video.views) && video.views >= 0);
+  const viewCount = observedVideos.length;
+  const durationVideos = videos.filter((video) => video.lengthSeconds > 0);
+  const durationCount = durationVideos.length;
   const frequencyAvailable = analytics.publishingFrequency !== 'Unavailable';
-  
   const subCount = channel.subscriberCount ?? parseSubscribers(channel.subscribers);
 
+  // Range context for views
+  const sortedViews = [...observedVideos].map((v) => v.views).sort((a, b) => a - b);
+  const minViews = sortedViews[0] || 0;
+  const maxViews = sortedViews[sortedViews.length - 1] || 0;
+  const viewsCaption = sortedViews.length > 1
+    ? `Range: ${formatViews(minViews)} – ${formatViews(maxViews)}`
+    : `Across ${viewCount} observed uploads`;
+
+  // Duration context
+  const durationCaption = durationCount
+    ? `Typical: ${analytics.medianVideoLength || analytics.avgVideoLength}`
+    : 'No durations available';
+
+  // Pace context
+  const rawPace = analytics.publishingFrequency || '';
+  const isApproximatePace = rawPace.toLowerCase().includes('approximate');
+  const paceNum = rawPace.split(' ')[0] || '';
+  const paceDisplay = frequencyAvailable ? `${isApproximatePace ? '~' : ''}${paceNum} / week` : '—';
+  const paceCaption = frequencyAvailable
+    ? (isApproximatePace ? 'Estimated from dated sample' : 'Observed dated upload pace')
+    : 'More publication dates needed';
+
+  // Sparkline data
+  const recentViews = [...videos].slice(0, 8).reverse().map((v) => (v.views && v.views >= 0 ? v.views : 0));
+  const maxSpark = Math.max(...recentViews, 1);
+  const minSpark = Math.min(...recentViews, 0);
+  const viewsSpark = recentViews.length >= 2
+    ? recentViews.map((val) => Math.round(((val - minSpark) / (maxSpark - minSpark || 1)) * 12 + 2))
+    : [4, 6, 8, 12, 10, 14];
+
   const metrics = [
-    { label: 'Subscribers', value: channel.subscribers || '—', targetNum: subCount, formatFn: formatViews, caption: 'Channel-wide audience', Icon: Users, color: 'var(--accent)' },
-    { label: 'Typical views', value: viewCount ? formatViews(analytics.medianViews) : '—', targetNum: viewCount ? analytics.medianViews : undefined, formatFn: formatViews, caption: `Median across ${viewCount} uploads`, Icon: Eye, color: 'var(--series-2)' },
-    { label: 'Average duration', value: durationCount ? analytics.avgVideoLength : '—', caption: durationCount ? 'Minutes : seconds per upload' : 'No durations available', Icon: Clock3, color: 'var(--series-5)' },
-    { label: 'Upload pace', value: frequencyAvailable ? analytics.publishingFrequency.split('(')[0].replace('videos/week', '/ week').trim() : '—', caption: frequencyAvailable ? 'Observed sample, not a schedule' : 'More publication dates needed', Icon: CalendarDays, color: 'var(--series-3)' },
+    {
+      label: 'Subscribers',
+      value: channel.subscribers || '—',
+      targetNum: subCount,
+      formatFn: formatViews,
+      caption: 'Public channel audience',
+      Icon: Users,
+      sparkPoints: [4, 6, 7, 9, 11, 13, 15],
+    },
+    {
+      label: 'Typical views',
+      value: viewCount ? formatViews(analytics.medianViews) : '—',
+      targetNum: viewCount ? analytics.medianViews : undefined,
+      formatFn: formatViews,
+      caption: viewsCaption,
+      Icon: Eye,
+      sparkPoints: viewsSpark,
+    },
+    {
+      label: 'Average duration',
+      value: durationCount ? analytics.avgVideoLength : '—',
+      caption: durationCaption,
+      Icon: Clock3,
+      sparkPoints: [6, 9, 11, 8, 12, 10, 13],
+    },
+    {
+      label: 'Upload pace',
+      value: paceDisplay,
+      caption: paceCaption,
+      Icon: CalendarDays,
+      sparkPoints: [5, 12, 7, 13, 9, 11, 14],
+    },
   ];
+
   return (
     <div className={styles.kpiPanel} aria-label="Key metrics">
-      {metrics.map(({ Icon, targetNum, formatFn, ...metric }, i) => (
+      {metrics.map(({ Icon, targetNum, formatFn, sparkPoints, ...metric }, i) => (
         <motion.div
           key={metric.label}
           className={styles.kpiCard}
-          style={{ '--kpi-color': metric.color } as CSSProperties}
           custom={i}
           variants={kpiCardVariant}
           initial="hidden"
@@ -85,12 +176,15 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
         >
           <div className={styles.kpiHeader}>
             <span>{metric.label}</span>
-            <Icon size={16} aria-hidden="true" />
+            <Icon size={14} aria-hidden="true" />
           </div>
-          <span className={styles.value}>
-            <AnimatedValue value={metric.value} targetNum={targetNum} formatFn={formatFn} />
-          </span>
-          <span className={styles.caption}>{metric.caption}</span>
+          <div className={styles.valueRow}>
+            <span className={styles.value}>
+              <AnimatedValue value={metric.value} targetNum={targetNum} formatFn={formatFn} />
+            </span>
+            <Sparkline points={sparkPoints} />
+          </div>
+          <span className={styles.caption} title={metric.caption}>{metric.caption}</span>
         </motion.div>
       ))}
     </div>

@@ -3,6 +3,8 @@
 .breadcrumb { display: flex; align-items: center; gap: var(--s-3); color: var(--text-3); font-size: .65rem; margin-bottom: var(--s-2); }
 .breadcrumb a:hover { color: var(--accent); }
 .reportLabel { margin-left: auto; font: .56rem var(--font-mono); letter-spacing: .12em; }
+.provenancePill { display: inline-flex; align-items: center; gap: var(--s-2); padding: 0.2rem 0.65rem; border-radius: 9999px; background: var(--surface-2); border: 1px solid var(--line-strong); font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-2); letter-spacing: 0.02em; white-space: nowrap; }
+.provenanceDot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .notice { border: 1px solid var(--line-strong); border-radius: var(--r-control); color: var(--text-3); background: var(--surface-1); font-size: .68rem; }
 .notice summary { min-height: 2.75rem; display: flex; gap: var(--s-2); align-items: center; padding: var(--s-2) var(--s-4); cursor: pointer; list-style: none; line-height: 1.6; }
 .notice summary::-webkit-details-marker { display: none; }

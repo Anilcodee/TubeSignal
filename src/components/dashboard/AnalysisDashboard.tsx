@@ -70,11 +70,23 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
   return (
     <div className={styles.pageContainer}>
       <div className={styles.dashboard}>
-        <div className={`${styles.breadcrumb} no-print`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div><Link href="/">Workspace</Link><span>/</span><span>Channel report</span><span className={styles.reportLabel}>THE SIGNAL REPORT</span></div>
-          <Link href={`/compare?c1=${encodeURIComponent(data.channel.handle || data.channel.channelId)}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-            <TrendingUp size={12} /> Compare with another creator
-          </Link>
+        <div className={`${styles.breadcrumb} no-print`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Link href="/">Workspace</Link><span>/</span><span>Channel report</span><span className={styles.reportLabel}>THE SIGNAL REPORT</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <span className={styles.provenancePill}>
+              <span
+                className={styles.provenanceDot}
+                style={{ background: sample ? '#A78BFA' : '#34D399' }}
+                aria-hidden="true"
+              />
+              {sample ? 'Sample Fixture' : 'Live YouTube Data'} • {data.videos.length} uploads • {data.meta.analysisSource === 'gemini' ? 'Gemini AI' : 'Deterministic'}
+            </span>
+            <Link href={`/compare?c1=${encodeURIComponent(data.channel.handle || data.channel.channelId)}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <TrendingUp size={12} /> Compare with another creator
+            </Link>
+          </div>
         </div>
         <ChannelOverview channel={data.channel} meta={data.meta} data={data} />
         <details className={styles.notice}>
@@ -134,15 +146,47 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
             />
             <div className={styles.chartGrid}><LengthVsViews data={data.chartData.lengthVsViews} /><PublishingTimeline data={data.chartData.publishingTimeline} /></div>
             {data.aiAnalysis.contentThemes.length > 0 && <ContentThemes data={data.chartData.contentThemes} />}
+            <button
+              type="button"
+              className={`${styles.continueButton} no-print`}
+              onClick={() => {
+                handleTabChange('transcripts');
+                document.getElementById('tab-transcripts')?.focus();
+                document.getElementById('report-tabs')?.scrollIntoView({ block: 'start' });
+              }}
+            >
+              <span>
+                <Mic size={18} />
+                <span>Ready to dissect spoken delivery?<small>Inspect top hook pacing & transcript in Hook Lab.</small></span>
+              </span>
+              <ArrowRight size={18} />
+            </button>
           </>}
           {activeTab === 'transcripts' && (
-            <TranscriptLab
-              key={data.channel.channelId}
-              videos={data.videos}
-              channelName={data.channel.name}
-              isDemo={sample}
-              onPlayStart={() => setActiveModalVideo(null)}
-            />
+            <>
+              <TranscriptLab
+                key={data.channel.channelId}
+                videos={data.videos}
+                channelName={data.channel.name}
+                isDemo={sample}
+                onPlayStart={() => setActiveModalVideo(null)}
+              />
+              <button
+                type="button"
+                className={`${styles.continueButton} no-print`}
+                onClick={() => {
+                  handleTabChange('uploads');
+                  document.getElementById('tab-uploads')?.focus();
+                  document.getElementById('report-tabs')?.scrollIntoView({ block: 'start' });
+                }}
+              >
+                <span>
+                  <Play size={18} />
+                  <span>See the numbers behind every video?<small>Compare all uploads side-by-side in All Uploads.</small></span>
+                </span>
+                <ArrowRight size={18} />
+              </button>
+            </>
           )}
           {activeTab === 'uploads' && <>
             <div className={styles.viewHeading}><span>THE SOURCE MATERIAL</span><h2>Every upload. In perspective.</h2><p>Compare the videos behind the numbers, ranked by public views.</p></div>

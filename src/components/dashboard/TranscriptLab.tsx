@@ -246,6 +246,7 @@ export const TranscriptLab = ({
             title={video.title}
           >
             <span>#{idx + 1}</span>
+            {idx === 0 && <span className={styles.standoutChipBadge}>★ Standout</span>}
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{video.title}</span>
             {video.viewsFormatted && <span className={styles.chipViews}>{video.viewsFormatted}</span>}
           </button>
@@ -346,11 +347,15 @@ export const TranscriptLab = ({
           <div className={styles.hookCard}>
             <div className={styles.cardHeader}>
               <div>
-                <span className={styles.archetypeBadge}>
-                  <Sparkles size={13} />
-                  {analysis.hookArchetype}
-                </span>
-                <p className={styles.archetypeDesc}>{analysis.archetypeDescription}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <span className={styles.archetypeBadge}>
+                    <Sparkles size={13} />
+                    {analysis.hookArchetype}
+                  </span>
+                  <span className={styles.archetypeWhy}>
+                    <strong>Why this hook works:</strong> {analysis.archetypeDescription}
+                  </span>
+                </div>
               </div>
               {currentVideo?.url && (
                 <a
@@ -372,10 +377,43 @@ export const TranscriptLab = ({
 
             {/* Metrics Grid */}
             <div className={styles.hookMetrics}>
-              <div className={styles.metricTile}>
+              <div className={`${styles.metricTile} ${styles.pacingTile}`}>
                 <div className={styles.metricLabel}>Speech Pacing</div>
                 <div className={styles.metricValue}>{analysis.wordsPerMinute} <small style={{ fontSize: 11, fontWeight: 400 }}>WPM</small></div>
-                <div className={styles.metricSub}>{analysis.wordsPerMinute > 165 ? '⚡ High-energy' : '🗣️ Conversational'}</div>
+                <div className={styles.metricSub}>
+                  {analysis.wordsPerMinute < 130
+                    ? 'Deliberate cadence'
+                    : analysis.wordsPerMinute > 165
+                      ? '⚡ High-energy'
+                      : '🗣️ Conversational'}
+                </div>
+                <div className={styles.wpmScaleBar} aria-label={`Pacing benchmark: ${analysis.wordsPerMinute} WPM`}>
+                  <div className={styles.wpmTrack}>
+                    <div
+                      className={`${styles.wpmSegment} ${analysis.wordsPerMinute < 130 ? styles.wpmSegmentActive : ''}`}
+                      title="<130 deliberate"
+                    />
+                    <div
+                      className={`${styles.wpmSegment} ${analysis.wordsPerMinute >= 130 && analysis.wordsPerMinute <= 165 ? styles.wpmSegmentActive : ''}`}
+                      title="130–165 conversational"
+                    />
+                    <div
+                      className={`${styles.wpmSegment} ${analysis.wordsPerMinute > 165 ? styles.wpmSegmentActive : ''}`}
+                      title=">165 high-energy"
+                    />
+                    <div
+                      className={styles.wpmPip}
+                      style={{
+                        left: `${Math.max(4, Math.min(96, ((analysis.wordsPerMinute - 90) / (200 - 90)) * 100))}%`,
+                      }}
+                    />
+                  </div>
+                  <div className={styles.wpmScaleLabels}>
+                    <span className={analysis.wordsPerMinute < 130 ? styles.activeLabel : ''}>&lt;130 deliberate</span>
+                    <span className={analysis.wordsPerMinute >= 130 && analysis.wordsPerMinute <= 165 ? styles.activeLabel : ''}>130–165 conversational</span>
+                    <span className={analysis.wordsPerMinute > 165 ? styles.activeLabel : ''}>&gt;165 high-energy</span>
+                  </div>
+                </div>
               </div>
               <div className={styles.metricTile}>
                 <div className={styles.metricLabel}>Hook Duration</div>
