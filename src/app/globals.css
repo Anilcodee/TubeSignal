@@ -20,6 +20,7 @@
   /* Lines */
   --line: rgba(255, 255, 255, 0.06);
   --line-strong: rgba(255, 255, 255, 0.10);
+  --line-subtle: var(--line);
   --color-surface-border: var(--line);
   --color-surface-border-subtle: var(--line);
 
@@ -41,12 +42,21 @@
   --color-accent: var(--accent);
   --color-accent-hover: #FFD39A;
   --color-accent-muted: var(--accent-soft);
+  --color-accent-glow: var(--accent-glow);
+  --gradient-brand: linear-gradient(135deg, #FFB224 0%, #FF8C00 100%);
 
   /* Semantic */
   --positive: #34D399;
   --negative: #F87171;
   --color-success: var(--positive);
+  --color-success-muted: rgba(52, 211, 153, 0.14);
   --color-danger: var(--negative);
+  --color-error: var(--negative);
+  --color-error-muted: rgba(248, 113, 113, 0.14);
+  --color-warning: #FBBF24;
+  --color-warning-muted: rgba(251, 191, 36, 0.14);
+  --color-info: #60A5FA;
+  --color-info-muted: rgba(96, 165, 250, 0.14);
 
   /* Data series */
   --series-base: #4B5563;
@@ -60,10 +70,41 @@
   --glass-bg: rgba(14, 16, 21, 0.60);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.03);
+  --color-surface-glass: rgba(18, 21, 23, 0.75);
+  --color-surface-hover: rgba(255, 255, 255, 0.04);
+  --color-background-dark: var(--bg);
+  --color-surface-dark: var(--surface-1);
+  --color-primary-dark: var(--accent);
 
   /* Typography */
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), 'SF Mono', Consolas, monospace;
+
+  /* Typography Scale */
+  --text-2xs: 0.6875rem; /* 11px */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.8125rem;  /* 13px */
+  --text-base: 0.875rem; /* 14px */
+  --text-md: 1rem;       /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.06em;
 
   /* Spacing 4px base */
   --s-1: 0.25rem;
@@ -103,6 +144,9 @@
   --radius-full: 9999px;
 
   /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.2);
   --shadow-popover: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--glass-border);
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
   --shadow-glow: 0 0 40px var(--accent-glow);

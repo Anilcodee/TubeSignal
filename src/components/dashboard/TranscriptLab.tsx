@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Pause, Play, Search, Sparkles, X, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeIn } from '@/utils/animations';
 import type { VideoData } from '@/types/analysis';
 import type { HookAnalysis } from '@/utils/transcript-analyzer';
 import styles from './TranscriptLab.module.css';
@@ -170,7 +172,7 @@ export const TranscriptLab = ({
   const analysis = data?.analysis;
 
   return (
-    <div className={styles.container}>
+    <motion.div className={styles.container} initial="hidden" animate="visible" variants={fadeIn}>
       <div className={styles.headingRow}>
         <div className={styles.titleArea}>
           <span>SERPAPI SPEECH INTELLIGENCE</span>
@@ -439,6 +441,6 @@ export const TranscriptLab = ({
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 };

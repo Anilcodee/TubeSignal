@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 import { Users, Eye, CalendarDays, Clock3 } from 'lucide-react';
 import type { ChannelData, ChannelAnalytics, VideoData } from '@/types/analysis';
 import { formatViews, parseSubscribers } from '@/utils/format';
+import { motion } from 'framer-motion';
+import { kpiCardVariant } from '@/utils/animations';
+
+
 import styles from './KpiStrip.module.css';
 
 function AnimatedValue({ 
@@ -14,13 +18,13 @@ function AnimatedValue({
   targetNum?: number, 
   formatFn?: (val: number) => string 
 }) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(() => (targetNum && targetNum > 0 ? 0 : (targetNum || 0)));
 
   useEffect(() => {
     if (targetNum === undefined || targetNum <= 0) {
-      setCount(targetNum || 0);
       return;
     }
+    let rafId: number;
     let startTimestamp: number | null = null;
     const duration = 1200; // 1.2s
 
@@ -32,12 +36,16 @@ function AnimatedValue({
       setCount(Math.floor(ease * targetNum));
       
       if (progress < 1) {
-        window.requestAnimationFrame(step);
+        rafId = window.requestAnimationFrame(step);
       } else {
         setCount(targetNum);
       }
     };
-    window.requestAnimationFrame(step);
+    rafId = window.requestAnimationFrame(step);
+
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
   }, [targetNum]);
 
   if (targetNum === undefined) return <>{value}</>;
@@ -66,13 +74,24 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
   return (
     <div className={styles.kpiPanel} aria-label="Key metrics">
       {metrics.map(({ Icon, targetNum, formatFn, ...metric }, i) => (
-        <div key={metric.label} className={styles.kpiCard} style={{ '--kpi-color': metric.color, animationDelay: `${i * .06}s` } as CSSProperties}>
-          <div className={styles.kpiHeader}><span>{metric.label}</span><Icon size={16} aria-hidden="true" /></div>
+        <motion.div
+          key={metric.label}
+          className={styles.kpiCard}
+          style={{ '--kpi-color': metric.color } as CSSProperties}
+          custom={i}
+          variants={kpiCardVariant}
+          initial="hidden"
+          animate="visible"
+        >
+          <div className={styles.kpiHeader}>
+            <span>{metric.label}</span>
+            <Icon size={16} aria-hidden="true" />
+          </div>
           <span className={styles.value}>
             <AnimatedValue value={metric.value} targetNum={targetNum} formatFn={formatFn} />
           </span>
           <span className={styles.caption}>{metric.caption}</span>
-        </div>
+        </motion.div>
       ))}
     </div>
   );

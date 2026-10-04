@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { ExternalLink, Flame, Play, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { slideUp, fadeIn } from '@/utils/animations';
 import type { VideoData } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
 import { calculateVelocity, calculateMAD, type VideoVelocity } from '@/utils/math-analytics';
@@ -92,7 +94,11 @@ export const VideoTable = ({
               <th scope="col" className={styles.numeric}>vs median</th>
             </tr>
           </thead>
-          <tbody>
+          <motion.tbody
+  initial="hidden"
+  animate="visible"
+  variants={fadeIn}
+>
             {ranked.map((video, index) => {
               const difference =
                 hasViews(video) && medianViews > 0
@@ -106,7 +112,10 @@ export const VideoTable = ({
                 video.views >= madStats.outlierCutoff;
 
               return (
-                <tr key={`${video.videoId}-${index}`}>
+                <motion.tr
+  key={`${video.videoId}-${index}`}
+  variants={slideUp}
+>
                   <td className={styles.rank}>{String(index + 1).padStart(2, '0')}</td>
                   <td>
                     <div className={styles.videoCell}>
@@ -182,10 +191,10 @@ export const VideoTable = ({
                       {difference === null ? '—' : `${difference > 0 ? '+' : ''}${difference}%`}
                     </span>
                   </td>
-                </tr>
+                </motion.tr>
               );
             })}
-          </tbody>
+          </motion.tbody>
         </table>
         {!ranked.length && <p className={styles.empty}>No videos are available yet.</p>}
       </div>

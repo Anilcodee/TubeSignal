@@ -5,6 +5,8 @@ import { Check, Copy, Hash, Type } from 'lucide-react';
 import type { TitlePatterns, VideoData } from '@/types/analysis';
 import { analyzeTitleLengthBuckets } from '@/utils/math-analytics';
 import styles from './TitleLab.module.css';
+import { motion } from 'framer-motion';
+import { fadeIn } from '@/utils/animations';
 
 interface TitleLabProps {
   patterns: TitlePatterns;
@@ -32,7 +34,7 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
     }
   };
   return (
-    <section className={styles.panel} aria-labelledby="title-lab-heading">
+    <motion.section className={styles.panel} aria-labelledby="title-lab-heading" initial="hidden" animate="visible" variants={fadeIn}>
       <div className={styles.header}><span className={styles.icon}><Type size={18} /></span><div><h3 id="title-lab-heading">The anatomy of a title.</h3><p>Recurring structure, not a formula for success.</p></div></div>
       <div className={styles.layout}>
         <div className={styles.lengthCard}>
@@ -85,6 +87,6 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
           <p className={styles.copyStatus} role="status">{message}</p>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };

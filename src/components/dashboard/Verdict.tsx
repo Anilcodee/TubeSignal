@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { fadeIn } from '@/utils/animations';
 import { ArrowUpRight, Eye, Pause, Play, Sparkles, X, Zap } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
@@ -103,23 +104,21 @@ export const Verdict = ({
 
   return (
     <section className={styles.verdict} aria-label="Your 60-second brief">
-      <motion.div 
+      <motion.div
         className={styles.content}
         initial="hidden"
-        animate="show"
-        variants={{
-          hidden: { opacity: 0 },
-          show: { opacity: 1, transition: { staggerChildren: 0.15 } }
-        }}
+        animate="visible"
+        variants={fadeIn}
       >
-        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.tag}><Sparkles size={14} /><span>YOUR 60-SECOND BRIEF</span></motion.div>
-        <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.headline}>{headline}</motion.h2>
-        <motion.p variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.supporting}>{hasComparison ? `A typical upload in this report has ${formatViews(analytics.medianViews)} views. Compare the leading upload, then explore the patterns.` : 'A snapshot of the public uploads available. More videos and view counts make comparisons more useful.'}</motion.p>
-        <motion.details variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.summary}>
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.tag}><Sparkles size={14} /><span>YOUR 60-SECOND BRIEF</span></motion.div>
+        <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.headline}>{headline}</motion.h2>
+        <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.supporting}>{hasComparison ? `A typical upload in this report has ${formatViews(analytics.medianViews)} views. Compare the leading upload, then explore the patterns.` : 'A snapshot of the public uploads available. More videos and view counts make comparisons more useful.'}</motion.p>
+        <motion.details variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.summary}>
           <summary>{meta.analysisSource === 'gemini' ? 'Read the AI interpretation' : 'Read the calculated summary'}</summary>
           <p>{aiAnalysis.summary}</p>
         </motion.details>
-        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className={styles.meta}><span className={styles.metaDot} /> {videos.length} uploads in this report<span aria-hidden="true">/</span><span>Cumulative views, not growth</span></motion.div>
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.meta}><span className={styles.metaDot} /> {videos.length} uploads in this report<span aria-hidden="true">/</span><span>Cumulative views, not growth</span></motion.div>
+
       </motion.div>
 
       {top && <motion.div 
