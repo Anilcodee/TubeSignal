@@ -8,8 +8,8 @@ import type { ChannelSearchResponse } from '@/types/analysis';
 export async function POST(request: NextRequest) {
   try {
     const body = await readRequestObject(request);
-    if (typeof body.query !== 'string' || !body.query.trim() || body.query.length > 512) {
-      throw new ServiceError(400, 'Enter a channel name, @handle, or YouTube channel URL.');
+    if (typeof body.query !== 'string' || !body.query.trim() || body.query.length > 200) {
+      throw new ServiceError(400, 'Enter a channel name, @handle, or YouTube channel URL (up to 200 characters).');
     }
     const query = body.query.trim();
     const identifier = normalizeChannelInput(query);

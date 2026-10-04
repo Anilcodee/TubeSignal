@@ -33,6 +33,7 @@ export interface VideoVelocity {
   viewsPerDay: number;
   formatted: string;
   daysSince: number;
+  isApproximate: boolean;
 }
 
 /**
@@ -40,12 +41,35 @@ export interface VideoVelocity {
  */
 export function calculateVelocity(video: VideoData, now = Date.now()): VideoVelocity {
   const views = Number.isFinite(video.views) && video.views >= 0 ? video.views : 0;
-  const daysSince = getDaysSincePublish(video, now);
+  let daysSince = 30;
+  let isApproximate = true;
+
+  if (video.publishedDate && video.publishedDate !== 'Unavailable') {
+    const parsed = parsePublishingDate(video.publishedDate, now);
+    if (parsed && Number.isFinite(parsed.timestamp)) {
+      daysSince = Math.max(1, Math.floor((now - parsed.timestamp) / 86_400_000));
+      isApproximate = parsed.approximate;
+    } else {
+      const d = new Date(video.publishedDate);
+      if (!isNaN(d.getTime())) {
+        daysSince = Math.max(1, Math.floor((now - d.getTime()) / 86_400_000));
+        isApproximate = false;
+      }
+    }
+  } else if (video.relativeDate) {
+    const parsedRel = parsePublishingDate(video.relativeDate, now);
+    if (parsedRel && Number.isFinite(parsedRel.timestamp)) {
+      daysSince = Math.max(1, Math.floor((now - parsedRel.timestamp) / 86_400_000));
+      isApproximate = true;
+    }
+  }
+
   const viewsPerDay = Math.round(views / daysSince);
   return {
     viewsPerDay,
-    formatted: `${formatViews(viewsPerDay)}/day`,
+    formatted: `${isApproximate ? '~' : ''}${formatViews(viewsPerDay)}/day`,
     daysSince,
+    isApproximate,
   };
 }
 

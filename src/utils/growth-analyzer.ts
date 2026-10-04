@@ -1,5 +1,6 @@
 import type { VideoData, AIAnalysis } from '@/types/analysis';
 import { formatViews } from './format';
+import { parsePublishingDate } from './publishing-date';
 
 export interface DurationTier {
   id: 'short' | 'standard' | 'extended' | 'deep';
@@ -38,9 +39,8 @@ export interface PublishingDayInsight {
 }
 
 export interface AudiencePulse {
-  sentimentScore: number; // 0 to 100
-  praisePoints: { title: string; detail: string; icon: 'fire' | 'heart' | 'bulb' }[];
-  frictionPoints: { title: string; detail: string; icon: 'alert' | 'timer' }[];
+  sentimentScore: number; // channel standout rate (0 to 100)
+  observedSignals: string[];
   contentDemands: { topic: string; demandLevel: 'High' | 'Very High'; reason: string }[];
 }
 
@@ -51,6 +51,7 @@ export interface ChannelGrowthInsights {
   titleFormulas: TitleFormula[];
   topFormula: TitleFormula | null;
   publishingDays: PublishingDayInsight[];
+  hasExactDates: boolean;
   peakPublishingDay: string;
   peakLiftMultiplier: number;
   audiencePulse: AudiencePulse;
@@ -68,7 +69,8 @@ export function analyzeChannelGrowth(
   medianViews: number,
   aiAnalysis?: AIAnalysis
 ): ChannelGrowthInsights {
-  const validVideos = videos.filter((v) => Number.isFinite(v.views) && v.views >= 0);
+  // Respect viewsAvailable: exclude missing views from dragging down view counts
+  const validVideos = videos.filter((v) => v.viewsAvailable !== false && Number.isFinite(v.views) && v.views >= 0);
   const totalCount = Math.max(1, validVideos.length);
   const baselineMedian = Math.max(1, medianViews);
 
@@ -119,8 +121,8 @@ export function analyzeChannelGrowth(
     };
   });
 
-  // Pick winner with at least 1 video that has highest average views
-  const eligibleTiers = durationTiers.filter((t) => t.count >= 1);
+  // Pick winner requiring at least 2 videos (prevents single outlier anomaly from winning)
+  const eligibleTiers = durationTiers.filter((t) => t.count >= 2);
   const winningDuration = eligibleTiers.length
     ? eligibleTiers.reduce((prev, curr) => (curr.avgViews > prev.avgViews ? curr : prev))
     : null;
@@ -129,9 +131,10 @@ export function analyzeChannelGrowth(
     winningDuration.isWinner = true;
   }
 
+  // Non-causal, observational description
   const durationInsightText = winningDuration
-    ? `${winningDuration.label} (${winningDuration.rangeText}) drives the highest viewership, averaging ${winningDuration.viewMultiplier}× the channel baseline.`
-    : 'Upload durations are evenly spread across formats.';
+    ? `${winningDuration.label} (${winningDuration.rangeText}) averaged the highest view count (${winningDuration.viewMultiplier}× channel median) across ${winningDuration.count} uploads. (Observational pattern, not a causal guarantee).`
+    : 'Upload durations in this sample are evenly distributed across formats.';
 
   // ── 2. Title Formulas ──
   const formulaDef: {
@@ -180,7 +183,6 @@ export function analyzeChannelGrowth(
     let matchedVideos: VideoData[] = [];
 
     if (id === 'direct') {
-      // Videos not captured by curiosity, numbers, or contrarian
       matchedVideos = validVideos.filter(
         (v) =>
           !formulaDef[0].pattern.test(v.title) &&
@@ -216,16 +218,16 @@ export function analyzeChannelGrowth(
     ? formulasWithVideos.reduce((prev, curr) => (curr.winRate > prev.winRate ? curr : prev))
     : titleFormulas[0] || null;
 
-  // ── 3. Publishing Days Radar ──
+  // ── 3. Publishing Days (Only from real, exact timestamps) ──
   const daysMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const dayCounts = Array.from({ length: 7 }, () => ({ total: 0, standouts: 0, viewsSum: 0 }));
 
   validVideos.forEach((v) => {
-    // If published date is parseable
-    const d = new Date(v.publishedDate);
-    if (!isNaN(d.getTime())) {
+    const parsed = parsePublishingDate(v.publishedDate);
+    if (parsed && !parsed.approximate) {
+      const d = new Date(parsed.timestamp);
       const dayIndex = d.getUTCDay();
       dayCounts[dayIndex].total++;
       dayCounts[dayIndex].viewsSum += v.views;
@@ -235,17 +237,7 @@ export function analyzeChannelGrowth(
     }
   });
 
-  // If no exact dates were parseable, seed intelligent distribution from catalog order
-  const hasParsedDates = dayCounts.some((d) => d.total > 0);
-  if (!hasParsedDates) {
-    validVideos.forEach((v, index) => {
-      // Simulate natural weekly spread (e.g., tech channels favour Tue/Thu/Sun)
-      const dayIndex = [4, 2, 0, 5, 3, 1, 6][index % 7];
-      dayCounts[dayIndex].total++;
-      dayCounts[dayIndex].viewsSum += v.views;
-      if (v.views >= baselineMedian) dayCounts[dayIndex].standouts++;
-    });
-  }
+  const hasExactDates = dayCounts.some((d) => d.total > 0);
 
   const publishingDays: PublishingDayInsight[] = dayCounts.map((item, idx) => {
     const winRate = item.total ? Math.round((item.standouts / item.total) * 100) : 0;
@@ -265,81 +257,77 @@ export function analyzeChannelGrowth(
 
   let peakDayIndex = 0;
   let maxScore = -1;
-  publishingDays.forEach((d, idx) => {
-    const score = d.videoCount > 0 ? d.liftMultiplier * 10 + d.standoutCount : 0;
-    if (score > maxScore) {
-      maxScore = score;
-      peakDayIndex = idx;
+  if (hasExactDates) {
+    publishingDays.forEach((d, idx) => {
+      const score = d.videoCount > 0 ? d.liftMultiplier * 10 + d.standoutCount : 0;
+      if (score > maxScore) {
+        maxScore = score;
+        peakDayIndex = idx;
+      }
+    });
+
+    if (publishingDays[peakDayIndex] && publishingDays[peakDayIndex].videoCount > 0) {
+      publishingDays[peakDayIndex].isPeak = true;
     }
-  });
-
-  if (publishingDays[peakDayIndex]) {
-    publishingDays[peakDayIndex].isPeak = true;
   }
-  const peakDayObj = publishingDays[peakDayIndex];
-  const peakPublishingDay = peakDayObj?.dayName || 'Thursday';
-  const peakLiftMultiplier = peakDayObj?.liftMultiplier || 1.0;
 
-  // ── 4. Audience Voice & Comment Sentiment Pulse ──
-  const topUpload = [...validVideos].sort((a, b) => b.views - a.views)[0];
-  const sentimentScore = 88; // Industry high benchmark
+  const peakDayObj = hasExactDates && publishingDays[peakDayIndex]?.videoCount > 0 ? publishingDays[peakDayIndex] : null;
+  const peakPublishingDay = peakDayObj ? peakDayObj.dayName : 'Unavailable';
+  const peakLiftMultiplier = peakDayObj ? peakDayObj.liftMultiplier : 1.0;
 
-  const praisePoints = [
-    {
-      title: 'Hook Clarity & High Pacing',
-      detail: 'Viewers frequently praise the immediate jump into content with zero fluff or 2-minute sponsor intros.',
-      icon: 'fire' as const,
-    },
-    {
-      title: 'Production & Visual Fidelity',
-      detail: 'Consistent positive remarks on B-roll framing, clear audio engineering, and dynamic graphics.',
-      icon: 'heart' as const,
-    },
-    {
-      title: 'Unbiased Honest Recommendations',
-      detail: 'High trust factor: audience values objective pros/cons over sponsored endorsements.',
-      icon: 'bulb' as const,
-    },
-  ];
+  // ── 4. Strategic Performance Signals & Concept Outlines (Real ground truth) ──
+  const standouts = validVideos.filter((v) => v.views >= baselineMedian);
+  const standoutScore = Math.round((standouts.length / totalCount) * 100);
 
-  const frictionPoints = [
-    {
-      title: 'Depth in Extended Chapters',
-      detail: 'When videos run under 8 minutes, viewers comment asking for more technical benchmarks and long-term tests.',
-      icon: 'timer' as const,
-    },
-    {
-      title: 'Regional Pricing / Availability',
-      detail: 'Audience queries frequently ask about global launch dates and non-US pricing differences.',
-      icon: 'alert' as const,
-    },
-  ];
+  const sortedObserved = [...validVideos].sort((a, b) => b.views - a.views);
+  const topUpload = sortedObserved[0];
+  const secondUpload = sortedObserved[1];
 
-  const contentDemands = [
-    {
-      topic: `Full Long-Term Review of ${topUpload ? topUpload.title.slice(0, 35) + '…' : 'Flagship Topic'}`,
-      demandLevel: 'Very High' as const,
-      reason: 'Top requested follow-up: 30-day battery and durability update.',
-    },
-    {
-      topic: 'Direct Head-to-Head Comparison Test',
-      demandLevel: 'High' as const,
-      reason: 'Audience debates alternatives in the comments and asks for real-world blind camera/speed tests.',
-    },
-    {
-      topic: 'Behind-the-Scenes & Workflow Breakdown',
-      demandLevel: 'High' as const,
-      reason: 'Viewers curious about gear, software stack, and studio setup.',
-    },
-  ];
+  const observedSignals: string[] = [];
+  if (topFormula && topFormula.count >= 2) {
+    observedSignals.push(`🔥 ${topFormula.label} (${topFormula.winRate}% win rate)`);
+  }
+  if (winningDuration) {
+    observedSignals.push(`⏱ ${winningDuration.label} (${winningDuration.rangeText})`);
+  }
+  if (aiAnalysis?.titlePatterns?.useOfNumbers && /\d/.test(aiAnalysis.titlePatterns.useOfNumbers)) {
+    observedSignals.push('🔢 Numbered titles present');
+  } else {
+    observedSignals.push('🎯 High topical clarity');
+  }
+
+  const contentDemands: { topic: string; demandLevel: 'High' | 'Very High'; reason: string }[] = [];
+
+  if (topUpload) {
+    contentDemands.push({
+      topic: `Follow-up to "${topUpload.title.length > 38 ? topUpload.title.slice(0, 36) + '…' : topUpload.title}"`,
+      demandLevel: 'Very High',
+      reason: `Top upload in sample: ${formatViews(topUpload.views)} views (${(topUpload.views / baselineMedian).toFixed(1)}× median).`,
+    });
+  }
 
   if (aiAnalysis?.contentThemes && aiAnalysis.contentThemes.length > 0) {
     const topTheme = aiAnalysis.contentThemes[0];
-    contentDemands[1] = {
+    contentDemands.push({
       topic: `Deep-Dive Series on "${topTheme.theme}"`,
-      demandLevel: 'Very High' as const,
-      reason: `Dominant channel pillar: ${topTheme.percentage}% of public views concentrate here.`,
-    };
+      demandLevel: 'Very High',
+      reason: `Dominant thematic pillar: ${topTheme.percentage}% of categorized sample.`,
+    });
+  } else if (secondUpload) {
+    contentDemands.push({
+      topic: `Expansion on "${secondUpload.title.length > 38 ? secondUpload.title.slice(0, 36) + '…' : secondUpload.title}"`,
+      demandLevel: 'High',
+      reason: `Second standout upload: ${formatViews(secondUpload.views)} views (${(secondUpload.views / baselineMedian).toFixed(1)}× median).`,
+    });
+  }
+
+  if (aiAnalysis?.recommendations && aiAnalysis.recommendations.length > 0) {
+    const rec = aiAnalysis.recommendations[0];
+    contentDemands.push({
+      topic: rec.length > 48 ? rec.slice(0, 46) + '…' : rec,
+      demandLevel: 'High',
+      reason: 'Empirical experimentation recommendation.',
+    });
   }
 
   return {
@@ -349,12 +337,12 @@ export function analyzeChannelGrowth(
     titleFormulas,
     topFormula,
     publishingDays,
+    hasExactDates,
     peakPublishingDay,
     peakLiftMultiplier,
     audiencePulse: {
-      sentimentScore,
-      praisePoints,
-      frictionPoints,
+      sentimentScore: standoutScore,
+      observedSignals,
       contentDemands,
     },
   };

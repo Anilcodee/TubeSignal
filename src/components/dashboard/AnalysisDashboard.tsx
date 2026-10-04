@@ -32,6 +32,11 @@ type ReportTab = typeof TABS[number]['id'];
 export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; isDemo: boolean }) => {
   const { data, isLoading, error, refetch } = useAnalysis(channelId, isDemo);
   const [activeTab, setActiveTab] = useState<ReportTab>('overview');
+  const [prevChannelId, setPrevChannelId] = useState(channelId);
+  if (channelId !== prevChannelId) {
+    setPrevChannelId(channelId);
+    setActiveTab('overview');
+  }
   const [activeModalVideo, setActiveModalVideo] = useState<{
     videoId: string;
     title: string;
@@ -132,6 +137,7 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           </>}
           {activeTab === 'transcripts' && (
             <TranscriptLab
+              key={data.channel.channelId}
               videos={data.videos}
               channelName={data.channel.name}
               isDemo={sample}

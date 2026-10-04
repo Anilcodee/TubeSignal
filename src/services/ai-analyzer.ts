@@ -17,8 +17,21 @@ const exactKeys = (value: Record<string, unknown>, keys: string[]): boolean => O
 export function validateAIAnalysis(value: unknown, baseline: AIAnalysis): AIAnalysis | null {
   if (!isObject(value) || !exactKeys(value, ['summary', 'contentThemes', 'titlePatterns', 'publishingStrategy', 'performanceInsights', 'recommendations'])) return null;
   if (!string(value.summary, 2000) || !strings(value.recommendations) || value.recommendations.length < 1 || value.recommendations.length > 8) return null;
-  // No defensible category mapping is supplied in this flow; a model cannot invent one.
-  if (!Array.isArray(value.contentThemes) || value.contentThemes.length !== 0) return null;
+  let validatedThemes: import('@/types/analysis').ContentTheme[] = baseline.contentThemes;
+  if (Array.isArray(value.contentThemes) && value.contentThemes.length > 0) {
+    const valid = value.contentThemes.every(
+      (t) => isObject(t) && string(t.theme, 80) && typeof t.percentage === 'number' && Number.isFinite(t.percentage)
+    );
+    if (valid) {
+      validatedThemes = value.contentThemes.map((t) => ({
+        theme: (t.theme as string).trim(),
+        percentage: Math.min(100, Math.max(0, Math.round(t.percentage as number))),
+        videoCount: typeof t.videoCount === 'number' && Number.isFinite(t.videoCount) && t.videoCount > 0
+          ? Math.round(t.videoCount)
+          : Math.max(1, Math.round(((t.percentage as number) / 100) * (baseline.contentThemes[0]?.videoCount ? 20 : 10))),
+      }));
+    }
+  }
   const titles = value.titlePatterns;
   if (!isObject(titles) || !exactKeys(titles, ['avgLength', 'commonPatterns', 'emotionalTriggers', 'useOfNumbers'])
     || typeof titles.avgLength !== 'number' || !Number.isFinite(titles.avgLength) || titles.avgLength < 0 || titles.avgLength > 500
@@ -38,7 +51,7 @@ export function validateAIAnalysis(value: unknown, baseline: AIAnalysis): AIAnal
   const narrative = [value.summary, ...value.recommendations].join(' ');
   // Guard against fabricated claims, external links, or metric promises
   if (/https?:\/\/|guaranteed|proven to|retention rate|click.through rate|\bCTR\b|algorithm favors/i.test(narrative)) return null;
-  return { ...baseline, summary: value.summary.trim(), recommendations: value.recommendations.map((item) => item.trim()) };
+  return { ...baseline, summary: value.summary.trim(), contentThemes: validatedThemes, recommendations: value.recommendations.map((item) => item.trim()) };
 }
 
 export class AIAnalyzerService {
@@ -106,9 +119,36 @@ export class AIAnalyzerService {
     const top = observed[0];
     const summary = `${channel.name}: this report covers ${videos.length} supplied videos, not the full channel history. `
       + (observed.length ? `${observed.length} have view counts, averaging ${analytics.avgViewsFormatted} views with a median of ${formatViews(analytics.medianViews)}. ` : 'View counts are unavailable. ')
-      + 'Lifetime view differences do not establish growth or explain why a video performed differently.';
+    const clusters: { theme: string; pattern: RegExp }[] = [
+      { theme: 'Reviews & Hands-On', pattern: /\b(review|hands.on|unboxing|first look|tested|impressions)\b/i },
+      { theme: 'Comparisons & Versus', pattern: /\b(vs|versus|compared|better than|difference|which is)\b/i },
+      { theme: 'Guides & Explainers', pattern: /\b(how to|guide|tutorial|explained|tips|tricks|steps)\b/i },
+      { theme: 'Analysis & Deep Dives', pattern: /\b(why|truth|future of|history|rise|fall|secret|problem with)\b/i },
+    ];
+    const rawThemes = clusters.map(({ theme, pattern }) => {
+      const matching = titles.filter((t) => pattern.test(t));
+      return {
+        theme,
+        videoCount: matching.length,
+        percentage: titles.length ? Math.round((matching.length / titles.length) * 100) : 0,
+      };
+    }).filter((t) => t.videoCount > 0);
+
+    const categorized = rawThemes.reduce((sum, t) => sum + t.videoCount, 0);
+    const otherCount = Math.max(0, titles.length - categorized);
+    if (rawThemes.length > 0 && otherCount > 0) {
+      rawThemes.push({
+        theme: 'General Channel Topics',
+        videoCount: otherCount,
+        percentage: titles.length ? Math.round((otherCount / titles.length) * 100) : 0,
+      });
+    }
+    const contentThemes = rawThemes.length > 0 ? rawThemes : [
+      { theme: 'General Channel Topics', percentage: 100, videoCount: titles.length || 1 }
+    ];
+
     return {
-      summary, contentThemes: [],
+      summary, contentThemes,
       titlePatterns: {
         avgLength,
         commonPatterns: [questions ? `${questions} of ${titles.length} titles contain a question mark` : '', colonTitles ? `${colonTitles} of ${titles.length} titles contain a colon` : ''].filter(Boolean),

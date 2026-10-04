@@ -175,7 +175,7 @@ export const VideoTable = ({
                   </td>
                   <td className={`${styles.numeric} tabular-nums`}>
                     {vel ? (
-                      <span className={styles.velocityVal} title={`${formatViews(vel.viewsPerDay)} views/day over ${vel.daysSince} days`}>
+                      <span className={styles.velocityVal} title={`${vel.isApproximate ? 'Estimated pace: ~' : ''}${formatViews(vel.viewsPerDay)} views/day over ${vel.daysSince} days`}>
                         <Zap size={11} /> {vel.formatted}
                       </span>
                     ) : (

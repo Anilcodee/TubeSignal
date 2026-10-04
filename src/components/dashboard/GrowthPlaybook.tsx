@@ -274,53 +274,63 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               </div>
             </div>
             <span className={styles.peakDayBadge}>
-              Peak: {insights.peakPublishingDay} {insights.peakLiftMultiplier > 1 ? `(${insights.peakLiftMultiplier}× lift)` : ''}
+              {insights.hasExactDates ? `Peak: ${insights.peakPublishingDay} (${insights.peakLiftMultiplier}×)` : 'Dates relative'}
             </span>
           </div>
 
           {/* Visual Heatwave Bar Equalizer */}
-          <div className={styles.heatwaveContainer}>
-            {insights.publishingDays.map((day) => {
-              const intensity = day.videoCount > 0 ? (day.videoCount / maxDayVideos) : 0;
-              const barHeightPct = day.videoCount > 0 ? Math.max(14, intensity * 100) : 4;
+          {insights.hasExactDates ? (
+            <div className={styles.heatwaveContainer}>
+              {insights.publishingDays.map((day) => {
+                const intensity = day.videoCount > 0 ? (day.videoCount / maxDayVideos) : 0;
+                const barHeightPct = day.videoCount > 0 ? Math.max(14, intensity * 100) : 4;
 
-              return (
-                <div 
-                  key={day.shortName} 
-                  className={`${styles.heatwaveCol} ${day.isPeak ? styles.heatwaveColPeak : ''}`}
-                >
-                  <div className={styles.heatwaveBarBox}>
-                    {day.isPeak && (
-                      <span className={styles.peakTag}>
-                        <Sparkles size={9} /> 1.7×
-                      </span>
-                    )}
-                    <motion.div 
-                      className={`${styles.heatwaveBar} ${day.isPeak ? styles.heatwaveBarPeak : ''}`}
-                      initial={{ height: 0 }}
-                      animate={{ height: `${barHeightPct}%` }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      style={{ opacity: day.videoCount > 0 ? 1 : 0.25 }}
-                    />
+                return (
+                  <div 
+                    key={day.shortName} 
+                    className={`${styles.heatwaveCol} ${day.isPeak ? styles.heatwaveColPeak : ''}`}
+                  >
+                    <div className={styles.heatwaveBarBox}>
+                      {day.isPeak && day.liftMultiplier > 1 && (
+                        <span className={styles.peakTag}>
+                          <Sparkles size={9} /> {day.liftMultiplier}×
+                        </span>
+                      )}
+                      <motion.div 
+                        className={`${styles.heatwaveBar} ${day.isPeak ? styles.heatwaveBarPeak : ''}`}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${barHeightPct}%` }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        style={{ opacity: day.videoCount > 0 ? 1 : 0.25 }}
+                      />
+                    </div>
+                    <span className={`${styles.heatwaveLabel} ${day.isPeak ? styles.heatwaveLabelPeak : ''}`}>
+                      {day.shortName}
+                    </span>
                   </div>
-                  <span className={`${styles.heatwaveLabel} ${day.isPeak ? styles.heatwaveLabelPeak : ''}`}>
-                    {day.shortName}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-3)', fontSize: '13px', background: 'var(--surface-2)', borderRadius: 'var(--radius-md)', margin: '16px 0' }}>
+              Specific release weekdays cannot be determined because uploads use approximate relative dates (e.g. &ldquo;2 weeks ago&rdquo;).
+            </div>
+          )}
 
-          {/* Golden Window Banner */}
+          {/* Publishing Window Banner */}
           <div className={styles.goldenWindowPill}>
             <Clock size={13} style={{ color: '#34d399', flexShrink: 0 }} />
             <span>
-              Recommended Window: <strong>{insights.peakPublishingDay}s between 2:00 – 5:00 PM EST</strong> (+{Math.round((insights.peakLiftMultiplier - 1) * 100)}% lift)
+              {insights.hasExactDates ? (
+                <>Most frequent upload day: <strong>{insights.peakPublishingDay}</strong> ({insights.peakLiftMultiplier}× median views)</>
+              ) : (
+                <>Observed release day breakdown: <strong>Unavailable for relative date samples</strong></>
+              )}
             </span>
           </div>
         </motion.div>
 
-        {/* ═══ CARD 4: Audience Sentiment & Demand Ideas ═══ */}
+        {/* ═══ CARD 4: Performance Signals & Demand Concepts ═══ */}
         <motion.div className={styles.card} variants={itemVariants}>
           <div className={styles.cardHeader}>
             <div className={styles.cardHeaderLeft}>
@@ -328,12 +338,12 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                 <Flame size={16} />
               </div>
               <div>
-                <h3 className={styles.cardTitle}>Audience Sentiment & Demands</h3>
-                <p className={styles.cardDesc}>Viewer praise drivers and high-demand topics</p>
+                <h3 className={styles.cardTitle}>Performance Signals & Concepts</h3>
+                <p className={styles.cardDesc}>Empirical format signals and high-probability follow-ups</p>
               </div>
             </div>
-            <span className={styles.sentimentPill}>
-              {insights.audiencePulse.sentimentScore}% Positive
+            <span className={styles.sentimentPill} title="Percentage of sample uploads meeting or beating channel median views">
+              {insights.audiencePulse.sentimentScore}% Standout Rate
             </span>
           </div>
 
@@ -356,19 +366,19 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             </div>
 
             <div className={styles.sentimentTags}>
-              <span className={styles.signalPill}>⚡ Snappy Hook Pacing</span>
-              <span className={styles.signalPill}>🎯 High Practical Value</span>
-              <span className={styles.signalPill}>🔎 Deep Comparison Tests</span>
+              {insights.audiencePulse.observedSignals.map((sig) => (
+                <span key={sig} className={styles.signalPill}>{sig}</span>
+              ))}
             </div>
           </div>
 
           {/* Next Video Concept Chips */}
           <div className={styles.demandsBox}>
             <span className={styles.demandsTitle}>
-              <Flame size={12} style={{ color: '#f87171' }} /> TOP AUDIENCE REQUESTS (CLICK TO COPY OUTLINE)
+              <Flame size={12} style={{ color: '#f87171' }} /> HIGH-POTENTIAL FOLLOW-UP CONCEPTS (CLICK TO COPY OUTLINE)
             </span>
             <div className={styles.demandChipsList}>
-              {insights.audiencePulse.contentDemands.slice(0, 2).map((demand, idx) => {
+              {insights.audiencePulse.contentDemands.slice(0, 3).map((demand, idx) => {
                 const isCopied = copiedTopic === demand.topic;
                 return (
                   <button
@@ -376,7 +386,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                     type="button"
                     className={styles.demandChip}
                     onClick={() => handleCopyTopic(demand.topic)}
-                    title="Click to copy concept outline"
+                    title={demand.reason}
                   >
                     <span className={styles.chipText}>{demand.topic}</span>
                     <span className={styles.demandBadge}>

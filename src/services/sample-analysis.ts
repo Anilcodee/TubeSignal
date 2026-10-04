@@ -29,7 +29,12 @@ export function buildSampleAnalysis(name: SampleName): FullAnalysisResponse {
       lengthSeconds, length: lengthSeconds ? video.length : 'Unavailable' };
   });
   const channel = { ...fixture.channel, totalVideosAnalyzed: videos.length };
-  const aiAnalysis = aiAnalyzerService.generateFallbackAnalysis(channel, videos);
+  const fallback = aiAnalyzerService.generateFallbackAnalysis(channel, videos);
+  const fixtureThemes = (fixture as unknown as { aiAnalysis?: { contentThemes?: import('@/types/analysis').ContentTheme[] } }).aiAnalysis?.contentThemes || [];
+  const aiAnalysis = {
+    ...fallback,
+    contentThemes: fixtureThemes.length > 0 ? fixtureThemes : fallback.contentThemes,
+  };
   return {
     channel, videos,
     analytics: DataTransformerService.calculateAnalytics(videos), aiAnalysis,

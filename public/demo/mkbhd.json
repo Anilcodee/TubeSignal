@@ -11,7 +11,7 @@
   },
   "videos": [
     {
-      "videoId": "iphone-16-pro",
+      "videoId": "bLqLh2uWq7M",
       "title": "iPhone 16 Pro Review: The Camera Button!",
       "views": 12400000,
       "viewsFormatted": "12.4M",
@@ -19,11 +19,11 @@
       "relativeDate": "2 weeks ago",
       "length": "14:32",
       "lengthSeconds": 872,
-      "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock1"
+      "thumbnail": "https://i.ytimg.com/vi/bLqLh2uWq7M/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=bLqLh2uWq7M"
     },
     {
-      "videoId": "pixel-9-pro",
+      "videoId": "Z-P0iZ17Y5s",
       "title": "Google Pixel 9 Pro Review: Actually Great?",
       "views": 8900000,
       "viewsFormatted": "8.9M",
@@ -31,11 +31,11 @@
       "relativeDate": "1 month ago",
       "length": "16:45",
       "lengthSeconds": 1005,
-      "thumbnail": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock2"
+      "thumbnail": "https://i.ytimg.com/vi/Z-P0iZ17Y5s/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=Z-P0iZ17Y5s"
     },
     {
-      "videoId": "best-tech-2026",
+      "videoId": "_Zp_kU8kC9U",
       "title": "Smartphone Awards 2026: The Best & Worst!",
       "views": 15200000,
       "viewsFormatted": "15.2M",
@@ -43,11 +43,11 @@
       "relativeDate": "8 months ago",
       "length": "22:15",
       "lengthSeconds": 1335,
-      "thumbnail": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock3"
+      "thumbnail": "https://i.ytimg.com/vi/_Zp_kU8kC9U/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=_Zp_kU8kC9U"
     },
     {
-      "videoId": "apple-vision-pro-2",
+      "videoId": "dtp6bRe6ItU",
       "title": "Apple Vision Pro 2: 6 Months Later",
       "views": 7800000,
       "viewsFormatted": "7.8M",
@@ -55,11 +55,11 @@
       "relativeDate": "2 months ago",
       "length": "18:20",
       "lengthSeconds": 1100,
-      "thumbnail": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock4"
+      "thumbnail": "https://i.ytimg.com/vi/dtp6bRe6ItU/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=dtp6bRe6ItU"
     },
     {
-      "videoId": "macbook-m4",
+      "videoId": "WkU_4hA5u88",
       "title": "M4 MacBook Pro: Don't Buy the Base Model!",
       "views": 6400000,
       "viewsFormatted": "6.4M",
@@ -67,8 +67,8 @@
       "relativeDate": "3 weeks ago",
       "length": "12:10",
       "lengthSeconds": 730,
-      "thumbnail": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock5"
+      "thumbnail": "https://i.ytimg.com/vi/WkU_4hA5u88/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=WkU_4hA5u88"
     }
   ],
   "analytics": {

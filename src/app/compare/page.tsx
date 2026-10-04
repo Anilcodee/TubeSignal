@@ -45,8 +45,8 @@ function CompareContent() {
     const sampleList = ['mkbhd', 'fireship', 'veritasium'];
     const isSample1 = sampleList.includes(c1.trim().toLowerCase().replace(/^@/, ''));
     const isSample2 = sampleList.includes(c2.trim().toLowerCase().replace(/^@/, ''));
-    const useDemo1 = demo !== undefined ? (demo && isSample1) : isSample1;
-    const useDemo2 = demo !== undefined ? (demo && isSample2) : isSample2;
+    const useDemo1 = demo ?? isSample1;
+    const useDemo2 = demo ?? isSample2;
 
     const cached1 = getClientCachedAnalysis(c1, useDemo1);
     const cached2 = getClientCachedAnalysis(c2, useDemo2);
@@ -117,7 +117,7 @@ function CompareContent() {
     setChannel1Input(channel2Input);
     setChannel2Input(temp);
     if (channel2Input.trim() && temp.trim()) {
-      runComparison(channel2Input, temp, false);
+      runComparison(channel2Input, temp);
     }
   };
 
@@ -157,7 +157,7 @@ function CompareContent() {
           className={styles.compareForm}
           onSubmit={(e) => {
             e.preventDefault();
-            runComparison(channel1Input, channel2Input, false);
+            runComparison(channel1Input, channel2Input);
           }}
         >
           <div className={styles.channelInputWrapper}>

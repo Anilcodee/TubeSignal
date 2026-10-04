@@ -11,7 +11,7 @@
   },
   "videos": [
     {
-      "videoId": "100-seconds-rust",
+      "videoId": "5C_HPTJg5ek",
       "title": "Rust in 100 Seconds",
       "views": 4200000,
       "viewsFormatted": "4.2M",
@@ -19,11 +19,11 @@
       "relativeDate": "3 months ago",
       "length": "02:15",
       "lengthSeconds": 135,
-      "thumbnail": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock_rust"
+      "thumbnail": "https://i.ytimg.com/vi/5C_HPTJg5ek/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=5C_HPTJg5ek"
     },
     {
-      "videoId": "ai-code-editors",
+      "videoId": "G3e-cpL7ofc",
       "title": "The End of VS Code? Cursor & AI IDEs Explained",
       "views": 3100000,
       "viewsFormatted": "3.1M",
@@ -31,11 +31,11 @@
       "relativeDate": "1 month ago",
       "length": "04:50",
       "lengthSeconds": 290,
-      "thumbnail": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock_ai"
+      "thumbnail": "https://i.ytimg.com/vi/G3e-cpL7ofc/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=G3e-cpL7ofc"
     },
     {
-      "videoId": "nextjs-drama",
+      "videoId": "SqcY0GlETPk",
       "title": "Why Everyone is Mad at React & Next.js",
       "views": 2800000,
       "viewsFormatted": "2.8M",
@@ -43,8 +43,8 @@
       "relativeDate": "2 months ago",
       "length": "05:12",
       "lengthSeconds": 312,
-      "thumbnail": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&auto=format&fit=crop&q=80",
-      "url": "https://www.youtube.com/watch?v=mock_next"
+      "thumbnail": "https://i.ytimg.com/vi/SqcY0GlETPk/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=SqcY0GlETPk"
     }
   ],
   "analytics": {

@@ -41,8 +41,15 @@ export const TranscriptLab = ({
     ? selectedVideoId
     : (topVideos[0]?.videoId || '');
 
-  const [loading, setLoading] = useState<boolean>(() => !transcriptClientCache.has(activeVideoId));
-  const [data, setData] = useState<TranscriptResponse | null>(() => transcriptClientCache.get(activeVideoId) ?? null);
+  const [loading, setLoading] = useState<boolean>(() => {
+    const cached = transcriptClientCache.get(activeVideoId);
+    return !cached || !cached.success;
+  });
+  const [data, setData] = useState<TranscriptResponse | null>(() => {
+    const cached = transcriptClientCache.get(activeVideoId);
+    return cached && cached.success ? cached : null;
+  });
+  const [retryCount, setRetryCount] = useState<number>(0);
   const [copied, setCopied] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isPlayingInline, setIsPlayingInline] = useState<boolean>(false);
@@ -105,7 +112,7 @@ export const TranscriptLab = ({
 
     let cancelled = false;
     const cached = transcriptClientCache.get(activeVideoId);
-    if (cached) {
+    if (cached && cached.success) {
       queueMicrotask(() => {
         if (!cancelled) {
           setData(cached);
@@ -131,7 +138,9 @@ export const TranscriptLab = ({
         });
         const resData = (await res.json()) as TranscriptResponse;
         if (!cancelled) {
-          transcriptClientCache.set(activeVideoId, resData);
+          if (resData.success) {
+            transcriptClientCache.set(activeVideoId, resData);
+          }
           setData(resData);
           setLoading(false);
         }
@@ -148,7 +157,7 @@ export const TranscriptLab = ({
     return () => {
       cancelled = true;
     };
-  }, [activeVideoId, isDemo]);
+  }, [activeVideoId, isDemo, retryCount]);
 
   const handleCopyTranscript = () => {
     if (!data?.analysis?.fullTranscriptText) return;
@@ -216,9 +225,9 @@ export const TranscriptLab = ({
           <button
             key={video.videoId}
             type="button"
-            className={`${styles.videoChip} ${video.videoId === selectedVideoId ? styles.activeChip : ''}`}
+            className={`${styles.videoChip} ${video.videoId === activeVideoId ? styles.activeChip : ''}`}
             onClick={() => {
-              if (selectedVideoId !== video.videoId) {
+              if (activeVideoId !== video.videoId) {
                 try {
                   iframeRef.current?.contentWindow?.postMessage(
                     JSON.stringify({ event: 'command', func: 'stopVideo', args: '' }),
@@ -300,6 +309,29 @@ export const TranscriptLab = ({
           <small style={{ color: 'var(--text-3)', display: 'block', marginTop: 4 }}>
             Try selecting another video above or testing a sample report.
           </small>
+          <div style={{ marginTop: 12 }}>
+            <button
+              type="button"
+              onClick={() => {
+                transcriptClientCache.delete(activeVideoId);
+                setRetryCount((c) => c + 1);
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 14px',
+                borderRadius: '8px',
+                background: 'var(--surface-3)',
+                color: 'var(--text)',
+                border: '1px solid var(--line)',
+                cursor: 'pointer',
+                fontSize: '12px',
+              }}
+            >
+              Retry transcript
+            </button>
+          </div>
         </div>
       )}
 

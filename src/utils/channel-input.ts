@@ -36,7 +36,7 @@ export function isChannelId(value: string): boolean {
 
 /** Keep malformed identifiers/URLs out of paid name discovery. */
 export function isInvalidSearchInput(value: string): boolean {
-  return !value.trim() || value.length > 120 || /[\u0000-\u001f\u007f\\/]/.test(value)
+  return !value.trim() || value.length > 200 || /[\u0000-\u001f\u007f\\/]/.test(value)
     || value.startsWith('@') || /^UC[A-Za-z0-9_-]{18,}$/.test(value)
     || /(?:https?:|www\.|youtube\.com|youtu\.be)/i.test(value);
 }
