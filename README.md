@@ -12,11 +12,13 @@ The product is intentionally explicit about what public metadata can and cannot 
   - `youtube_video_transcript`: Speech intelligence, opening 40-second hook breakdowns, and pacing metrics.
 - **Creator Faceoff (`/compare`)**: Side-by-side comparative analysis between two creators with real-time KPI matrix, advantage indicators, and head-to-head verdict.
 - **Visual Intelligence Workspace**: Interactive 3D signal sculpture, instant sample presets, and zero-clutter research console.
+- **Header Provenance Transparency**: Prominent badge disclosing data source (`Sample Fixture` vs `Live YouTube Data`), sample size `n=`, and interpretation model (`Gemini AI` vs `Deterministic`).
 - **Organized 4-View Deep Dive**:
-  - **At a glance**: 60-second executive brief, standout upload spotlight, median view baseline, KPI strip, and actionable next steps.
-  - **Content patterns**: Title length distribution, recurring packaging formulas, duration vs. views scatter plot, and monthly publishing cadence.
-  - **Hook & Script Lab**: Speech intelligence powered by video transcripts—analyzing 40s opening hook archetypes (Story/Curiosity/Direct/Contrarian), words-per-minute (WPM) pacing, high-retention power words, and interactive transcript search.
-  - **All uploads**: Full public upload catalog ranked by views, accompanied by velocity badges and direct links.
+  - **At a glance**: 2-sentence inline TL;DR, explicit baseline context (`Typical: X • Top: Y • n=Z uploads • Cumulative views, not growth pace`), inline age caveats, unified 4-cell KPI strip with SVG sparklines, and observed growth playbook.
+  - **Content patterns**: Title length distribution, small-sample count gating (`n >= 4` sweet spot vs `n < 4` early signal), concrete title examples, duration vs. views scatter plot, and verified publishing cadence.
+  - **Hook & Script Lab**: Speech intelligence powered by video transcripts—analyzing 40s opening hook archetypes with psychological "Why it works" explanations, qualitative WPM scale bar (`<130 deliberate • 130–165 conversational • >165 high-energy`) with active indicator pip, `★ Standout` top-video chip badge, high-retention power words, and interactive transcript search.
+  - **All uploads**: Full public upload catalog ranked by lifetime views or daily velocity (`~views/day`), relative age column (`24d`, `3mo`, `1.2y`), accessible inline playback, and outlier tooltips.
+- **Contextual Tab Guidance**: Cross-tab action buttons linking sequential workflow steps across the entire research dossier.
 - **Multi-Format Dossier Export**: Generate self-contained offline HTML dossiers, structured Markdown briefs, or raw JSON datasets—no `window.print()` workarounds.
 - **Native Sharing**: Web Share API integration, 1-click clipboard summary cards, and quick sharing to X (Twitter) and LinkedIn.
 - **Multi-Tier API Preservation**: Browser `sessionStorage` cache (0ms reloads on refresh/navigation without burning API credits), server-side LRU memory cache, and strict rate limiting via `PaidRequestGuard`.

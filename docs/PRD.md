@@ -1,7 +1,7 @@
 # TubeSignal — Product Requirements Document (PRD)
 
-> **Version:** 2.0  
-> **Last Updated:** October 2, 2026  
+> **Version:** 2.2  
+> **Last Updated:** October 5, 2026  
 > **Author:** Anil  
 > **Hackathon:** SerpApi India Hackathon 2026  
 > **Deadline:** October 10, 2026, 23:59 IST  
@@ -24,7 +24,7 @@
 
 ### The Gap in Existing Tools
 - Traditional analytics tools (Social Blade, VidIQ) are cluttered with ads, paywalled, or present vanity growth projections.
-- No existing tool combines **live search discovery**, **speech hook intelligence**, and **multi-channel faceoff** in a single, glanceable research console.
+- No existing tool combines **live search discovery**, **speech hook intelligence**, and **multi-channel faceoff** in a single, glanceable research console with absolute data honesty.
 
 ---
 
@@ -32,9 +32,10 @@
 
 > *"Paste a YouTube handle or creator name — receive an executive content strategy dossier and speech hook breakdown in seconds."*
 
-1. **Honesty Over Hype**: Public data is bounded. Lifetime views do not equal growth rate, and public catalogs cannot see retention curves or CTRs. TubeSignal is transparent about what public data proves.
+1. **Honesty Over Hype**: Public data is bounded. Lifetime views do not equal growth rate, and public catalogs cannot see retention curves or CTRs. TubeSignal is transparent about what public data proves, pairs view totals with video age, and discloses sample sizes.
 2. **Speed & Efficiency**: Instant multi-tier caching (client `sessionStorage` + server LRU cache) ensures 0ms reloads and zero wasted API credits.
 3. **Actionable Insights**: Direct takeaways on video duration, hook archetype pacing, title structure, and competitive advantages.
+4. **Calm & Scannable Interface**: Dark graphite surfaces with signal-amber accents, unified hairline panels, SVG sparklines, and guided cross-tab exploration.
 
 ---
 
@@ -44,11 +45,13 @@
 |---|---|---|
 | **Channel Discovery** | Fuzzy search by creator name or handle via SerpApi `youtube` engine | ✅ Complete |
 | **Direct Analysis** | Direct URL, `@handle`, or channel ID resolution via SerpApi `youtube_channel` | ✅ Complete |
-| **Executive Verdict** | 60-second summary, standout upload spotlight, and median view ratio | ✅ Complete |
-| **KPI Matrix** | Median views, upload cadence, estimated weekly views, and views-to-sub ratio | ✅ Complete |
-| **Content Patterns** | Title character length analysis, recurring packaging formulas, duration scatter plot | ✅ Complete |
-| **Hook & Script Lab** | Speech intelligence via SerpApi `youtube_video_transcript`—analyzing 40s opening hook archetypes, WPM pacing, and power words | ✅ Complete |
+| **Executive Verdict** | Inline 2-sentence TL;DR, standout spotlight with `{ratio}× typical` badge, inline age caveats, and full text in `<details>` | ✅ Complete |
+| **Unified KPI Panel** | 4-cell hairline panel with SVG sparklines, median views, upload pace (`~X / week`), and reduced-motion support | ✅ Complete |
+| **Content Patterns** | Title character length analysis, small-sample count gating (`n >= 4` sweet spot), example titles, and duration scatter plot | ✅ Complete |
+| **Hook & Script Lab** | Speech intelligence via SerpApi `youtube_video_transcript`—analyzing 40s opening hook archetypes, psychological "Why it works" explanations, qualitative WPM scale bar (`<130 deliberate • 130–165 conversational • >165 high-energy`), and `★ Standout` top-video badges | ✅ Complete |
+| **Video Catalog Table** | Public upload catalog ranked by views or daily pace (`~views/day`), relative age column (`24d`, `3mo`, `1.2y`), accessible inline playback, and outlier tooltips | ✅ Complete |
 | **Creator Faceoff (`/compare`)** | Head-to-head comparison between two creators with real-time KPI matrix and advantage badges | ✅ Complete |
+| **Provenance Indicator** | Header badge disclosing live vs sample fixture, upload count `n=`, and Gemini AI vs deterministic calculation | ✅ Complete |
 | **Standalone Dossier Export** | Downloadable offline HTML dossier, structured Markdown, and raw JSON export | ✅ Complete |
 | **Native Sharing** | Web Share API integration, clipboard summary cards, X/Twitter & LinkedIn sharing | ✅ Complete |
 | **Quota & Rate Guard** | In-process concurrency limiter and burst protection (20 SerpApi/min, 10 Gemini/min) | ✅ Complete |
@@ -68,5 +71,5 @@
 ## 6. Success Metrics & Hackathon Rubric Alignment
 
 - **Innovation & Track Fit**: Fits the Knowledge & Public Interest track by democratizing transparent creator research.
-- **Technical Rigor**: 3 SerpApi engines integrated, Turbopack Next.js build, strict TypeScript types, 0 lint warnings.
-- **Aesthetic Excellence**: Dark-mode glassmorphism, responsive data charts, zero layout shift, bespoke 3D signal sculpture.
+- **Technical Rigor**: 3 SerpApi engines integrated, Turbopack Next.js build, strict TypeScript types, 0 lint warnings, 15/15 backend checks.
+- **Aesthetic Excellence**: Dark-mode graphite surfaces, responsive data charts, zero layout shift, bespoke 3D signal sculpture, scannable numbers.

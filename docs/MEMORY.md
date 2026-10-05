@@ -1,8 +1,8 @@
 # TubeSignal — Memory Document
 
 > **Purpose:** Living document that tracks project state, architectural decisions, key learnings, and context across development sessions.  
-> **Last Updated:** October 2, 2026  
-> **Status:** Feature Complete, Audited & Hardened (Ready for GitHub Push & Deployment)  
+> **Last Updated:** October 5, 2026  
+> **Status:** Feature Complete, Audited & Hardened, Pushed to GitHub (`Anilcodee/TubeSignal`)  
 
 ---
 
@@ -38,6 +38,9 @@
 | D10 | Oct 1 | **Standalone Offline Dossier Export** | Avoids `window.print()` workarounds by generating self-contained HTML, Markdown, and raw JSON dossiers. |
 | D11 | Oct 2 | **Multi-Tier Caching Architecture** | Browser `sessionStorage` + server LRU cache ensures page refreshes (F5) and page navigation take 0ms and use 0 API calls. |
 | D12 | Oct 2 | **Disabled Chart.js Animations** | Eliminated Chart.js 4.x interpolator bug (`this._fn is not a function at Map.forEach`) caused by dynamic color arrays. |
+| D13 | Oct 4 | **Data Honesty Audit & Zero-Fabrication** | Eliminated simulated weekday distributions, relative dates treated as approximate only, removed causal claims across insights, and derived Audience Pulse strictly from actual catalog signals. |
+| D14 | Oct 4 | **Signal Report UX Suite (Step A: Misreading Prevention)** | Inline TL;DR summary with `<details>` for full text, explicit baseline context row (`Typical: X • Top: Y • n=Z uploads • Cumulative views, not growth pace`), inline age caveats, sweet-spot count gating (`n >= 4`), and relative age column in VideoTable. |
+| D15 | Oct 4 | **Signal Report UX Suite (Step B: Scannable Numbers & Guidance)** | Unified 4-cell KPI panel with hairline dividers, SVG sparklines with amber terminal dot, upload pace context (`~X / week`), qualitative WPM scale bar (`<130 deliberate • 130–165 conversational • >165 high-energy`), `★ Standout` top-video badge, sticky header provenance pill, and contextual cross-tab continue buttons. |
 
 ---
 
@@ -54,3 +57,9 @@
 - **Context:** Creators frequently refresh pages, compare channels, or revisit reports. Repeated API calls would quickly deplete limited hackathon API credits.
 - **Decision:** Store completed reports in `sessionStorage` on client, alongside a 1-hour server-side LRU memory cache.
 - **Consequences:** Page refreshes and navigating back and forth between `/analyze` and `/compare` consume 0 network requests and 0 API credits.
+
+### ADR-003: Strict Data Grounding & Provenance Disclosure
+- **Status:** Accepted
+- **Context:** Users can easily mistake public sample metadata for channel-wide truth or mistake lifetime views for current growth pace.
+- **Decision:** Every report prominently discloses sample provenance (sample vs live, sample size `n=`, Gemini vs deterministic computation), pairs lifetime views with relative video age, gates small samples (`n < 4`), and never simulates missing dates or private metrics (CTR, retention).
+- **Consequences:** TubeSignal reports are completely trustworthy, defensible, and clear under hackathon judge scrutiny.
