@@ -72,7 +72,7 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
       <div className={styles.dashboard}>
         <div className={`${styles.breadcrumb} no-print`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Link href="/">Workspace</Link><span>/</span><span>Channel report</span><span className={styles.reportLabel}>THE SIGNAL REPORT</span>
+            <Link href="/">Workspace</Link><span>/</span><span>Channel report</span><span className={styles.reportLabel}>Signal Report</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <span className={styles.provenancePill}>
@@ -83,8 +83,8 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
               />
               {sample ? 'Sample Fixture' : 'Live YouTube Data'} • {data.videos.length} uploads • {data.meta.analysisSource === 'gemini' ? 'Gemini AI' : 'Deterministic'}
             </span>
-            <Link href={`/compare?c1=${encodeURIComponent(data.channel.handle || data.channel.channelId)}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <TrendingUp size={12} /> Compare with another creator
+            <Link href={`/compare?c1=${encodeURIComponent(data.channel.handle || data.channel.channelId)}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 'var(--radius-sm, 6px)', background: 'var(--accent-soft)', border: '1px solid var(--accent-line)' }}>
+              <TrendingUp size={13} /> Compare against competitor
             </Link>
           </div>
         </div>

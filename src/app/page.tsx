@@ -29,9 +29,12 @@ export default function WorkspacePage() {
           <div className={styles.searchHint}><span>Or search a creator by name</span><kbd>Ctrl / ⌘ K</kbd></div>
           <div className={styles.trustRow}>
             <span><ShieldCheck size={14} /> Public data only</span>
+            <span className={styles.trustSep}>•</span>
             <span><Check size={14} /> No YouTube login</span>
-            <Link href="/compare" style={{ color: 'var(--accent)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <TrendingUp size={13} /> Compare creators
+            <span className={styles.trustSep}>•</span>
+            <Link href="/compare" className={styles.compareHeroLink}>
+              <TrendingUp size={14} />
+              <span>Compare creators</span>
             </Link>
           </div>
         </div>
@@ -49,13 +52,13 @@ export default function WorkspacePage() {
 
       <section id="sample-reports" className={styles.samples} aria-labelledby="samples-title">
         <div className={styles.sectionHeader}>
-          <div><span className={styles.sectionEyebrow}><ScanLine size={13} /> TAKE A LOOK INSIDE</span><h2 id="samples-title">Start with a familiar face.</h2><p>Three sample reports. Zero setup. A feel for the full picture.</p></div>
-          <span className={styles.sampleNote}>Explore the experience <ArrowDown size={14} /></span>
+          <div><span className={styles.sectionEyebrow}><ScanLine size={13} /> Interactive Preview</span><h2 id="samples-title">Start with a familiar face.</h2><p>Three sample reports. Zero setup. A feel for the full picture.</p></div>
+          <span className={styles.sampleNote}><Sparkles size={13} /> Instant access, no sign-up</span>
         </div>
         <div className={styles.sampleGrid}>
           {SAMPLES.map(({ Icon, ...sample }) => (
             <Link key={sample.handle} href={`/analyze/${sample.handle}?demo=true`} className={styles.sampleCard} style={{ '--card-color': sample.color } as CSSProperties}>
-              <div className={styles.sampleTop}><span className={styles.sampleIcon}><Icon size={22} strokeWidth={1.6} /></span><span className={styles.sampleTag}>SAMPLE REPORT</span><ArrowRight size={17} className={styles.cardArrow} /></div>
+              <div className={styles.sampleTop}><span className={styles.sampleIcon}><Icon size={22} strokeWidth={1.6} /></span><span className={styles.sampleTag}>Sample report</span><ArrowRight size={17} className={styles.cardArrow} /></div>
               <div className={styles.cardInfo}><span className={styles.category}>{sample.category}</span><h3>{sample.name}</h3><p>{sample.detail}</p></div>
               <div className={styles.cardBottom}><span>@{sample.handle}<small>{sample.count} illustrative uploads</small></span><div className={styles.miniBars} aria-hidden="true">{sample.bars.map((height, i) => <i key={i} style={{ height: `${height}%` }} />)}</div></div>
             </Link>

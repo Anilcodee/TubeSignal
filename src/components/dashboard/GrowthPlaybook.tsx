@@ -374,9 +374,12 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
 
           {/* Next Video Concept Chips */}
           <div className={styles.demandsBox}>
-            <span className={styles.demandsTitle}>
-              <Flame size={12} style={{ color: '#f87171' }} /> HIGH-POTENTIAL FOLLOW-UP CONCEPTS (CLICK TO COPY OUTLINE)
-            </span>
+            <div className={styles.demandsHeaderRow}>
+              <span className={styles.demandsTitle}>
+                <Flame size={13} style={{ color: '#f87171' }} /> High-Potential Follow-up Concepts
+              </span>
+              <span className={styles.copyHint}>Click to copy outline</span>
+            </div>
             <div className={styles.demandChipsList}>
               {insights.audiencePulse.contentDemands.slice(0, 3).map((demand, idx) => {
                 const isCopied = copiedTopic === demand.topic;

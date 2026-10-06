@@ -183,14 +183,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-family: var(--font-mono, monospace);
   font-weight: 600;
   color: #5a646e;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 0.15rem 0.45rem;
-  border-radius: 9999px;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full, 9999px);
 }
 
 /* ── Navigation Columns ── */
@@ -207,15 +207,15 @@
 }
 
 .colHeading {
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-family: var(--font-mono, monospace);
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #4d555d;
+  color: #8d949a;
   margin: 0;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .navList {
@@ -231,11 +231,11 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.76rem;
-  color: #6b737b;
+  font-size: 0.8125rem;
+  color: #8d949a;
   text-decoration: none;
   transition: all 0.2s ease;
-  padding: 0.15rem 0;
+  padding: 0.2rem 0;
 }
 
 .navLink:hover {
@@ -244,27 +244,27 @@
 }
 
 .coreBadge {
-  font-size: 0.52rem;
+  font-size: 0.7rem;
   font-family: var(--font-mono, monospace);
   font-weight: 700;
   text-transform: uppercase;
   color: #ffc16e;
   background: rgba(255, 193, 110, 0.12);
   border: 1px solid rgba(255, 193, 110, 0.3);
-  padding: 0.05rem 0.3rem;
-  border-radius: 0.2rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-sm, 6px);
   letter-spacing: 0.05em;
 }
 
 .subLabel {
-  font-size: 0.62rem;
-  color: #3d454d;
+  font-size: 0.75rem;
+  color: #6b737b;
   font-weight: 400;
-  margin-left: 0.15rem;
+  margin-left: 0.25rem;
 }
 
 .extIcon {
-  color: #3d454d;
+  color: #6b737b;
   transition: color 0.2s ease;
   flex-shrink: 0;
 }
@@ -275,12 +275,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.74rem;
-  color: #4d555d;
+  font-size: 0.75rem;
+  color: #6b737b;
 }
 
 .trustItem svg {
-  color: #2a9d6e;
+  color: #34d399;
   flex-shrink: 0;
 }
 
@@ -317,19 +317,19 @@
 }
 
 .copyright {
-  font-size: 0.68rem;
-  color: #3d454d;
+  font-size: 0.75rem;
+  color: #6b737b;
   font-family: var(--font-mono, monospace);
 }
 
 .separator {
-  color: rgba(255, 255, 255, 0.08);
-  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 0.75rem;
 }
 
 .madeWith {
-  font-size: 0.68rem;
-  color: #3d454d;
+  font-size: 0.75rem;
+  color: #6b737b;
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -358,13 +358,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: #4d555d;
+  color: #8d949a;
   text-decoration: none;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.02);
   transition: all 0.2s ease;
 }
@@ -372,20 +372,20 @@
 .githubLink:hover {
   color: #ecedef;
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .backToTop {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: #4d555d;
+  color: #8d949a;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm, 6px);
   cursor: pointer;
   transition: all 0.25s ease;
 }

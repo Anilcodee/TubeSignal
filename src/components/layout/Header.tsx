@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowUpRight, AudioLines } from 'lucide-react';
+import { ArrowUpRight, AudioLines, Search } from 'lucide-react';
 import { CommandBar } from '@/components/search/CommandBar';
 import styles from './Header.module.css';
 
@@ -29,7 +29,7 @@ export const Header = () => {
               <Link href="/analyze/mkbhd?demo=true" className={styles.demoLink}>Explore report <ArrowUpRight size={14} /></Link>
             </>
           ) : (
-            <Link href="/"><ArrowLeft size={13} /> New search</Link>
+            <Link href="/" className={styles.sampleNav}><Search size={13} /> New search</Link>
           )}
         </nav>
       </div>

@@ -42,7 +42,7 @@
 
 .valueRow {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--s-2);
   margin-top: var(--s-3);
@@ -60,11 +60,11 @@
 
 .sparkline {
   flex-shrink: 0;
-  margin-bottom: 2px;
+  margin-bottom: 0;
 }
 
 .caption {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: var(--text-3);
   margin-top: var(--s-2);
   line-height: 1.5;
@@ -94,6 +94,6 @@
     font-size: 1.35rem;
   }
   .caption {
-    font-size: 0.62rem;
+    font-size: 0.75rem;
   }
 }

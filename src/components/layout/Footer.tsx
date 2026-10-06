@@ -118,7 +118,7 @@ export const Footer = () => {
 
             {/* Column 3: Technology */}
             <div className={styles.navCol}>
-              <h4 className={styles.colHeading}>Powered By</h4>
+              <h4 className={styles.colHeading}>Technology</h4>
               <ul className={styles.navList}>
                 <li>
                   <a
@@ -127,8 +127,8 @@ export const Footer = () => {
                     rel="noopener noreferrer"
                     className={styles.navLink}
                   >
-                    SerpApi YouTube Engine
-                    <ExternalLink size={10} className={styles.extIcon} />
+                    <span>SerpApi YouTube</span>
+                    <ExternalLink size={11} className={styles.extIcon} />
                   </a>
                 </li>
                 <li>
@@ -138,19 +138,19 @@ export const Footer = () => {
                     rel="noopener noreferrer"
                     className={styles.navLink}
                   >
-                    Google Gemini AI
-                    <ExternalLink size={10} className={styles.extIcon} />
+                    <span>Google Gemini AI</span>
+                    <ExternalLink size={11} className={styles.extIcon} />
                   </a>
                 </li>
                 <li>
                   <span className={styles.trustItem}>
-                    <CheckCircle2 size={11} />
+                    <CheckCircle2 size={12} />
                     <span>Zero data stored</span>
                   </span>
                 </li>
                 <li>
                   <span className={styles.trustItem}>
-                    <CheckCircle2 size={11} />
+                    <CheckCircle2 size={12} />
                     <span>No login required</span>
                   </span>
                 </li>
@@ -172,7 +172,7 @@ export const Footer = () => {
             </span>
             <span className={styles.separator}>·</span>
             <span className={styles.madeWith}>
-              Built with <Heart size={11} className={styles.heartIcon} /> for the SerpApi Hackathon
+              Built with <Heart size={12} className={styles.heartIcon} /> for the SerpApi Hackathon
             </span>
           </div>
 
@@ -194,8 +194,8 @@ export const Footer = () => {
               onClick={scrollToTop}
               aria-label="Back to top of page"
             >
+              <ArrowUp size={13} />
               <span>Top</span>
-              <ArrowUp size={12} />
             </button>
           </div>
         </div>

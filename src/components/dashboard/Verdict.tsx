@@ -33,9 +33,16 @@ export const Verdict = ({
     ? <>The top upload gets <em>{ratio.toFixed(1)}×</em> typical views <span className={styles.ageCaveat}>(not age-adjusted)</span></>
     : top ? <>Every channel has a story.<br /><em>Start with this upload.</em></> : <>Your channel,<br /><em>in perspective.</em></>;
 
-  const summarySentences = (aiAnalysis.summary || '').match(/[^.!?]+[.!?]+(\s|$)/g) || [aiAnalysis.summary || ''];
-  const inlineSummary = summarySentences.slice(0, 2).join('').trim();
-  const remainingSummary = summarySentences.slice(2).join('').trim();
+  const rawSummary = (aiAnalysis.summary || '').trim();
+  const summarySentences = rawSummary
+    ? rawSummary
+        .replace(/([.!?])\s+(?=[A-Z0-9])/g, '$1|__SENTENCE_SEP__|')
+        .split('|__SENTENCE_SEP__|')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : [];
+  const inlineSummary = summarySentences.slice(0, 2).join(' ').trim();
+  const remainingSummary = summarySentences.slice(2).join(' ').trim();
 
   const handleStartInlinePlay = () => {
     setIsPlayingInline(true);
@@ -114,14 +121,14 @@ export const Verdict = ({
         animate="visible"
         variants={fadeIn}
       >
-        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.tag}><Sparkles size={14} /><span>YOUR 60-SECOND BRIEF</span></motion.div>
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.tag}><Sparkles size={14} /><span>Your 60-Second Brief</span></motion.div>
         <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.headline}>{headline}</motion.h2>
         <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.baselineRow}>
           <span>Typical: <strong>{formatViews(analytics.medianViews)}</strong></span>
           <span className={styles.baselineSep}>•</span>
           <span>Top: <strong>{top ? formatViews(top.views) : '—'}</strong></span>
           <span className={styles.baselineSep}>•</span>
-          <span>n={videos.length} uploads</span>
+          <span>Sample: <strong>{videos.length}</strong> uploads</span>
           <span className={styles.baselineSep}>•</span>
           <span style={{ color: 'var(--text-3)' }}>Cumulative views, not growth</span>
         </motion.div>
@@ -150,7 +157,7 @@ export const Verdict = ({
         transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
       >
         <div className={styles.spotlightLabel}>
-          <span>THE STANDOUT UPLOAD</span>
+          <span>Standout Upload</span>
           <ArrowUpRight size={15} />
         </div>
 
