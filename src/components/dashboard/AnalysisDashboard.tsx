@@ -18,6 +18,7 @@ import { PublishingTimeline } from '@/components/charts/PublishingTimeline';
 import { LengthVsViews } from '@/components/charts/LengthVsViews';
 import { InPageVideoTheater } from './InPageVideoTheater';
 import { GrowthPlaybook } from './GrowthPlaybook';
+import { TracingBeam } from '@/components/ui/TracingBeam';
 import Loading from '@/app/analyze/[channelId]/loading';
 import styles from '@/app/analyze/[channelId]/page.module.css';
 
@@ -69,7 +70,8 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
   };
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.dashboard}>
+      <TracingBeam>
+        <div className={styles.dashboard}>
         <div className={`${styles.breadcrumb} no-print`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Link href="/">Workspace</Link><span>/</span><span>Channel report</span><span className={styles.reportLabel}>Signal Report</span>
@@ -219,6 +221,7 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           </p>
         </details>
       </div>
+      </TracingBeam>
     </div>
   );
 };

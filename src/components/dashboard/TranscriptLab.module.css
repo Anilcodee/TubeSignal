@@ -180,6 +180,95 @@
   font-weight: 500;
 }
 
+/* ═══ Spoken Waveform Scrubber ═══ */
+.waveformContainer {
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-control);
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-4);
+}
+
+.waveformHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
+  font-size: 12px;
+}
+
+.waveformTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.waveformIcon {
+  color: var(--accent);
+}
+
+.waveformHint {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+
+.waveformBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 54px;
+  padding: 4px 0 2px;
+}
+
+.waveformBarCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: transform var(--transition-fast);
+}
+
+.waveformBarCol:hover {
+  transform: scaleY(1.1);
+  transform-origin: bottom;
+}
+
+.waveformBarLine {
+  width: 100%;
+  min-width: 3px;
+  max-width: 10px;
+  border-radius: 2px 2px 1px 1px;
+  transition: background var(--transition-fast), height var(--transition-fast);
+}
+
+.waveformBarColActive .waveformBarLine {
+  background: var(--accent) !important;
+  box-shadow: 0 0 8px rgba(255, 178, 36, 0.7);
+}
+
+.waveformBarTime {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--text-3);
+  margin-top: 4px;
+  display: none;
+}
+
+.waveformBarCol:nth-child(5n + 1) .waveformBarTime {
+  display: block;
+}
+
 /* ═══ Metrics Grid ═══ */
 .hookMetrics {
   display: grid;

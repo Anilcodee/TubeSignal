@@ -20,6 +20,8 @@ export default function WorkspacePage() {
   const router = useRouter();
   return (
     <div className={styles.workspace}>
+      <div className={styles.heroBeams} aria-hidden="true" />
+      <div className={styles.gridRays} aria-hidden="true" />
       <section className={styles.hero} aria-labelledby="workspace-title">
         <div className={styles.heroCopy}>
           <div className={styles.eyebrow}><span className={styles.liveDot} /> A clearer lens on YouTube</div>

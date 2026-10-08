@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Pause, Play, Search, Sparkles, X, Zap } from 'lucide-react';
+import { AudioLines, Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Pause, Play, Search, Sparkles, X, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/utils/animations';
 import type { VideoData } from '@/types/analysis';
@@ -184,6 +184,50 @@ export const TranscriptLab = ({
   }
 
   const analysis = data?.analysis;
+
+  const waveformSlices = useMemo(() => {
+    if (!analysis) return [];
+    const totalBars = 23;
+    const hookSec = analysis.hookDurationSeconds || 30;
+    return Array.from({ length: totalBars }, (_, i) => {
+      const second = i * 2;
+      const isHook = second <= hookSec;
+      const matchingSeg = segments?.find(
+        (s) => Math.abs((s.startMs / 1000) - second) <= 2
+      );
+      const wordLen = matchingSeg?.text ? matchingSeg.text.split(' ').length : 0;
+      const baseHeight = 30 + ((i * 11 + 17) % 45);
+      const height = matchingSeg ? Math.min(100, Math.max(25, wordLen * 7 + 25)) : baseHeight;
+      const color = isHook ? 'rgba(255, 193, 110, 0.75)' : 'rgba(96, 165, 250, 0.45)';
+      return {
+        second,
+        height,
+        color,
+        isHook,
+        intensityLabel: isHook ? 'Hook zone' : 'Body zone',
+      };
+    });
+  }, [analysis, segments]);
+
+  const handleScrubToSecond = (sec: number) => {
+    setInlineSecond(sec);
+    setIsPlaying(true);
+    if (!isPlayingInline) {
+      setIsPlayingInline(true);
+      onPlayStart?.();
+    } else {
+      try {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'seekTo', args: [sec, true] }),
+          '*'
+        );
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+          '*'
+        );
+      } catch {}
+    }
+  };
 
   return (
     <motion.div className={styles.container} initial="hidden" animate="visible" variants={fadeIn}>
@@ -373,6 +417,37 @@ export const TranscriptLab = ({
             {/* Hook Text Quote */}
             <div className={styles.hookQuoteBox}>
               &ldquo;{analysis.hookText}&rdquo;
+            </div>
+
+            {/* Interactive Spoken Waveform & Hook Timeline Scrubber */}
+            <div className={styles.waveformContainer}>
+              <div className={styles.waveformHeader}>
+                <div className={styles.waveformTitle}>
+                  <AudioLines size={14} className={styles.waveformIcon} />
+                  <span>Opening 45s Spoken Cadence &amp; Hook Waveform</span>
+                </div>
+                <span className={styles.waveformHint}>Click any bar to scrub video</span>
+              </div>
+              <div className={styles.waveformBars} role="region" aria-label="Audio timeline scrubber">
+                {waveformSlices.map((slice) => {
+                  const isActive = Math.abs(inlineSecond - slice.second) < 2;
+                  return (
+                    <button
+                      key={slice.second}
+                      type="button"
+                      className={`${styles.waveformBarCol} ${isActive ? styles.waveformBarColActive : ''}`}
+                      onClick={() => handleScrubToSecond(slice.second)}
+                      title={`Scrub to 0:${slice.second.toString().padStart(2, '0')} (${slice.intensityLabel})`}
+                    >
+                      <span
+                        className={styles.waveformBarLine}
+                        style={{ height: `${slice.height}%`, background: slice.color }}
+                      />
+                      <span className={styles.waveformBarTime}>{slice.second}s</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Metrics Grid */}
