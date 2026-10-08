@@ -3,6 +3,7 @@
   perspective: 1000px;
   transform-style: preserve-3d;
   height: 100%;
+  width: 100%;
 }
 
 .inner {
@@ -11,14 +12,15 @@
   height: 100%;
   transform-style: preserve-3d;
   will-change: transform;
-  border-radius: inherit;
+  border-radius: var(--radius-lg, 14px);
+  display: flex;
 }
 
 .glare {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  border-radius: inherit;
+  border-radius: var(--radius-lg, 14px);
   z-index: 10;
   opacity: 0;
   transition: opacity 0.3s ease;

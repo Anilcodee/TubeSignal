@@ -30,7 +30,7 @@
 .barChart > span:nth-child(4), .barChart > span:nth-child(10) { background: linear-gradient(0deg, #B47432, var(--accent)); }
 .previewBottom { display: flex; justify-content: space-between; font-size: .55rem; color: var(--text-2); margin-top: var(--s-3); gap: var(--s-2); }
 .legend { color: var(--text-3); }
-.insight { position: absolute; right: -1rem; bottom: 7rem; display: flex; align-items: center; gap: var(--s-3); padding: var(--s-4); background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--r-panel); box-shadow: var(--shadow-card); transform: rotate(5deg); animation: reveal 1s .35s both; }
+.insight { position: absolute; right: 0; bottom: 7rem; display: flex; align-items: center; gap: var(--s-3); padding: var(--s-4); background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--r-panel); box-shadow: var(--shadow-card); transform: rotate(5deg); animation: reveal 1s .35s both; }
 .insight > div { display: grid; place-items: center; width: 2rem; height: 2rem; background: var(--accent-soft); color: var(--accent); border-radius: var(--r-control); }
 .insight > span { font-size: .7rem; color: var(--text-3); line-height: 1.7; }
 .insight strong { color: var(--text); font-weight: 500; }
