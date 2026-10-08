@@ -71,8 +71,32 @@ export const CommandBar = ({ onSearch, isHero = false, placeholder = 'Creator na
     } finally { clearTimeout(timeout); }
   };
 
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isHero || !wrapper.current) return;
+    const rect = wrapper.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   return (
-    <div ref={wrapper} className={`${styles.wrapper} ${isHero ? styles.hero : ''}`}>
+    <div
+      ref={wrapper}
+      className={`${styles.wrapper} ${isHero ? styles.hero : ''}`}
+      onMouseMove={handleMouseMove}
+      style={
+        isHero
+          ? ({
+              '--spotlight-x': `${mousePos.x}px`,
+              '--spotlight-y': `${mousePos.y}px`,
+            } as React.CSSProperties)
+          : undefined
+      }
+    >
+      {isHero && <div className={styles.spotlightGlow} aria-hidden="true" />}
       <form className={styles.form} role="search" onSubmit={(event) => { event.preventDefault(); void search(); }}>
         <Search size={17} className={styles.searchIcon} aria-hidden="true" />
         <label className="sr-only" htmlFor={id}>Search YouTube channels</label>

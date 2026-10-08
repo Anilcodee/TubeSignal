@@ -7,6 +7,7 @@ import { fadeIn } from '@/utils/animations';
 import { ArrowUpRight, Eye, Pause, Play, Sparkles, X, Zap } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
+import { TextGenerate } from '@/components/ui/TextGenerate';
 import styles from './Verdict.module.css';
 
 export const Verdict = ({
@@ -134,7 +135,7 @@ export const Verdict = ({
         </motion.div>
         {inlineSummary ? (
           <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.inlineSummary}>
-            {inlineSummary}
+            <TextGenerate words={inlineSummary} delayPerWord={0.02} initialDelay={0.25} />
           </motion.p>
         ) : (
           <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.supporting}>

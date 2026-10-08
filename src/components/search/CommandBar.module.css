@@ -7,11 +7,41 @@
 .form button { display: flex; align-items: center; justify-content: center; gap: var(--s-2); height: 30px; padding: 0 var(--s-3); flex-shrink: 0; border-radius: var(--r-control); background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 500; }
 .form button:hover:not(:disabled) { background: var(--color-accent-hover); }
 .form button:disabled { opacity: .5; cursor: not-allowed; }
-.hero { max-width: 720px; }
-.hero .form { height: 64px; padding-left: var(--s-4); gap: var(--s-3); border-radius: .85rem; background: var(--surface-1); border-color: var(--line-strong); box-shadow: 0 8px 32px #0003, 0 0 0 4px var(--glass-highlight); }
-.hero .form:focus-within { border-color: var(--accent-line); box-shadow: 0 0 0 4px var(--accent-soft); }
-.hero input { font-size: .8rem; }
-.hero button { height: 46px; padding: 0 var(--s-4); font-size: .78rem; font-weight: 600; border-radius: .6rem; }
+.hero { position: relative; max-width: 720px; }
+.spotlightGlow {
+  position: absolute;
+  inset: -20px;
+  border-radius: 1.5rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(350px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255, 178, 36, 0.16), transparent 75%);
+  z-index: 0;
+}
+.hero:hover .spotlightGlow {
+  opacity: 1;
+}
+.hero .form {
+  position: relative;
+  z-index: 1;
+  height: 64px;
+  padding-left: var(--s-4);
+  gap: var(--s-3);
+  border-radius: .85rem;
+  background: linear-gradient(180deg, rgba(24, 28, 34, 0.95), rgba(15, 18, 22, 0.98));
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.hero:hover .form {
+  border-color: rgba(255, 193, 110, 0.35);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 178, 36, 0.08);
+}
+.hero .form:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft), 0 12px 42px rgba(0, 0, 0, 0.6); }
+.hero input { font-size: 0.875rem; }
+.hero button { height: 46px; padding: 0 var(--s-4); font-size: 0.8125rem; font-weight: 600; border-radius: .6rem; }
 .hero button:disabled { opacity: .6; }
 .popover { position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 100; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--r-panel); box-shadow: var(--shadow-popover); padding: var(--s-2); max-height: 420px; overflow-y: auto; }
 .popoverHeading { padding: var(--s-2); color: var(--text-2); font-size: 12px; line-height: 1.5; }

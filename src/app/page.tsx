@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { ArrowDown, ArrowRight, AudioLines, Check, ChevronRight, FlaskConical, Flame, ScanLine, ShieldCheck, Sparkles, TrendingUp, Video } from 'lucide-react';
 import { CommandBar } from '@/components/search/CommandBar';
 import { SignalScene } from '@/components/home/SignalScene';
+import { FlipWords } from '@/components/ui/FlipWords';
+import { TiltCard } from '@/components/ui/TiltCard';
 import styles from './page.module.css';
 
 const SAMPLES = [
@@ -22,7 +24,15 @@ export default function WorkspacePage() {
         <div className={styles.heroCopy}>
           <div className={styles.eyebrow}><span className={styles.liveDot} /> A clearer lens on YouTube</div>
           <h1 id="workspace-title">Less noise.<br /><span>More signal.</span></h1>
-          <p className={styles.subtitle}>Understand any channel.<br />Find what stands out. Know where to look next.</p>
+          <p className={styles.subtitle}>
+            Understand any channel.<br />
+            Find what{' '}
+            <FlipWords
+              words={['stands out.', 'drives views.', 'hooks audiences.', 'compounds growth.']}
+              className={styles.flipWordHighlight}
+            />{' '}
+            Know where to look next.
+          </p>
           <div className={styles.searchWrapper}>
             <CommandBar isHero placeholder="Paste a channel link or @handle" onSearch={(id) => router.push(`/analyze/${encodeURIComponent(id)}`)} />
           </div>
@@ -57,11 +67,13 @@ export default function WorkspacePage() {
         </div>
         <div className={styles.sampleGrid}>
           {SAMPLES.map(({ Icon, ...sample }) => (
-            <Link key={sample.handle} href={`/analyze/${sample.handle}?demo=true`} className={styles.sampleCard} style={{ '--card-color': sample.color } as CSSProperties}>
-              <div className={styles.sampleTop}><span className={styles.sampleIcon}><Icon size={22} strokeWidth={1.6} /></span><span className={styles.sampleTag}>Sample report</span><ArrowRight size={17} className={styles.cardArrow} /></div>
-              <div className={styles.cardInfo}><span className={styles.category}>{sample.category}</span><h3>{sample.name}</h3><p>{sample.detail}</p></div>
-              <div className={styles.cardBottom}><span>@{sample.handle}<small>{sample.count} illustrative uploads</small></span><div className={styles.miniBars} aria-hidden="true">{sample.bars.map((height, i) => <i key={i} style={{ height: `${height}%` }} />)}</div></div>
-            </Link>
+            <TiltCard key={sample.handle} maxTilt={8} glareColor="rgba(255, 178, 36, 0.1)">
+              <Link href={`/analyze/${sample.handle}?demo=true`} className={styles.sampleCard} style={{ '--card-color': sample.color } as CSSProperties}>
+                <div className={styles.sampleTop}><span className={styles.sampleIcon}><Icon size={22} strokeWidth={1.6} /></span><span className={styles.sampleTag}>Sample report</span><ArrowRight size={17} className={styles.cardArrow} /></div>
+                <div className={styles.cardInfo}><span className={styles.category}>{sample.category}</span><h3>{sample.name}</h3><p>{sample.detail}</p></div>
+                <div className={styles.cardBottom}><span>@{sample.handle}<small>{sample.count} illustrative uploads</small></span><div className={styles.miniBars} aria-hidden="true">{sample.bars.map((height, i) => <i key={i} style={{ height: `${height}%` }} />)}</div></div>
+              </Link>
+            </TiltCard>
           ))}
         </div>
         <p className={styles.disclosure}><Sparkles size={13} /> Built for clarity, not information overload. Samples are illustrative, not live channel stats.</p>

@@ -300,7 +300,11 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                         className={`${styles.heatwaveBar} ${day.isPeak ? styles.heatwaveBarPeak : ''}`}
                         initial={{ height: 0 }}
                         animate={{ height: `${barHeightPct}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        whileHover={{ scaleY: 1.1, originY: 1 }}
+                        transition={{
+                          height: { duration: 0.6, ease: "easeOut" },
+                          scaleY: { type: "spring", stiffness: 450, damping: 20 }
+                        }}
                         style={{ opacity: day.videoCount > 0 ? 1 : 0.25 }}
                       />
                     </div>
