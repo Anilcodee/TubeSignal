@@ -69,7 +69,12 @@ export default function WorkspacePage() {
         </div>
         <div className={styles.sampleGrid}>
           {SAMPLES.map(({ Icon, ...sample }) => (
-            <TiltCard key={sample.handle} maxTilt={8} glareColor="rgba(255, 178, 36, 0.1)">
+            <TiltCard
+              key={sample.handle}
+              maxTilt={8}
+              glareColor="rgba(255, 178, 36, 0.1)"
+              onClick={() => router.push(`/analyze/${sample.handle}?demo=true`)}
+            >
               <Link href={`/analyze/${sample.handle}?demo=true`} className={styles.sampleCard} style={{ '--card-color': sample.color } as CSSProperties}>
                 <div className={styles.sampleTop}><span className={styles.sampleIcon}><Icon size={22} strokeWidth={1.6} /></span><span className={styles.sampleTag}>Sample report</span><ArrowRight size={17} className={styles.cardArrow} /></div>
                 <div className={styles.cardInfo}><span className={styles.category}>{sample.category}</span><h3>{sample.name}</h3><p>{sample.detail}</p></div>

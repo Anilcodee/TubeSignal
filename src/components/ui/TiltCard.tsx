@@ -9,6 +9,7 @@ interface TiltCardProps {
   className?: string;
   maxTilt?: number;
   glareColor?: string;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export const TiltCard = ({
@@ -16,6 +17,7 @@ export const TiltCard = ({
   className = '',
   maxTilt = 10,
   glareColor = 'rgba(255, 255, 255, 0.14)',
+  onClick,
 }: TiltCardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -61,6 +63,8 @@ export const TiltCard = ({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      style={{ cursor: onClick ? 'pointer' : undefined }}
     >
       <motion.div
         className={styles.inner}
