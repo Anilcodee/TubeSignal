@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowDown, ArrowRight, AudioLines, Check, ChevronRight, FlaskConical, Flame, ScanLine, ShieldCheck, Sparkles, TrendingUp, Video } from 'lucide-react';
+import { ArrowRight, AudioLines, Check, ChevronRight, FlaskConical, Flame, ScanLine, ShieldCheck, Sparkles, TrendingUp, Video } from 'lucide-react';
 import { CommandBar } from '@/components/search/CommandBar';
 import { SignalScene } from '@/components/home/SignalScene';
 import { FlipWords } from '@/components/ui/FlipWords';

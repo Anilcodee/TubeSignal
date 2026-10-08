@@ -179,10 +179,6 @@ export const TranscriptLab = ({
     return segments.filter((s) => s.text.toLowerCase().includes(q));
   }, [segments, searchQuery]);
 
-  if (topVideos.length === 0) {
-    return null;
-  }
-
   const analysis = data?.analysis;
 
   const waveformSlices = useMemo(() => {
@@ -208,6 +204,10 @@ export const TranscriptLab = ({
       };
     });
   }, [analysis, segments]);
+
+  if (topVideos.length === 0) {
+    return null;
+  }
 
   const handleScrubToSecond = (sec: number) => {
     setInlineSecond(sec);
