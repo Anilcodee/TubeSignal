@@ -1,728 +1,416 @@
 /* ═══════════════════════════════════════════════════════════════ */
-/* Growth Playbook — Graphic-First Creator Intelligence Dashboard  */
+/* What Drives Growth — Minimalist Editorial Studio Layout         */
 /* ═══════════════════════════════════════════════════════════════ */
 
-.container {
+.section {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
-.sectionHeader {
+.header {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.75rem;
-  font-family: var(--font-mono, monospace);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #ffc16e;
-  margin-bottom: 0.3rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .title {
   font-size: 1.35rem;
-  font-weight: 700;
-  color: #ecedef;
+  font-weight: 600;
+  color: var(--text);
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .subtitle {
-  font-size: 0.82rem;
-  color: #8d949a;
-  margin: 0.2rem 0 0;
-  line-height: 1.4;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  margin: 0.25rem 0 0;
+  line-height: 1.5;
 }
 
-/* ── Integrated Winning Formula Flow Strip ── */
-.formulaStrip {
+/* ── Segmented Studio Tabs ── */
+.tabTrack {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: rgba(18, 21, 26, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 0.65rem 1rem;
-  gap: 0.5rem;
-}
-
-.formulaStepCard {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex: 1;
-  background: none;
-  border: 1px solid transparent;
-  padding: 0.5rem 0.75rem;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 10px;
-  cursor: pointer;
-  text-align: left;
-  transition: all var(--transition-fast);
+  padding: 4px;
 }
 
-.formulaStepCard:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.formulaStepActive {
-  background: rgba(255, 193, 110, 0.08);
-  border-color: rgba(255, 193, 110, 0.35);
-  box-shadow: 0 0 16px rgba(255, 178, 36, 0.12);
-}
-
-.formulaStepIcon {
-  width: 2.2rem;
-  height: 2.2rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.formulaStepMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.formulaStepLabel {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #8d949a;
-}
-
-.formulaStepVal {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #f8fafc;
-}
-
-.flowArrow {
-  color: rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
-}
-
-/* ── Lens Switcher Tabs ── */
-.lensBar {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: rgba(14, 17, 21, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 5px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.lensTab {
+.tabBtn {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 8px;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 7px;
   background: none;
   border: none;
-  color: var(--text-2);
+  color: var(--text-3);
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
-  white-space: nowrap;
   transition: color var(--transition-fast);
   z-index: 1;
 }
 
-.lensTab:hover {
+.tabBtn:hover {
   color: var(--text);
 }
 
-.lensTabActive {
+.tabBtnActive {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.tabGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  z-index: -1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Canvas Wrapper ── */
+.canvasWrapper {
+  background: var(--surface-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg, 14px);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.canvas {
+  min-height: 220px;
+}
+
+.lensLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* ── Editorial Takeaway Block ── */
+.takeawayBlock {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.takeawayNumber {
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.takeawayLead {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.takeawayLead strong {
+  color: var(--text);
+}
+
+.highlightText {
   color: var(--accent);
   font-weight: 600;
 }
 
-.lensIndicator {
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  background: rgba(255, 193, 110, 0.14);
-  border: 1px solid rgba(255, 193, 110, 0.35);
-  z-index: -1;
-  box-shadow: 0 0 16px rgba(255, 178, 36, 0.12);
-}
-
-/* ── Focused Bento Canvas ── */
-.focusedCanvas {
-  background: linear-gradient(180deg, rgba(22, 26, 32, 0.95), rgba(15, 18, 23, 0.98));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg, 14px);
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  min-height: 280px;
-}
-
-.canvasHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.canvasHeaderLeft {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.canvasTitle {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.canvasDesc {
-  font-size: 0.8125rem;
-  color: var(--text-2);
-  margin: 0.2rem 0 0;
-  line-height: 1.5;
-}
-
-/* ── Cards Grid ── */
-.cardsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.15rem;
-}
-
-.card {
-  background: linear-gradient(135deg, rgba(20, 23, 28, 0.95), rgba(12, 14, 18, 0.98));
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 14px;
-  padding: 1.35rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.card:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
-}
-
-.cardHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.cardHeaderLeft {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.cardIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 8px;
-  background: rgba(255, 193, 110, 0.12);
-  color: #ffc16e;
-  border: 1px solid rgba(255, 193, 110, 0.25);
-  flex-shrink: 0;
-}
-
-.cardTitle {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #ecedef;
-  margin: 0;
-}
-
-.cardDesc {
-  font-size: 0.75rem;
-  color: #8d949a;
-  margin: 0.1rem 0 0;
-}
-
-/* ── Badges ── */
-.winnerBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #ffc16e;
-  background: rgba(255, 193, 110, 0.12);
-  border: 1px solid rgba(255, 193, 110, 0.3);
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius-sm, 6px);
-}
-
-.formulaPill {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #60a5fa;
-  background: rgba(96, 165, 250, 0.12);
-  border: 1px solid rgba(96, 165, 250, 0.3);
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius-sm, 6px);
-}
-
-.peakDayBadge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #34d399;
-  background: rgba(52, 211, 153, 0.12);
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius-sm, 6px);
-}
-
-.sentimentPill {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #a78bfa;
-  background: rgba(167, 139, 250, 0.12);
-  border: 1px solid rgba(167, 139, 250, 0.3);
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius-sm, 6px);
-}
-
-/* ═══ CARD 1: Segmented Spectrum ═══ */
-.spectrumTrack {
+/* ── Continuous Timeline Spectrum Gauge ── */
+.spectrumBar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 8px;
 }
 
-.spectrumSegment {
+.spectrumSeg {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0.45rem 0.25rem;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid transparent;
-  gap: 2px;
-}
-
-.spectrumSegment span {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #8d949a;
-}
-
-.spectrumSegment small {
-  font-size: 0.75rem;
-  color: #717d8a;
-}
-
-.spectrumWinner {
-  background: rgba(255, 193, 110, 0.14);
-  border-color: rgba(255, 193, 110, 0.4);
-  box-shadow: 0 0 12px rgba(255, 193, 110, 0.15);
-}
-
-.spectrumWinner span {
-  color: #ffc16e;
-  font-weight: 700;
-}
-
-.spectrumWinner small {
-  color: #ffc16e;
-  font-weight: 600;
-}
-
-.activeTierList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.tierRow {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.tierMeta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.75rem;
-}
-
-.tierName {
-  color: #d1d5db;
-  font-weight: 500;
-}
-
-.tierName small {
-  color: #717d8a;
-}
-
-.tierStats {
-  color: #9ca3af;
-  font-size: 0.72rem;
-}
-
-.tierStats strong {
-  color: #f3f4f6;
-}
-
-.barTrack {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-.barFill {
-  height: 100%;
-  background: #60a5fa;
-  border-radius: 9999px;
-}
-
-.barFillWinner {
-  background: linear-gradient(90deg, #ffc16e, #f59e0b);
-  box-shadow: 0 0 8px rgba(255, 193, 110, 0.4);
-}
-
-/* ═══ CARD 2: Title Formula ═══ */
-.formulaRankList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.formulaItem {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  padding: 0.5rem 0.65rem;
+  gap: 3px;
+  padding: 0.75rem 0.5rem;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background 0.15s ease;
+  transition: all var(--transition-fast);
 }
 
-.formulaItem:hover {
-  background: rgba(255, 255, 255, 0.04);
+.spectrumSegActive {
+  background: rgba(255, 178, 36, 0.08);
+  border-color: rgba(255, 178, 36, 0.35);
+  box-shadow: 0 0 20px rgba(255, 178, 36, 0.08);
 }
 
-.formulaItemHeader {
+.segLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.spectrumSegActive .segLabel {
+  color: var(--accent);
+}
+
+.segName {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.spectrumSegActive .segName {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ── Minimalist Tier Performance Bars ── */
+.tierGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tierItem {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tierTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.formulaBadge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border: 1px solid;
-  padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-sm, 6px);
-}
-
-.formulaRate {
   font-size: 0.8125rem;
-  font-weight: 700;
 }
 
-.formulaBarTrack {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.06);
+.tierLabel {
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.tierStat {
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.tierStat strong {
+  color: var(--text);
+}
+
+.tierTrack {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 9999px;
   overflow: hidden;
 }
 
-.formulaBarFill {
+.tierFill {
   height: 100%;
   border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.25);
 }
 
-.formulaSampleLine {
+.tierFillWinner {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(255, 178, 36, 0.4);
+}
+
+/* ── Formula List ── */
+.formulaList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.formulaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formulaRowTop {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 0.2rem;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
-.sampleDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.sampleText {
+.formulaTag {
   font-size: 0.75rem;
-  color: #94a3b8;
-  font-style: italic;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid currentColor;
 }
 
-/* ═══ CARD 3: Weekly Heatwave Equalizer ═══ */
-.heatwaveContainer {
+.formulaStat {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+}
+
+.formulaStat strong {
+  color: var(--text);
+}
+
+.sampleQuote {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  font-style: italic;
+  padding-left: 2px;
+}
+
+/* ── 7-Day Equalizer ── */
+.equalizerTrack {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
+  gap: 0.75rem;
   align-items: flex-end;
-  height: 100px;
+  height: 120px;
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.heatwaveCol {
+.equalizerCol {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   height: 100%;
   justify-content: flex-end;
 }
 
-.heatwaveBarBox {
+.equalizerBarBox {
   position: relative;
   width: 100%;
-  height: 75px;
+  height: 90px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
-.peakTag {
+.equalizerPeakTag {
   position: absolute;
-  top: -18px;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
+  top: -22px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #ffc16e;
-  background: rgba(255, 193, 110, 0.2);
-  border: 1px solid rgba(255, 193, 110, 0.4);
-  padding: 0.1rem 0.4rem;
-  border-radius: var(--radius-sm, 6px);
-}
-
-.heatwaveBar {
-  width: 18px;
-  background: rgba(255, 255, 255, 0.15);
+  color: var(--accent);
+  background: rgba(255, 178, 36, 0.15);
+  border: 1px solid rgba(255, 178, 36, 0.35);
+  padding: 1px 5px;
   border-radius: 4px;
 }
 
-.heatwaveBarPeak {
-  background: linear-gradient(180deg, #ffc16e, #f59e0b);
-  box-shadow: 0 0 12px rgba(255, 193, 110, 0.35);
+.equalizerBar {
+  width: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
 }
 
-.heatwaveLabel {
+.equalizerBarPeak {
+  background: linear-gradient(180deg, var(--accent), #f59e0b);
+  box-shadow: 0 0 16px rgba(255, 178, 36, 0.35);
+}
+
+.equalizerLabel {
   font-size: 0.75rem;
-  color: #8d949a;
+  color: var(--text-3);
   font-weight: 500;
 }
 
-.heatwaveLabelPeak {
-  color: #ffc16e;
-  font-weight: 700;
+.equalizerLabelPeak {
+  color: var(--accent);
+  font-weight: 600;
 }
 
-.goldenWindowPill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.78rem;
-  color: #d1d5db;
-  background: rgba(52, 211, 153, 0.08);
-  border: 1px solid rgba(52, 211, 153, 0.2);
-  padding: 0.55rem 0.85rem;
-  border-radius: var(--radius-md, 8px);
+/* ── Concept Deck ── */
+.conceptDeck {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
-.goldenWindowPill strong {
-  color: #34d399;
-}
-
-/* ═══ CARD 4: Sentiment & Demands ═══ */
-.sentimentHeaderBox {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 0.25rem 0;
-}
-
-.miniGauge {
-  position: relative;
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gaugeSvg {
-  width: 100%;
-  height: 100%;
-}
-
-.gaugeValue {
-  position: absolute;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: #a78bfa;
-}
-
-.sentimentTags {
+.conceptCard {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-}
-
-.signalPill {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.75rem;
-  color: #d1d5db;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius-sm, 6px);
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
-.demandsBox {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 0.95rem;
-  margin-top: 0.25rem;
+.conceptCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
 }
 
-.demandsHeaderRow {
+.conceptCardTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  flex-wrap: wrap;
 }
 
-.demandsTitle {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.75rem;
+.conceptTitle {
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #d1d5db;
-  letter-spacing: 0.02em;
+  color: var(--text);
 }
 
-.copyHint {
-  font-size: 0.75rem;
-  color: #8d949a;
-  font-style: italic;
-}
-
-.demandChipsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.demandChip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: var(--radius-md, 8px);
-  padding: 0.6rem 0.85rem;
-  min-height: 44px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
-}
-
-.demandChip:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.chipText {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #e2e8f0;
-  line-height: 1.4;
-  flex: 1;
-}
-
-.demandBadge {
+.conceptBadge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.12);
-  padding: 0.2rem 0.55rem;
-  border-radius: var(--radius-sm, 6px);
-  flex-shrink: 0;
+  gap: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-@media (max-width: 900px) {
-  .cardsGrid {
-    grid-template-columns: 1fr;
-  }
-  .formulaStrip {
+.conceptDesc {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.emptyNote {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .header {
     flex-direction: column;
     align-items: flex-start;
   }
-  .flowArrow {
-    display: none;
+  .conceptDeck {
+    grid-template-columns: 1fr;
+  }
+  .canvasWrapper {
+    padding: 1.25rem;
   }
 }

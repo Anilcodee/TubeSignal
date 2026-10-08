@@ -122,17 +122,13 @@ export const Verdict = ({
         animate="visible"
         variants={fadeIn}
       >
-        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.tag}><Sparkles size={14} /><span>Your 60-Second Brief</span></motion.div>
-        <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.headline}>{headline}</motion.h2>
-        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.baselineRow}>
-          <span>Typical: <strong>{formatViews(analytics.medianViews)}</strong></span>
-          <span className={styles.baselineSep}>•</span>
-          <span>Top: <strong>{top ? formatViews(top.views) : '—'}</strong></span>
-          <span className={styles.baselineSep}>•</span>
-          <span>Sample: <strong>{videos.length}</strong> uploads</span>
-          <span className={styles.baselineSep}>•</span>
-          <span style={{ color: 'var(--text-3)' }}>Cumulative views, not growth</span>
+        <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.tag}>
+          <Sparkles size={14} />
+          <span>Executive Brief</span>
         </motion.div>
+        <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.headline}>
+          {headline}
+        </motion.h2>
         {inlineSummary ? (
           <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.inlineSummary}>
             <TextGenerate words={inlineSummary} delayPerWord={0.02} initialDelay={0.25} />
