@@ -8,7 +8,6 @@ import {
   Calendar, 
   Check, 
   Flame, 
-  Sparkles,
   Copy
 } from 'lucide-react';
 import type { VideoData, AIAnalysis } from '@/types/analysis';
@@ -60,7 +59,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
           </p>
         </div>
 
-        {/* ── Segmented Studio Tabs (Linear / Apple style) ── */}
+        {/* ── Segmented Studio Tabs (Bklit / Linear style) ── */}
         <div className={styles.tabTrack} role="tablist" aria-label="Growth dimensions">
           {LENSES.map(({ id, label, Icon }) => {
             const isActive = activeLens === id;
@@ -77,7 +76,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                 <span>{label}</span>
                 {isActive && (
                   <motion.div
-                    layoutId="activeStudioTab"
+                    layoutId="activeGrowthTab"
                     className={styles.tabGlow}
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
@@ -102,38 +101,25 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             {/* ═══ LENS 1: DURATION ═══ */}
             {activeLens === 'duration' && (
               <div className={styles.lensLayout}>
-                <div className={styles.takeawayBlock}>
-                  <div className={styles.takeawayNumber}>
-                    {insights.winningDuration?.rangeText || '15–30 mins'}
+                <div className={styles.metricStrip}>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Optimal Duration</span>
+                    <span className={styles.metricValue} style={{ color: 'var(--accent)' }}>
+                      {insights.winningDuration?.rangeText || '15–30 mins'}
+                    </span>
                   </div>
-                  <div className={styles.takeawayLead}>
-                    <strong>Sweet Spot:</strong> Videos in this range average{' '}
-                    <span className={styles.highlightText}>
-                      {insights.winningDuration ? `${insights.winningDuration.viewMultiplier}×` : 'higher'}
-                    </span>{' '}
-                    the channel median views.
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Performance Lift</span>
+                    <span className={styles.metricValue}>
+                      {insights.winningDuration ? `${insights.winningDuration.viewMultiplier}× median` : 'Higher views'}
+                    </span>
                   </div>
-                </div>
-
-                {/* Continuous Timeline Gauge */}
-                <div className={styles.spectrumBar}>
-                  {[
-                    { id: 'short', label: '< 8m', name: 'Short' },
-                    { id: 'standard', label: '8–15m', name: 'Standard' },
-                    { id: 'extended', label: '15–30m', name: 'Extended' },
-                    { id: 'deep', label: '30m+', name: 'Deep' },
-                  ].map((seg) => {
-                    const isWinner = insights.winningDuration?.id === seg.id;
-                    return (
-                      <div
-                        key={seg.id}
-                        className={`${styles.spectrumSeg} ${isWinner ? styles.spectrumSegActive : ''}`}
-                      >
-                        <span className={styles.segLabel}>{seg.label}</span>
-                        <span className={styles.segName}>{seg.name}{isWinner ? ' ★' : ''}</span>
-                      </div>
-                    );
-                  })}
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Sample Density</span>
+                    <span className={styles.metricValue}>
+                      {insights.winningDuration?.count ?? 0} uploads in sample
+                    </span>
+                  </div>
                 </div>
 
                 {/* Minimalist Tier Performance Bars */}
@@ -143,7 +129,10 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                     return (
                       <div key={tier.id} className={styles.tierItem}>
                         <div className={styles.tierTop}>
-                          <span className={styles.tierLabel}>{tier.label}</span>
+                          <span className={`${styles.tierLabel} ${tier.isWinner ? styles.tierLabelWinner : ''}`}>
+                            {tier.label}
+                            {tier.isWinner && <span className={styles.winnerBadge}>Top Performer</span>}
+                          </span>
                           <span className={styles.tierStat}>
                             <strong>{tier.avgViewsFormatted}</strong> views ({tier.viewMultiplier}× typical)
                           </span>
@@ -153,7 +142,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                             className={`${styles.tierFill} ${tier.isWinner ? styles.tierFillWinner : ''}`}
                             initial={{ width: 0 }}
                             animate={{ width: `${width}%` }}
-                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
                           />
                         </div>
                       </div>
@@ -166,16 +155,24 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             {/* ═══ LENS 2: TITLE PACKAGING ═══ */}
             {activeLens === 'titles' && (
               <div className={styles.lensLayout}>
-                <div className={styles.takeawayBlock}>
-                  <div className={styles.takeawayNumber} style={{ color: '#60a5fa' }}>
-                    {insights.topFormula?.badge || 'Structured'}
+                <div className={styles.metricStrip}>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Lead Hook Pattern</span>
+                    <span className={styles.metricValue} style={{ color: '#60a5fa' }}>
+                      {insights.topFormula?.badge || 'Structured'}
+                    </span>
                   </div>
-                  <div className={styles.takeawayLead}>
-                    <strong>Lead Pattern:</strong> This phrasing beats typical channel views in{' '}
-                    <span className={styles.highlightText} style={{ color: '#60a5fa' }}>
-                      {insights.topFormula?.winRate || 75}%
-                    </span>{' '}
-                    of uploads.
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Win Rate</span>
+                    <span className={styles.metricValue}>
+                      {insights.topFormula?.winRate || 75}% beat typical
+                    </span>
+                  </div>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>View Multiplier</span>
+                    <span className={styles.metricValue}>
+                      {insights.topFormula?.avgMultiplier || 1.3}× typical views
+                    </span>
                   </div>
                 </div>
 
@@ -189,7 +186,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                             {formula.badge}
                           </span>
                           <span className={styles.formulaStat}>
-                            <strong>{formula.winRate}%</strong> beat typical ({formula.avgMultiplier}× views)
+                            <strong>{formula.winRate}%</strong> win rate ({formula.avgMultiplier}× views)
                           </span>
                         </div>
                         <div className={styles.tierTrack}>
@@ -198,7 +195,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                             style={{ background: color }}
                             initial={{ width: 0 }}
                             animate={{ width: `${Math.max(8, formula.winRate)}%` }}
-                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
                           />
                         </div>
                         {formula.sampleTitles[0] && (
@@ -216,17 +213,24 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             {/* ═══ LENS 3: RELEASE WINDOWS ═══ */}
             {activeLens === 'schedule' && (
               <div className={styles.lensLayout}>
-                <div className={styles.takeawayBlock}>
-                  <div className={styles.takeawayNumber} style={{ color: '#34d399' }}>
-                    {insights.hasExactDates ? insights.peakPublishingDay : 'Mid-Week'}
+                <div className={styles.metricStrip}>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Momentum Day</span>
+                    <span className={styles.metricValue} style={{ color: '#34d399' }}>
+                      {insights.hasExactDates ? insights.peakPublishingDay : 'Mid-Week'}
+                    </span>
                   </div>
-                  <div className={styles.takeawayLead}>
-                    <strong>Momentum Day:</strong>{' '}
-                    {insights.hasExactDates ? (
-                      <>Uploads on this day cluster with <strong>{insights.peakLiftMultiplier}×</strong> typical views.</>
-                    ) : (
-                      <>Upload dates use relative approximate labels for this sample.</>
-                    )}
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Velocity Lift</span>
+                    <span className={styles.metricValue}>
+                      {insights.hasExactDates ? `${insights.peakLiftMultiplier}× typical` : 'Approximate dates'}
+                    </span>
+                  </div>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Active Windows</span>
+                    <span className={styles.metricValue}>
+                      {insights.publishingDays.filter(d => d.videoCount > 0).length} of 7 days
+                    </span>
                   </div>
                 </div>
 
@@ -271,12 +275,24 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
             {/* ═══ LENS 4: CONTENT CONCEPTS ═══ */}
             {activeLens === 'concepts' && (
               <div className={styles.lensLayout}>
-                <div className={styles.takeawayBlock}>
-                  <div className={styles.takeawayNumber} style={{ color: '#a78bfa' }}>
-                    {insights.audiencePulse.contentDemands[0]?.topic || 'Reviews & Teardowns'}
+                <div className={styles.metricStrip}>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Top Content Demand</span>
+                    <span className={styles.metricValue} style={{ color: '#a78bfa' }}>
+                      {insights.audiencePulse.contentDemands[0]?.topic || 'Reviews & Teardowns'}
+                    </span>
                   </div>
-                  <div className={styles.takeawayLead}>
-                    <strong>High-Potential Direction:</strong> Empirically supported topic areas with demonstrated audience interest.
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Audience Appetite</span>
+                    <span className={styles.metricValue}>
+                      High Market Demand
+                    </span>
+                  </div>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Opportunities</span>
+                    <span className={styles.metricValue}>
+                      {insights.audiencePulse.contentDemands.length} strategic themes
+                    </span>
                   </div>
                 </div>
 

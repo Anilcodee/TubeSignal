@@ -3,13 +3,28 @@ import { Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 // Register plugins before touching defaults.
 ChartJS.register(Legend, Tooltip);
 
-export const chartColors = { accent: '#FFC16E', base: '#697985', text: '#B0B3B5', grid: 'rgba(141, 148, 154, 0.12)', surface: '#1A1D20' };
+// Bklit UI-inspired Warm Amber & Slate Visualization Tokens
+export const chartColors = {
+  accent: '#FFC16E',          // Bklit warm amber primary (Signal Gold)
+  accentHover: '#FFD39A',
+  series2: '#60A5FA',         // Secondary cyan
+  series3: '#34D399',         // Emerald
+  series4: '#A78BFA',         // Violet
+  series5: '#F87171',         // Rose
+  base: 'rgba(255, 255, 255, 0.14)',      // Subtle slate baseline
+  baseHover: 'rgba(255, 255, 255, 0.28)',
+  text: 'rgba(160, 164, 173, 0.85)',
+  textMuted: 'rgba(141, 148, 154, 0.6)',
+  grid: 'rgba(255, 255, 255, 0.05)',       // Bklit ultra-subtle dashed grid
+  surface: 'rgba(18, 21, 26, 0.94)',       // Glassmorphic dark card
+  border: 'rgba(255, 255, 255, 0.12)',
+};
 
 export const configureChartTheme = () => {
   ChartJS.defaults.color = chartColors.text;
   ChartJS.defaults.borderColor = chartColors.grid;
   ChartJS.defaults.font.size = 11;
-  ChartJS.defaults.font.family = 'Arial, sans-serif';
+  ChartJS.defaults.font.family = 'var(--font-geist-sans), Arial, sans-serif';
   ChartJS.defaults.plugins.legend.display = false;
 
   // Disable animations globally to prevent Chart.js 4.x interpolator crashes ("this._fn is not a function")
@@ -21,13 +36,17 @@ export const configureChartTheme = () => {
   const tooltip = ChartJS.defaults.plugins.tooltip;
   if (tooltip) {
     tooltip.backgroundColor = chartColors.surface;
-    tooltip.borderColor = '#33363D';
+    tooltip.borderColor = chartColors.border;
     tooltip.borderWidth = 1;
-    tooltip.titleColor = '#ECEDEF';
-    tooltip.bodyColor = '#A0A4AD';
-    tooltip.padding = 10;
-    tooltip.cornerRadius = 6;
-    tooltip.displayColors = false;
+    tooltip.titleColor = '#FFFFFF';
+    tooltip.bodyColor = '#94A3B8';
+    tooltip.padding = { top: 8, bottom: 8, left: 12, right: 12 };
+    tooltip.cornerRadius = 8;
+    tooltip.displayColors = true;
+    tooltip.boxWidth = 6;
+    tooltip.boxHeight = 6;
+    tooltip.boxPadding = 4;
+    tooltip.usePointStyle = true;
     tooltip.animation = false;
   }
 
