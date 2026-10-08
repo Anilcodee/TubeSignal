@@ -1,9 +1,10 @@
+/* Blitz UI Inspired Clean Stat / Data Grid Pattern */
 .kpiPanel {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   background: var(--surface-1);
-  border: 1px solid var(--line);
-  border-radius: var(--r-panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg, 14px);
   overflow: hidden;
 }
 
@@ -12,10 +13,10 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: var(--s-5);
-  border-right: 1px solid var(--line);
+  padding: 1.25rem 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   background: transparent;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--transition-fast);
 }
 
 .kpiCard:last-child {
@@ -32,25 +33,29 @@
   justify-content: space-between;
   gap: var(--s-2);
   color: var(--text-2);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
-.kpiHeader svg {
+.kpiIcon {
   color: var(--text-3);
-  flex-shrink: 0;
+  opacity: 0.65;
+  transition: opacity var(--transition-fast);
+}
+
+.kpiCard:hover .kpiIcon {
+  opacity: 1;
 }
 
 .valueRow {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-2);
-  margin-top: var(--s-3);
+  align-items: baseline;
+  margin-top: 0.65rem;
 }
 
 .value {
-  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
-  font-weight: 500;
+  font-size: clamp(1.5rem, 2.4vw, 1.95rem);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--text);
   letter-spacing: -0.04em;
@@ -58,15 +63,10 @@
   line-height: 1.1;
 }
 
-.sparkline {
-  flex-shrink: 0;
-  margin-bottom: 0;
-}
-
 .caption {
   font-size: 0.75rem;
   color: var(--text-3);
-  margin-top: var(--s-2);
+  margin-top: 0.4rem;
   line-height: 1.5;
   white-space: nowrap;
   overflow: hidden;
@@ -82,18 +82,15 @@
   }
   .kpiCard:nth-child(1),
   .kpiCard:nth-child(2) {
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 }
 
 @media (max-width: 480px) {
   .kpiCard {
-    padding: var(--s-4);
+    padding: 1rem 1.15rem;
   }
   .value {
-    font-size: 1.35rem;
-  }
-  .caption {
-    font-size: 0.75rem;
+    font-size: 1.4rem;
   }
 }

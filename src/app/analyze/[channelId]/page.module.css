@@ -21,13 +21,13 @@
 .tabs button[aria-selected="true"] { color: var(--accent); border-color: var(--accent); }
 .tabCount { display: grid; place-items: center; background: var(--surface-2); border-radius: var(--radius-sm, 6px); padding: .15rem .45rem; font-size: 0.75rem; font-family: var(--font-mono); }
 .tabHint { color: var(--text-3); font-size: 0.75rem; align-self: center; margin-top: 2px; }
-.view { display: flex; flex-direction: column; gap: var(--s-5); animation: fadeIn .3s both; min-width: 0; }
+.view { display: flex; flex-direction: column; gap: 2.25rem; animation: fadeIn .3s both; min-width: 0; }
 .viewHeading { padding: var(--s-4) 0; }
 .viewHeading > span { color: var(--accent); font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: .08em; font-weight: 600; }
 .viewHeading h2 { font-size: clamp(1.6rem, 2.5vw, 2rem); font-weight: 500; letter-spacing: -.05em; margin-top: var(--s-3); }
 .viewHeading p { color: var(--text-3); font-size: 0.875rem; line-height: 1.7; margin-top: var(--s-2); }
-.grid7_5 { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--s-5); align-items: stretch; }
-.chartGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); }
+.grid7_5 { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 1.5rem; align-items: stretch; }
+.chartGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
 .continueButton { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); text-align: left; padding: var(--s-5) var(--s-6); background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--radius-lg, 14px); transition: background var(--transition-fast), border-color var(--transition-fast); }
 .continueButton > span { display: flex; align-items: center; gap: var(--s-4); font-size: 0.875rem; }
 .continueButton svg { color: var(--accent); flex-shrink: 0; }

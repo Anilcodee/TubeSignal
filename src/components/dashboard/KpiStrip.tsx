@@ -8,32 +8,7 @@ import { kpiCardVariant } from '@/utils/animations';
 
 import styles from './KpiStrip.module.css';
 
-function Sparkline({ points }: { points: number[] }) {
-  if (!points || points.length < 2) return null;
-  const width = 48;
-  const height = 16;
-  const step = width / (points.length - 1);
-  const pathD = points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${(i * step).toFixed(1)} ${(height - p).toFixed(1)}`)
-    .join(' ');
-  const lastX = width;
-  const lastY = height - points[points.length - 1];
 
-  return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={styles.sparkline} aria-hidden="true">
-      <path
-        d={pathD}
-        fill="none"
-        stroke="#666B77"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.75"
-      />
-      <circle cx={lastX} cy={lastY} r="2.2" fill="#FFB224" />
-    </svg>
-  );
-}
 
 function AnimatedValue({ 
   value, 
@@ -165,7 +140,7 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
 
   return (
     <div className={styles.kpiPanel} aria-label="Key metrics">
-      {metrics.map(({ Icon, targetNum, formatFn, sparkPoints, ...metric }, i) => (
+      {metrics.map(({ Icon, targetNum, formatFn, ...metric }, i) => (
         <motion.div
           key={metric.label}
           className={styles.kpiCard}
@@ -176,13 +151,12 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
         >
           <div className={styles.kpiHeader}>
             <span>{metric.label}</span>
-            <Icon size={14} aria-hidden="true" />
+            <Icon size={15} className={styles.kpiIcon} aria-hidden="true" />
           </div>
           <div className={styles.valueRow}>
             <span className={styles.value}>
               <AnimatedValue value={metric.value} targetNum={targetNum} formatFn={formatFn} />
             </span>
-            <Sparkline points={sparkPoints} />
           </div>
           <span className={styles.caption} title={metric.caption}>{metric.caption}</span>
         </motion.div>
