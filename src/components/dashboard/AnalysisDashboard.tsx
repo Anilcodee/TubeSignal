@@ -23,10 +23,10 @@ import Loading from '@/app/analyze/[channelId]/loading';
 import styles from '@/app/analyze/[channelId]/page.module.css';
 
 const TABS = [
-  { id: 'overview', label: 'At a glance', description: 'Decide what matters', step: '01', Icon: LayoutGrid },
-  { id: 'patterns', label: 'Content patterns', description: 'Find what repeats', step: '02', Icon: ChartNoAxesCombined },
-  { id: 'transcripts', label: 'Hook & Script Lab', description: 'Study the opening', step: '03', Icon: Mic },
-  { id: 'uploads', label: 'Videos', description: 'Verify the evidence', step: '04', Icon: Play },
+  { id: 'overview', label: 'At a glance', shortLabel: 'Overview', description: 'Decide what matters', step: '01', Icon: LayoutGrid },
+  { id: 'patterns', label: 'Content patterns', shortLabel: 'Patterns', description: 'Find what repeats', step: '02', Icon: ChartNoAxesCombined },
+  { id: 'transcripts', label: 'Hook & Script Lab', shortLabel: 'Hooks', description: 'Study the opening', step: '03', Icon: Mic },
+  { id: 'uploads', label: 'Videos', shortLabel: 'Videos', description: 'Verify the evidence', step: '04', Icon: Play },
 ] as const;
 type ReportTab = typeof TABS[number]['id'];
 const isReportTab = (value: string | null): value is ReportTab => TABS.some((tab) => tab.id === value);
@@ -110,7 +110,7 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
          />
          <div id="report-tabs" className={`${styles.tabBar} no-print`}>
            <div role="tablist" aria-label="Report views" className={styles.tabs}>
-             {TABS.map(({ id, label, description, step, Icon }, index) => <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={activeTab === id} aria-controls={`panel-${id}`} tabIndex={activeTab === id ? 0 : -1}
+             {TABS.map(({ id, label, shortLabel, description, step, Icon }, index) => <button key={id} type="button" role="tab" id={`tab-${id}`} aria-label={`${label} — ${description}`} aria-selected={activeTab === id} aria-controls={`panel-${id}`} tabIndex={activeTab === id ? 0 : -1}
                onClick={() => handleTabChange(id)} onKeyDown={(event) => {
                 let target = index;
                 if (event.key === 'ArrowRight') target = (index + 1) % TABS.length;
@@ -119,7 +119,7 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
                 else if (event.key === 'End') target = TABS.length - 1;
                 else return;
                 event.preventDefault(); handleTabChange(TABS[target].id); document.getElementById(`tab-${TABS[target].id}`)?.focus();
-               }}><span className={styles.tabStep}>{step}</span><Icon size={15} /><span className={styles.tabCopy}><span className={styles.tabLabel}>{label}</span><small>{description}</small></span>{id === 'uploads' && <span className={styles.tabCount}>{data.videos.length}</span>}</button>)}
+               }}><span className={styles.tabStep}>{step}</span><Icon size={14} className={styles.tabIcon} /><span className={styles.tabCopy}><span className={styles.tabLabel}>{label}</span><span className={styles.tabLabelShort}>{shortLabel}</span><small>{description}</small></span>{id === 'uploads' && <span className={styles.tabCount}>{data.videos.length}</span>}</button>)}
            </div>
          </div>
         <AnimatePresence mode="wait">

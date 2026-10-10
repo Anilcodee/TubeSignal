@@ -30,6 +30,7 @@
 .tabs button[aria-selected="true"] .tabStep { color: var(--accent); }
 .tabCopy { display: block; min-width: 0; overflow: hidden; }
 .tabLabel { display: block; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.tabLabelShort { display: none; font-weight: 600; }
 .tabCopy small { display: block; margin-top: .18rem; overflow: hidden; color: var(--text-3); font-size: .625rem; line-height: 1.3; text-overflow: ellipsis; }
 .tabs button[aria-selected="true"] .tabCopy small { color: var(--text-2); }
 .tabCount { display: grid; place-items: center; margin-left: auto; background: var(--surface-2); border-radius: var(--radius-sm, 6px); padding: .15rem .45rem; font-size: 0.6875rem; font-family: var(--font-mono); }
@@ -67,6 +68,6 @@
 .methodNote p { margin-top: var(--s-2); max-width: 110ch; }
 @media (max-width: 900px) { .grid7_5, .chartGrid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .tabBar { top: 7.25rem; scroll-margin-top: 8.25rem; } }
-@media (max-width: 680px) { .tabBar { top: 7.25rem; padding: .3rem .3rem 0; } .tabs { width: 100%; } .tabs button { min-height: 3rem; justify-content: center; gap: .3rem; padding: .35rem .25rem; } .tabStep, .tabCopy small { display: none; } .tabCopy { font-size: .7rem; } .tabCount { padding: .1rem .25rem; } .viewHeading { align-items: flex-start; flex-direction: column; gap: .75rem; } }
+@media (max-width: 680px) { .tabBar { top: 7.25rem; padding: .25rem; } .tabs { width: 100%; gap: .25rem; } .tabs button { min-height: 2.75rem; justify-content: center; gap: .25rem; padding: .35rem .2rem; } .tabStep, .tabCopy small { display: none; } .tabLabel { display: none; } .tabLabelShort { display: block; font-size: .75rem; font-weight: 600; white-space: nowrap; } .tabIcon { flex-shrink: 0; } .tabCount { padding: .1rem .25rem; font-size: .625rem; margin-left: 2px; } .viewHeading { align-items: flex-start; flex-direction: column; gap: .75rem; } }
 @media (max-width: 600px) { .pageContainer { padding-top: var(--s-5); } .reportLabel { display: none; } .noticeMore { display: none; } .notice summary > svg:last-child { margin-left: auto; } .continueButton { padding: var(--s-4); } .continueButton > span { font-size: 0.8125rem; } }
 @media print { .pageContainer { max-width: none; padding: 0; } .grid7_5, .chartGrid { display: block; } .grid7_5 > *, .chartGrid > * { margin-bottom: 1.25rem; } .methodNote > p, .notice > p { display: block; } .notice { break-inside: avoid; } }
