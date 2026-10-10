@@ -57,6 +57,7 @@
 
 .videoChip {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 8px;
   padding: 8px 14px;

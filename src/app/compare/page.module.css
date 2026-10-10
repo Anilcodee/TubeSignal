@@ -739,7 +739,7 @@
   50% { transform: scaleY(1); opacity: 1; }
 }
 
-@media (max-width: 780px) {
+@media (max-width: 900px) {
   .compareForm {
     flex-wrap: wrap;
   }

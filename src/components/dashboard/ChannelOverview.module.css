@@ -14,7 +14,7 @@
 .timestamp { color: var(--text-3); font-size: 11px; line-height: 1.5; margin-top: var(--s-1); }
 
 /* ═══ Action buttons & Dropdowns ═══ */
-.actions { display: flex; align-items: center; gap: var(--s-2); }
+.actions { display: flex; align-items: center; gap: var(--s-2); margin-left: auto; flex-shrink: 0; }
 
 .dropdown { position: relative; }
 
@@ -94,10 +94,12 @@
   color: var(--text);
   z-index: 1000;
   animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  white-space: normal;
 }
 
-.toast span { display: flex; align-items: center; gap: 6px; }
+.toast span { display: flex; align-items: center; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
 
 .toast.success { border-color: rgba(52, 211, 153, 0.3); }
 .toast.success svg { color: #34D399; }
@@ -128,5 +130,6 @@
 /* ═══ Responsive ═══ */
 @media (max-width: 600px) {
   .actions { width: 100%; justify-content: flex-end; }
+  .dropdown:first-child .dropdownMenu { left: 0; right: auto; }
   .dropdownMenu { min-width: 180px; }
 }
