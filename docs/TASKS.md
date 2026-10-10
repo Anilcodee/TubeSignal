@@ -1,10 +1,10 @@
 
 # TubeSignal — Sprint Plan & Task Checklist
 
-> **Version:** 2.2
-> **Last Updated:** October 5, 2026
-> **Status:** All core, data honesty, and UX enhancements complete ✅ (Audited, hardened, 0 errors, 0 lint warnings, Next.js build pass)
-> **Next Milestone:** Demo Video Recording & Hackathon Submission
+> **Version:** 2.3
+> **Last Updated:** October 10, 2026
+> **Status:** Feature work complete and locally verified ✅ (build, TypeScript, lint, UI contracts, backend checks, Playwright/Axe)
+> **Next Milestone:** Manual product review, commit, demo video, and hackathon submission
 > **Hackathon Deadline:** October 10, 2026 at 23:59 IST
 
 ---
@@ -102,6 +102,17 @@
   - [X] Sticky `.provenancePill` (`Sample Fixture / Live YouTube Data • N uploads • Gemini AI / Deterministic`) in report header
   - [X] Contextual next-step action buttons connecting tab workflows
 
+### Phase 11: Velocity, Faceoff, and Release Hardening
+
+- [X] Age-adjusted median lifetime views/day with unknown-date exclusion and approximate-date labels
+- [X] Separate lifetime, typical, and age-adjusted velocity signals in Videos and Compare
+- [X] Shareable report tabs using `?tab=overview|patterns|transcripts|uploads`
+- [X] Lazy channel-level hook comparison for up to three leading openings per creator
+- [X] Demo/live transcript separation with bounded client caching and timeout handling
+- [X] UI contract checks for disclosure, evidence controls, and comparison surfaces
+- [X] Playwright/Axe coverage for tabs, Compare, opening analysis, and accessibility
+- [X] Production build, strict TypeScript, lint, and 17 backend regression checks
+
 ---
 
 ## 2. Submission Preparation
@@ -109,10 +120,10 @@
 | Step                       | Description                                                                   | Status                      |
 | -------------------------- | ----------------------------------------------------------------------------- | --------------------------- |
 | **Code Audit**       | Turbopack build check, TypeScript strict typing, ESLint zero-warning check    | ✅ 0 errors, 0 warnings     |
-| **Backend Suite**    | 15 backend verification checks (`scripts/backend-checks.mjs`)               | ✅ 15/15 passed             |
+| **Backend Suite**    | 17 backend verification checks (`scripts/backend-checks.mjs`)               | ✅ 17/17 passed             |
 | **Production Build** | Static generation & compilation check (`next build`)                        | ✅ Exit code 0              |
-| **Documentation**    | Update README.md, ARCHITECTURE.md, PRD.md, TASKS.md, and MEMORY.md            | ✅ Fully updated            |
-| **GitHub Push**      | Push`main` branch to GitHub repository `Anilcodee/TubeSignal`             | ✅ Pushed (`origin/main`) |
+| **Documentation**    | Update README.md, ARCHITECTURE.md, PRD.md, TASKS.md, and MEMORY.md            | ✅ Updated for Phase 11   |
+| **GitHub Push**      | Commit and push the current working-tree changes to `Anilcodee/TubeSignal`    | ⏳ User action              |
 | **Deployment**       | Import GitHub repo into Vercel and configure`SERPAPI_API_KEY`               | ⏳ Ready                    |
 | **Demo Video**       | Record ~3-minute video demonstrating 3 SerpApi engines, Hook Lab, and Faceoff | ⏳ Next                     |
 | **Final Submission** | Submit project on hackathon portal before Oct 10                              | ⏳ On track                 |

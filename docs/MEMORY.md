@@ -1,8 +1,8 @@
 # TubeSignal — Memory Document
 
 > **Purpose:** Living document that tracks project state, architectural decisions, key learnings, and context across development sessions.  
-> **Last Updated:** October 5, 2026  
-> **Status:** Feature Complete, Audited & Hardened, Pushed to GitHub (`Anilcodee/TubeSignal`)  
+> **Last Updated:** October 10, 2026
+> **Status:** Feature complete and locally verified; current changes remain uncommitted
 
 ---
 
@@ -41,6 +41,10 @@
 | D13 | Oct 4 | **Data Honesty Audit & Zero-Fabrication** | Eliminated simulated weekday distributions, relative dates treated as approximate only, removed causal claims across insights, and derived Audience Pulse strictly from actual catalog signals. |
 | D14 | Oct 4 | **Signal Report UX Suite (Step A: Misreading Prevention)** | Inline TL;DR summary with `<details>` for full text, explicit baseline context row (`Typical: X • Top: Y • n=Z uploads • Cumulative views, not growth pace`), inline age caveats, sweet-spot count gating (`n >= 4`), and relative age column in VideoTable. |
 | D15 | Oct 4 | **Signal Report UX Suite (Step B: Scannable Numbers & Guidance)** | Unified 4-cell KPI panel with hairline dividers, SVG sparklines with amber terminal dot, upload pace context (`~X / week`), qualitative WPM scale bar (`<130 deliberate • 130–165 conversational • >165 high-energy`), `★ Standout` top-video badge, sticky header provenance pill, and contextual cross-tab continue buttons. |
+| D16 | Oct 10 | **Age-adjusted velocity with explicit unknowns** | Median lifetime views/day is calculated from publishing age, excludes unknown dates, marks approximate dates, and is presented as a retrieval-time snapshot rather than recent growth. |
+| D17 | Oct 10 | **Strict demo/live transcript separation** | Sample transcripts are only returned for explicitly flagged sample reports; live reports surface unavailable-caption states instead of using illustrative speech. |
+| D18 | Oct 10 | **Lazy channel-level hook comparison** | Compare samples up to three leading openings per creator on demand, caches client responses for 15 minutes, and reports transcript heuristics with sample counts and provenance. |
+| D19 | Oct 10 | **Browser verification as a release gate** | UI contracts, 17 backend checks, production build, and Playwright/Axe flows must pass before handoff. |
 
 ---
 
@@ -63,3 +67,26 @@
 - **Context:** Users can easily mistake public sample metadata for channel-wide truth or mistake lifetime views for current growth pace.
 - **Decision:** Every report prominently discloses sample provenance (sample vs live, sample size `n=`, Gemini vs deterministic computation), pairs lifetime views with relative video age, gates small samples (`n < 4`), and never simulates missing dates or private metrics (CTR, retention).
 - **Consequences:** TubeSignal reports are completely trustworthy, defensible, and clear under hackathon judge scrutiny.
+
+### ADR-004: Lifetime Views and Age-Adjusted Velocity Are Separate Signals
+- **Status:** Accepted
+- **Context:** A lifetime view total cannot establish recent growth because uploads have different ages.
+- **Decision:** Keep lifetime totals and median lifetime views/day as separate metrics. Unknown dates produce unavailable velocity values; approximate dates remain labeled.
+- **Consequences:** Compare, Videos, and Overview can provide useful pace context without implying a time-series growth claim.
+
+### ADR-005: Demo Transcripts Must Never Masquerade as Live Data
+- **Status:** Accepted
+- **Context:** Fixture speech is useful for demos but unsafe as evidence for a live channel.
+- **Decision:** The transcript API requires an explicit demo flag for sample fixtures, and the client keeps demo/live cache keys separate.
+- **Consequences:** Live caption failures remain visible and cannot silently produce illustrative hook metrics.
+
+---
+
+## 4. Current Verification Snapshot
+
+- `npm.cmd run build` — passed.
+- `npm.cmd run lint` — passed.
+- `npx.cmd tsc --noEmit` — passed.
+- `npm.cmd run ui-check` — 3/3 passed.
+- `node scripts/backend-checks.mjs` — 17/17 passed.
+- `npm.cmd run e2e` — 3/3 passed, including lazy opening analysis and accessibility checks.

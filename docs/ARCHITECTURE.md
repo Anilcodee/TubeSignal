@@ -1,7 +1,7 @@
 # TubeSignal — Architecture Document
 
-> **Version:** 2.2  
-> **Last Updated:** October 5, 2026  
+> **Version:** 2.3
+> **Last Updated:** October 10, 2026
 > **Stack:** Next.js (App Router) + TypeScript + Turbopack + SerpApi + Gemini AI + Chart.js  
 > **Hackathon Track:** Knowledge & Public Interest (Education / Research)  
 > **Deadline:** October 10, 2026, 23:59 IST  
@@ -18,7 +18,9 @@ graph TD
         Dash["Analysis Dashboard (4 Guided Tabs)"]
         KPI["Unified 4-Cell KPI Panel + SVG Sparklines"]
         HookLab["Hook & Script Lab + WPM Benchmark Scale"]
-        Compare["Creator Faceoff (/compare)"]
+        Compare["Creator Faceoff (/compare) + Hook Comparison"]
+        Tabs["Shareable Report Tabs (?tab=)"]
+        TranscriptClient["Client Transcript Loader + 15m Cache"]
         ClientCache[("Browser sessionStorage Cache")]
     end
 
@@ -49,11 +51,13 @@ graph TD
     UI --> ClientCache
     Dash --> ClientCache
     Compare --> ClientCache
+    Compare --> TranscriptClient
     
     UI --> SearchAPI
     Dash --> AnalyzeAPI
     Compare --> AnalyzeAPI
     HookLab --> TranscriptAPI
+    TranscriptClient --> TranscriptAPI
 
     AnalyzeAPI --> Guard
     TranscriptAPI --> Guard
@@ -88,7 +92,7 @@ graph TD
 c:\Projects\SerpApi-hackathon-project\
 ├── docs/                      # Architectural, PRD, design, and task documentation
 ├── public/                    # Static assets, branding, and offline fixtures
-├── scripts/                   # Local CI checks and 15 mock backend tests
+├── scripts/                   # UI contracts and 17 mock backend tests
 ├── src/
 │   ├── app/
 │   │   ├── analyze/[channelId]/ # Main channel analysis dashboard
@@ -101,7 +105,7 @@ c:\Projects\SerpApi-hackathon-project\
 │   │   └── page.tsx           # Visual intelligence landing page
 │   ├── components/
 │   │   ├── charts/            # Chart.js visualization components
-│   │   ├── dashboard/         # Dashboard tabs (Verdict, HookLab, KpiStrip, VideoTable)
+│   │   ├── dashboard/         # Dashboard tabs, ReportPulse, VideoTable, HookComparison
 │   │   ├── layout/            # Header, Footer, and Navigation
 │   │   ├── search/            # Instant channel discovery modal
 │   │   └── ui/                # UI primitives (badges, buttons, cards)
@@ -109,7 +113,7 @@ c:\Projects\SerpApi-hackathon-project\
 │   ├── lib/                   # Chart theme and global utilities
 │   ├── services/              # SerpApi, Gemini AI, Transformer, Cache
 │   ├── types/                 # TypeScript type declarations
-│   └── utils/                 # Formatting, prompts, report generator, growth analyzer
+│   └── utils/                 # Formatting, prompts, report generator, velocity and hook analytics
 └── package.json
 ```
 
@@ -132,7 +136,7 @@ c:\Projects\SerpApi-hackathon-project\
    - Page refreshes (F5), page navigation to `/compare`, and tab switching use **0 API calls** and **0 Gemini credits**.
 2. **Server Process Cache (`CacheService`)**:
    - Bounded LRU in-memory cache with strictly validated TTL (`Date.now() + Math.max(1000, ttlMs)`).
-   - Assembled analyses are cached for 1 hour; raw API responses for 30 minutes; transcripts for 24 hours.
+    - Assembled analyses are cached for 1 hour; raw API responses for 30 minutes; server transcripts for 24 hours; client transcript responses for 15 minutes with a 50-entry bound.
 3. **In-Flight Coalescing**:
    - Deduplicates simultaneous requests for the same channel, executing only one upstream call.
 4. **Paid Quota Guard (`PaidRequestGuard`)**:
@@ -151,9 +155,12 @@ c:\Projects\SerpApi-hackathon-project\
   - Sample Size: `N uploads`
   - Model: `Gemini AI` vs. `Deterministic Heuristics`
 - **Contextual Grounding**:
-  - Lifetime view totals are paired with video age (`24d`, `3mo`, `1.2y`) and sorted by daily pace (`~views/day`).
+  - Lifetime view totals are paired with video age (`24d`, `3mo`, `1.2y`) and can be compared using median lifetime views/day.
+  - Velocity excludes unknown publication dates, uses a one-day floor only for videos younger than one day, and labels approximate dates.
+  - Velocity is explicitly described as a retrieval-time snapshot, not recent growth.
   - Small sample sizes (`n < 4`) in packaging patterns are explicitly labeled as `EARLY SIGNAL` rather than `SWEET SPOT`.
   - Speech pacing is grounded against a qualitative WPM scale bar (`<130 deliberate • 130–165 conversational • >165 high-energy`).
+  - Demo transcript fixtures are only available to explicitly flagged sample reports; live channels receive unavailable-caption messaging when captions cannot be fetched.
 
 ---
 
@@ -164,3 +171,12 @@ In `src/utils/report-generator.ts`:
 - **Executive Markdown (`.md`)**: Structured creator brief suitable for Notion, Obsidian, or GitHub.
 - **Raw JSON Dataset (`.json`)**: Machine-readable dataset for data analysts and researchers.
 - **Clipboard & Social**: Clean preview card copying and direct sharing to X and LinkedIn.
+
+---
+
+## 8. Verification Architecture
+
+- `scripts/backend-checks.mjs` covers 17 mocked data, provider, cache, quota, provenance, date, velocity, and hook-summary checks.
+- `scripts/ui-checks.mjs` validates shareable report tabs, progressive disclosure, focused evidence controls, and comparison signals.
+- Playwright runs three Chromium flows covering report tabs, Compare, lazy opening analysis, and Axe accessibility checks.
+- The production build is served on port `3107` during E2E runs to avoid stale development-server state.

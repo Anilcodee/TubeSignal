@@ -1,6 +1,6 @@
 # TubeSignal — Design Document v2
 
-> **Version:** 2.0 (replaces 1.0) · **Updated:** September 30, 2026
+> **Version:** 2.1 (implementation update) · **Updated:** October 10, 2026
 > **Direction:** An instrument, not a poster. Quiet graphite surfaces, hairline structure, one signal-amber accent, and an AI verdict that leads every page.
 
 ---
@@ -32,6 +32,23 @@ Every big analytics product has one moment people remember. Ours: **the dashboar
 > Publishes ~2× a week, mostly Tuesday and Thursday. Shorter videos underperform the channel median by 38%.
 
 This is the single place the UI is allowed to be big and expressive. Everything else stays quiet.
+
+### 1.1 Implemented report workflow
+
+The report is organized as four shareable evidence views rather than one uninterrupted wall of panels:
+
+- **Overview** leads with `ReportPulse`: standout signal, repeatable lever, and next experiment.
+- **Patterns** groups title, theme, duration, and publishing evidence.
+- **Hook & Script** keeps transcript analysis progressive and adds the actionable “What to borrow” takeaway.
+- **Videos** provides searchable, filterable upload evidence with lifetime and age-adjusted velocity labels.
+
+The selected view is preserved in the URL as `?tab=overview|patterns|transcripts|uploads`, so a finding can be shared directly.
+
+### 1.2 Comparison design
+
+`/compare` uses visual rails for mean views, median views, median lifetime views/day, upload cadence, and average length. Each rail names the statistic and includes context where interpretation could be misunderstood. A separate **Content focus** section summarizes the largest observed theme, while **Opening style** is opt-in and loads transcript heuristics for up to three leading videos per creator.
+
+Velocity is always framed as lifetime views divided by publishing age. It is not presented as recent growth.
 
 ---
 

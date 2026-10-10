@@ -10,18 +10,19 @@ The product is intentionally explicit about what public metadata can and cannot 
   - `youtube`: Creator and channel discovery with instant fuzzy matching.
   - `youtube_channel`: Comprehensive channel metadata and latest public uploads catalog.
   - `youtube_video_transcript`: Speech intelligence, opening 40-second hook breakdowns, and pacing metrics.
-- **Creator Faceoff (`/compare`)**: Side-by-side comparative analysis between two creators with real-time KPI matrix, advantage indicators, and head-to-head verdict.
+- **Creator Faceoff (`/compare`)**: Side-by-side comparative analysis between two creators with mean/median views, age-adjusted views/day, cadence, duration, content focus, and head-to-head signals.
 - **Visual Intelligence Workspace**: Interactive 3D signal sculpture, instant sample presets, and zero-clutter research console.
 - **Header Provenance Transparency**: Prominent badge disclosing data source (`Sample Fixture` vs `Live YouTube Data`), sample size `n=`, and interpretation model (`Gemini AI` vs `Deterministic`).
-- **Organized 4-View Deep Dive**:
+- **Organized 4-View Deep Dive** with shareable `?tab=` URLs:
   - **At a glance**: 2-sentence inline TL;DR, explicit baseline context (`Typical: X • Top: Y • n=Z uploads • Cumulative views, not growth pace`), inline age caveats, unified 4-cell KPI strip with SVG sparklines, and observed growth playbook.
   - **Content patterns**: Title length distribution, small-sample count gating (`n >= 4` sweet spot vs `n < 4` early signal), concrete title examples, duration vs. views scatter plot, and verified publishing cadence.
   - **Hook & Script Lab**: Speech intelligence powered by video transcripts—analyzing 40s opening hook archetypes with psychological "Why it works" explanations, qualitative WPM scale bar (`<130 deliberate • 130–165 conversational • >165 high-energy`) with active indicator pip, `★ Standout` top-video chip badge, high-retention power words, and interactive transcript search.
-  - **All uploads**: Full public upload catalog ranked by lifetime views or daily velocity (`~views/day`), relative age column (`24d`, `3mo`, `1.2y`), accessible inline playback, and outlier tooltips.
+  - **All uploads**: Full public upload catalog ranked by lifetime views or age-adjusted velocity (`~views/day`), relative age column (`24d`, `3mo`, `1.2y`), accessible inline playback, and outlier tooltips.
+- **Channel Hook Comparison**: Compare opening archetypes, estimated WPM, opening duration, question rate, and direct-address rate across sampled creator openings. Live reports never substitute illustrative demo transcripts.
 - **Contextual Tab Guidance**: Cross-tab action buttons linking sequential workflow steps across the entire research dossier.
 - **Multi-Format Dossier Export**: Generate self-contained offline HTML dossiers, structured Markdown briefs, or raw JSON datasets—no `window.print()` workarounds.
 - **Native Sharing**: Web Share API integration, 1-click clipboard summary cards, and quick sharing to X (Twitter) and LinkedIn.
-- **Multi-Tier API Preservation**: Browser `sessionStorage` cache (0ms reloads on refresh/navigation without burning API credits), server-side LRU memory cache, and strict rate limiting via `PaidRequestGuard`.
+- **Multi-Tier API Preservation**: Browser `sessionStorage` cache (0ms reloads on refresh/navigation without burning API credits), bounded client transcript cache, server-side LRU memory cache, and strict rate limiting via `PaidRequestGuard`.
 - **Gemini AI + Statistical Fallback**: Grounded narrative observations via Gemini 1.5 Flash with mathematical, deterministic fallbacks when unconfigured or rate-limited.
 - **Offline Sample Reports**: 100% offline demonstration fixtures for MKBHD, Fireship, and Veritasium that require zero API keys.
 
@@ -117,10 +118,12 @@ Run the repository checks from the project root:
 npm run lint
 node scripts/backend-checks.mjs
 node scripts/backend-checks.mjs --typecheck
+npm run ui-check
+npm run e2e
 npm run build
 ```
 
-The backend check script uses mocked provider responses, so it never spends API credits. It covers identifier validation, sample provenance, request limits, numeric/date parsing, cache and quota behavior, provider failures, concurrent request coalescing, and Gemini response validation.
+The backend check script uses mocked provider responses, so it never spends API credits. It covers identifier validation, sample provenance, request limits, numeric/date parsing, cache and quota behavior, provider failures, concurrent request coalescing, velocity semantics, hook summaries, and Gemini response validation. The UI contract and browser suites cover shareable report tabs, progressive disclosure, Compare, lazy opening analysis, and Axe accessibility checks.
 
 ## Deployment
 
@@ -137,7 +140,9 @@ Set `SERPAPI_API_KEY` and, optionally, `GEMINI_API_KEY` / `GEMINI_MODEL` in the 
 
 - Reports analyze the latest public video uploads returned by the provider (typically 30 uploads), not an infinite channel archive.
 - View counts are cumulative and uploads naturally have different ages.
+- Age-adjusted velocity is a snapshot calculated as lifetime views divided by publishing age; it is not recent growth or a causal performance claim.
 - Relative publication dates are marked approximate and are not treated as precise weekday evidence.
 - Missing counts, dates, durations, and thumbnails remain cleanly labeled as "Unavailable" instead of being fabricated.
 - Sample reports are static illustrative fixtures and do not consume live network requests.
+- Live transcript requests never fall back to sample speech; unavailable captions remain explicitly labeled.
 - Private creator metrics (click-through rates, audience retention percentages, YouTube Studio revenue) are never guessed or simulated.

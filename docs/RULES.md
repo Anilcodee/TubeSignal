@@ -1,7 +1,7 @@
 # 📏 TubeSignal — Development Rules
 
 > **Version:** 1.0  
-> **Last Updated:** September 29, 2026  
+> **Last Updated:** October 10, 2026
 > **Purpose:** Coding standards, conventions, and guardrails for consistent, high-quality development  
 
 ---
@@ -364,5 +364,14 @@ docs: add API usage examples to README
 For hackathon presentation reliability:
 - **Always have pre-cached data** for at least 2 channels (e.g., MKBHD, Fireship)
 - **Demo mode toggle** in the UI that uses cached data instead of live API
-- **Fallback to cached data** automatically if any API call fails
+- **Use cached demo fixtures** for presentation reliability; never substitute them for live-channel transcript evidence
 - **Never show API errors** in the demo video
+
+## 13. Release Verification Rules
+
+- Run `npm.cmd run build`, `npm.cmd run lint`, and `npx.cmd tsc --noEmit` before handoff.
+- Run `npm.cmd run ui-check` after changing report structure or comparison copy.
+- Run `node scripts/backend-checks.mjs` after changing data transformation, validation, caching, or provider behavior.
+- Run `npm.cmd run e2e` after changing report navigation, Compare, transcript loading, or accessibility-sensitive markup.
+- Do not use illustrative transcript fixtures for live channels; sample speech requires an explicit demo flag.
+- Do not describe lifetime views or age-adjusted lifetime views/day as recent growth.
