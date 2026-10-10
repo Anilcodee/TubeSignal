@@ -146,3 +146,7 @@ Set `SERPAPI_API_KEY` and, optionally, `GEMINI_API_KEY` / `GEMINI_MODEL` in the 
 - Sample reports are static illustrative fixtures and do not consume live network requests.
 - Live transcript requests never fall back to sample speech; unavailable captions remain explicitly labeled.
 - Private creator metrics (click-through rates, audience retention percentages, YouTube Studio revenue) are never guessed or simulated.
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.

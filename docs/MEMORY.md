@@ -2,7 +2,7 @@
 
 > **Purpose:** Living document that tracks project state, architectural decisions, key learnings, and context across development sessions.  
 > **Last Updated:** October 10, 2026
-> **Status:** Feature complete and locally verified; current changes remain uncommitted
+> **Status:** Project complete, verified, pushed to GitHub (origin/main), and officially submitted to the SerpApi India Hackathon 2026.
 
 ---
 
@@ -14,7 +14,7 @@
 | **Tagline** | Find the signal in any YouTube channel |
 | **Hackathon** | SerpApi India Hackathon 2026 |
 | **Track** | Knowledge & Public Interest (Education / Research) |
-| **Deadline** | October 10, 2026 at 23:59 IST |
+| **Deadline** | October 10, 2026 at 23:59 IST (Submitted ✅) |
 | **Developer** | Anil |
 | **Stack** | Next.js 16 + TypeScript + SerpApi (3 Engines) + Gemini 1.5 Flash + Chart.js |
 | **Deployment** | Vercel |
@@ -45,6 +45,7 @@
 | D17 | Oct 10 | **Strict demo/live transcript separation** | Sample transcripts are only returned for explicitly flagged sample reports; live reports surface unavailable-caption states instead of using illustrative speech. |
 | D18 | Oct 10 | **Lazy channel-level hook comparison** | Compare samples up to three leading openings per creator on demand, caches client responses for 15 minutes, and reports transcript heuristics with sample counts and provenance. |
 | D19 | Oct 10 | **Browser verification as a release gate** | UI contracts, 17 backend checks, production build, and Playwright/Axe flows must pass before handoff. |
+| D20 | Oct 10 | **Hackathon Submission Complete** | Project pushed to `Anilcodee/TubeSignal`, verified with 17/17 tests, licensed under MIT, demo video recorded, and submitted ahead of the 23:59 IST deadline. |
 
 ---
 
