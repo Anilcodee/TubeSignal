@@ -155,6 +155,14 @@
   .wrapper {
     padding: 1.25rem;
   }
+  .headerText {
+    min-width: 0;
+    width: 100%;
+  }
+  .badge {
+    max-width: 100%;
+    white-space: normal;
+  }
   .chartContainer {
     height: 250px;
   }
