@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { ExternalLink, Flame, Play, Zap } from 'lucide-react';
+import { ExternalLink, Flame, Play, Search, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { slideUp, fadeIn } from '@/utils/animations';
 import type { VideoData } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
 import { calculateVelocity, calculateMAD, type VideoVelocity } from '@/utils/math-analytics';
+import { ConfidenceLabel } from '@/components/ui/ConfidenceLabel';
 import styles from './VideoTable.module.css';
 
 export const VideoTable = ({
@@ -22,6 +23,8 @@ export const VideoTable = ({
   onWatchVideo?: (videoId: string, title: string) => void;
 }) => {
   const [sortMode, setSortMode] = useState<'views' | 'velocity'>('views');
+  const [filterMode, setFilterMode] = useState<'all' | 'above' | 'below'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const hasViews = (video: VideoData) =>
     video.viewsAvailable !== false && Number.isFinite(video.views) && video.views >= 0;
@@ -36,12 +39,23 @@ export const VideoTable = ({
   const validViews = videos.filter(hasViews).map((v) => v.views);
   const madStats = calculateMAD(validViews);
 
-  const ranked = [...videos].sort((a, b) => {
-    if (sortMode === 'velocity') {
-      const velA = velocityMap.get(a.videoId)?.viewsPerDay || 0;
-      const velB = velocityMap.get(b.videoId)?.viewsPerDay || 0;
+  const isOutlier = (video: VideoData) =>
+    hasViews(video) && madStats.outlierCutoff > 0 && video.views >= madStats.outlierCutoff;
+
+  const visibleVideos = videos.filter((video) => {
+    const matchesSearch = !searchQuery.trim() || video.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
+    if (!matchesSearch) return false;
+    if (filterMode === 'all' || !medianViews) return true;
+    return filterMode === 'above' ? hasViews(video) && video.views >= medianViews : hasViews(video) && video.views < medianViews;
+  });
+
+  const ranked = [...visibleVideos].sort((a, b) => {
+      if (sortMode === 'velocity') {
+       const velA = velocityMap.get(a.videoId)?.viewsPerDay || 0;
+       const velB = velocityMap.get(b.videoId)?.viewsPerDay || 0;
       return velB - velA;
     }
+    if (filterMode === 'all' && searchQuery.trim()) return Number(hasViews(b)) - Number(hasViews(a)) || b.views - a.views;
     return Number(hasViews(b)) - Number(hasViews(a)) || b.views - a.views;
   });
 
@@ -53,18 +67,28 @@ export const VideoTable = ({
         <div>
           <h3 id="videos-title">The uploads behind the report</h3>
           <p>
-            {sortMode === 'views' ? 'Ranked by total views (favors older uploads)' : 'Ranked by daily pace (~views/day momentum)'} · Median: {medianLabel} · {videos.length} uploads
-          </p>
-        </div>
-        <div className={styles.headerControls}>
-          <div className={styles.sortToggleGroup} role="group" aria-label="Sort videos by">
+              {sortMode === 'views' ? 'Sorted by lifetime views; older videos may have had more time to grow.' : 'Sorted by age-adjusted views per day since publication.'} · Typical lifetime: {medianLabel} · {ranked.length} of {videos.length} shown
+            </p>
+          </div>
+          <div className={styles.headerControls}>
+            <label className={styles.tableSearch}>
+              <Search size={13} />
+              <span className="sr-only">Search videos</span>
+              <input type="search" placeholder="Find a video" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />
+            </label>
+            <div className={styles.filterToggleGroup} role="group" aria-label="Filter videos">
+              <button type="button" className={`${styles.filterBtn} ${filterMode === 'all' ? styles.filterBtnActive : ''}`} onClick={() => setFilterMode('all')}>All</button>
+              <button type="button" className={`${styles.filterBtn} ${filterMode === 'above' ? styles.filterBtnActive : ''}`} onClick={() => setFilterMode('above')}>Above typical</button>
+              <button type="button" className={`${styles.filterBtn} ${filterMode === 'below' ? styles.filterBtnActive : ''}`} onClick={() => setFilterMode('below')}>Below</button>
+            </div>
+            <div className={styles.sortToggleGroup} role="group" aria-label="Sort videos by">
             <button
               type="button"
               className={`${styles.sortBtn} ${sortMode === 'views' ? styles.sortBtnActive : ''}`}
               onClick={() => setSortMode('views')}
               title="Ranked by cumulative lifetime views (older uploads accumulate more)"
             >
-              Total Views
+               Most views
             </button>
             <button
               type="button"
@@ -72,28 +96,30 @@ export const VideoTable = ({
               onClick={() => setSortMode('velocity')}
               title="Ranked by daily view velocity since publish date (~views/day)"
             >
-              <Zap size={11} /> Views / Day
+               <Zap size={11} /> Fastest pace
             </button>
           </div>
-          <span className={styles.sampleLabel}>{isSample ? 'Illustrative sample' : 'Public metadata'}</span>
+           <ConfidenceLabel sampleSize={validViews.length} detail={`${validViews.length} with view data`} />
+           <span className={styles.sampleLabel}>{isSample ? 'Illustrative sample' : 'Public metadata'}</span>
         </div>
       </div>
 
-      <div className={styles.tableWrapper}>
-        <table className={styles.table}>
+       <div className={styles.tableWrapper}>
+         <div className={styles.desktopTable}>
+         <table className={styles.table}>
           <caption className="sr-only">
-            Analyzed videos ranked by views or velocity, with publication age and percentage difference from sample median
+         Videos ranked by views or estimated views per day, with publication timing and difference from the typical video
           </caption>
           <thead>
             <tr>
               <th scope="col" className={styles.rank}>#</th>
               <th scope="col">Video</th>
-              <th scope="col" className={styles.numeric} title="Time elapsed since publication">Age</th>
+               <th scope="col" className={styles.numeric} title="Time since publication">Published</th>
               <th scope="col" className={styles.numeric}>Views</th>
-              <th scope="col" className={styles.numeric} title="Average views gained per day since publication">
-                Velocity (Pace)
+               <th scope="col" className={styles.numeric} title="Estimated views gained per day since publication">
+                 Views / day
               </th>
-              <th scope="col" className={styles.numeric} title="Percentage difference from channel median views">vs typical</th>
+               <th scope="col" className={styles.numeric} title="Difference from the typical video">vs typical</th>
             </tr>
           </thead>
           <motion.tbody
@@ -108,10 +134,7 @@ export const VideoTable = ({
                   : null;
               const validLink = /^https:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//i.test(video.url);
               const vel = velocityMap.get(video.videoId);
-              const isOutlier =
-                hasViews(video) &&
-                madStats.outlierCutoff > 0 &&
-                video.views >= madStats.outlierCutoff;
+              const isStandout = isOutlier(video);
 
               return (
                 <motion.tr
@@ -123,9 +146,8 @@ export const VideoTable = ({
                     <div className={styles.videoCell}>
                       <button
                         type="button"
-                        className={styles.thumb}
+                         className={`${styles.thumb} ${onWatchVideo ? styles.thumbInteractive : ''}`}
                         onClick={() => onWatchVideo?.(video.videoId, video.title)}
-                        style={{ cursor: onWatchVideo ? 'pointer' : 'default', background: 'transparent', border: 'none', padding: 0 }}
                         title={onWatchVideo ? 'Click to watch in-app theater' : undefined}
                         aria-label={`Watch ${video.title} in theater`}
                       >
@@ -159,22 +181,22 @@ export const VideoTable = ({
                           ) : (
                             <span className={styles.title}>{video.title}</span>
                           )}
-                          {isOutlier && (
-                            <span className={styles.breakoutBadge} title="Outlier: far above typical for this sample (exceeds 2× median absolute deviation)">
-                              <Flame size={10} /> Outlier
+                           {isStandout && (
+                             <span className={styles.breakoutBadge} title="This video is far above the typical result in this sample">
+                               <Flame size={10} /> Standout
                             </span>
                           )}
                         </div>
                         <span className={styles.videoMeta}>
-                          {video.lengthSeconds > 0 ? video.length : 'Duration unavailable'}
+                           {video.lengthSeconds > 0 ? video.length : 'Length unavailable'}
                           <span aria-hidden="true"> · </span>
                           {video.relativeDate || video.publishedDate || 'Date unavailable'}
                         </span>
                       </div>
                     </div>
                   </td>
-                  <td className={`${styles.numeric} tabular-nums`} style={{ color: 'var(--text-3)', fontSize: '12px' }}>
-                    {vel ? (
+                   <td className={`${styles.numeric} ${styles.publishedCell} tabular-nums`}>
+                     {vel?.available && vel.daysSince !== null ? (
                       <span title={`Published ${vel.daysSince} days ago${vel.isApproximate ? ' (approximate date)' : ''}`}>
                         {vel.isApproximate ? '~' : ''}{vel.daysSince < 30 ? `${vel.daysSince}d` : vel.daysSince < 365 ? `${Math.round(vel.daysSince / 30)}mo` : `${(vel.daysSince / 365).toFixed(1)}y`}
                       </span>
@@ -186,8 +208,8 @@ export const VideoTable = ({
                     {hasViews(video) ? formatViews(video.views) : 'Unavailable'}
                   </td>
                   <td className={`${styles.numeric} tabular-nums`}>
-                    {vel ? (
-                      <span className={styles.velocityVal} title={`${vel.isApproximate ? 'Estimated pace: ~' : ''}${formatViews(vel.viewsPerDay)} views/day over ${vel.daysSince} days`}>
+                     {vel?.available && vel.viewsPerDay !== null ? (
+                       <span className={styles.velocityVal} title={`${vel.isApproximate ? 'Estimated: ~' : ''}${formatViews(vel.viewsPerDay)} views per day over ${vel.daysSince} days`}>
                         <Zap size={11} /> {vel.formatted}
                       </span>
                     ) : (
@@ -207,8 +229,37 @@ export const VideoTable = ({
               );
             })}
           </motion.tbody>
-        </table>
-        {!ranked.length && <p className={styles.empty}>No videos are available yet.</p>}
+         </table>
+         </div>
+         <div className={styles.mobileVideoList} aria-label="Video evidence cards">
+           {ranked.map((video, index) => {
+             const difference = hasViews(video) && medianViews > 0 ? Math.round((video.views / medianViews - 1) * 100) : null;
+             const validLink = /^https:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//i.test(video.url);
+             const vel = velocityMap.get(video.videoId);
+             const isStandout = isOutlier(video);
+             return (
+               <article key={`${video.videoId}-mobile-${index}`} className={styles.mobileVideoCard}>
+                 <div className={styles.mobileCardTop}>
+                   <button type="button" className={styles.mobileThumb} onClick={() => onWatchVideo?.(video.videoId, video.title)} aria-label={`Watch ${video.title}`}>
+                     <Play size={17} className={styles.playIcon} />
+                     {video.thumbnail && <Image unoptimized src={video.thumbnail} alt="" fill sizes="88px" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}
+                   </button>
+                   <div className={styles.mobileTitleBlock}>
+                     {validLink ? <a href={video.url} target="_blank" rel="noopener noreferrer" className={styles.title}>{video.title}<ExternalLink size={11} aria-hidden="true" /></a> : <span className={styles.title}>{video.title}</span>}
+                     {isStandout && <span className={styles.breakoutBadge}><Flame size={10} /> Standout</span>}
+                     <span className={styles.videoMeta}>{video.lengthSeconds > 0 ? video.length : 'Length unavailable'} · {video.relativeDate || video.publishedDate || 'Date unavailable'}</span>
+                   </div>
+                 </div>
+                 <div className={styles.mobileMetricGrid}>
+                   <span><small>Views</small><strong>{hasViews(video) ? formatViews(video.views) : '—'}</strong></span>
+                    <span><small>Views / day</small><strong className={styles.velocityVal}>{vel?.available ? <><Zap size={11} /> {vel.formatted}</> : '—'}</strong></span>
+                   <span><small>vs typical</small><strong className={difference !== null && difference > 0 ? styles.positive : styles.neutral}>{difference === null ? '—' : `${difference > 0 ? '+' : ''}${difference}%`}</strong></span>
+                 </div>
+               </article>
+             );
+           })}
+         </div>
+         {!ranked.length && <p className={styles.empty}>No videos are available yet.</p>}
       </div>
     </section>
   );

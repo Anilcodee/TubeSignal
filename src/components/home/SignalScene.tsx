@@ -7,6 +7,9 @@ export const SignalScene = () => (
     <div className={styles.halo} />
     <div className={styles.coordinates}><span>CREATOR INTELLIGENCE</span><ScanLine size={16} /></div>
     <div className={styles.orbit}><i /><i /><i /></div>
+    <div className={styles.scanLine} />
+    <div className={`${styles.signalNode} ${styles.nodeA}`}><span>01</span><i /></div>
+    <div className={`${styles.signalNode} ${styles.nodeB}`}><span>03</span><i /></div>
     <div className={styles.sculpture}>
       <div className={styles.ringOuter} />
       <div className={styles.ringMiddle} />

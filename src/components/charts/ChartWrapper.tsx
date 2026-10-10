@@ -44,7 +44,7 @@ export const ChartWrapper = ({
     {dataTable && (
       <details className={styles.dataDetails}>
         <summary className={styles.summaryBtn}>
-          <span>View tabular data</span>
+           <span>Show exact values</span>
         </summary>
         <div className={styles.dataScroll}>{dataTable}</div>
       </details>

@@ -1,12 +1,21 @@
 .scene { position: relative; width: 100%; min-height: 33rem; perspective: 70rem; isolation: isolate; }
+.scene::before { content: ''; position: absolute; inset: 5% 2% 8%; background: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 3rem 3rem; mask-image: radial-gradient(ellipse, #000, transparent 70%); opacity: .32; pointer-events: none; }
 .halo { position: absolute; inset: 5% 0; background: radial-gradient(ellipse, var(--accent-glow), transparent 64%); z-index: -1; }
 .coordinates { position: absolute; inset: 1.5rem 1rem auto; display: flex; justify-content: space-between; color: var(--text-3); font: .6rem var(--font-mono); letter-spacing: .16em; }
 .orbit { position: absolute; width: 26rem; height: 26rem; border: 1px solid var(--line); border-radius: 50%; top: 3rem; left: 50%; transform: translateX(-50%); }
 .orbit::after { content: ''; position: absolute; inset: 2.5rem; border: 1px dashed var(--line-strong); border-radius: 50%; }
-.orbit i { position: absolute; width: .3rem; height: .3rem; background: var(--accent); border-radius: 50%; box-shadow: 0 0 14px var(--accent-line); }
+.orbit::before { content: ''; position: absolute; inset: -.35rem; border: 2px solid transparent; border-top-color: var(--accent); border-right-color: rgba(255,178,36,.25); border-radius: 50%; animation: orbitSpin 16s linear infinite; }
+.orbit i { position: absolute; width: .3rem; height: .3rem; background: var(--accent); border-radius: 50%; box-shadow: 0 0 14px var(--accent-line); animation: nodePulse 2.4s ease-in-out infinite; }
 .orbit i:nth-child(1) { top: 18%; left: 10%; }
 .orbit i:nth-child(2) { bottom: 20%; right: 9%; }
 .orbit i:nth-child(3) { top: 12%; right: 16%; background: var(--text-3); }
+.orbit i:nth-child(2) { animation-delay: .7s; }
+.orbit i:nth-child(3) { animation-delay: 1.4s; }
+.scanLine { position: absolute; top: 6rem; left: 50%; width: 19rem; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: .5; transform: translateX(-50%) rotate(-28deg); animation: scan 5.5s ease-in-out infinite; pointer-events: none; }
+.signalNode { position: absolute; display: flex; align-items: center; gap: .5rem; color: var(--text-3); font: .58rem var(--font-mono); letter-spacing: .08em; }
+.signalNode i { width: .35rem; height: .35rem; display: block; border: 1px solid var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px var(--accent-soft); }
+.nodeA { top: 32%; left: 4%; animation: nodeFloat 5s ease-in-out infinite; }
+.nodeB { top: 20%; right: 5%; animation: nodeFloat 6s .8s ease-in-out infinite reverse; }
 .sculpture { position: absolute; top: 5rem; left: 50%; width: 20rem; height: 20rem; transform-style: preserve-3d; transform: translateX(-50%) rotateX(48deg) rotateZ(-30deg); animation: levitate 7s ease-in-out infinite; will-change: transform; }
 .ringOuter, .ringMiddle, .ringInner { position: absolute; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, var(--surface-warm) 38%, var(--accent) 67%, var(--surface-warm) 95%); box-shadow: 0 12px 0 var(--surface-warm), 0 14px 0 var(--accent-line), 0 30px 45px #0008, inset 0 2px 1px var(--accent); }
 .ringOuter { inset: 0; border: 1px solid var(--accent-line); }
@@ -38,7 +47,11 @@
 @keyframes levitate { 0%, 100% { transform: translateX(-50%) translateY(0) rotateX(48deg) rotateZ(-30deg); } 50% { transform: translateX(-50%) translateY(-.8rem) rotateX(52deg) rotateZ(-24deg); } }
 @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @keyframes reveal { from { opacity: 0; translate: 0 1rem; } to { opacity: 1; translate: 0 0; } }
+@keyframes orbitSpin { to { transform: rotate(360deg); } }
+@keyframes nodePulse { 0%, 100% { transform: scale(1); opacity: .65; } 50% { transform: scale(1.7); opacity: 1; } }
+@keyframes scan { 0%, 100% { opacity: 0; transform: translateX(-50%) rotate(-28deg) translateY(-5rem); } 35%, 65% { opacity: .65; } 50% { transform: translateX(-50%) rotate(-28deg) translateY(10rem); } }
+@keyframes nodeFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.45rem); } }
 @media (max-width: 1050px) { .insight { right: 0; bottom: 3rem; } .preview { left: 0; bottom: 5rem; width: 16rem; } .signalTag { right: 0; } }
 @media (max-width: 900px) { .scene { max-width: 28rem; min-height: 28rem; margin: 0 auto; } .coordinates { top: 0; } .sculpture { top: 2rem; } .orbit { top: .5rem; width: 23rem; height: 23rem; } .signalTag { top: 2rem; } .preview { bottom: 2rem; } .insight { bottom: 4.5rem; } .caption { bottom: -.5rem; } }
 @media (max-width: 400px) { .sculpture { width: 14.5rem; height: 14.5rem; top: 3.5rem; } .ringMiddle { inset: 1.6rem; } .ringInner { inset: 3.2rem; } .core { inset: 4.75rem; } .core svg { width: 3rem; } .orbit { width: 19rem; height: 19rem; } .insight { padding: var(--s-3); right: -.25rem; bottom: 1.5rem; } .preview { width: 15rem; bottom: 4rem; } }
-@media (prefers-reduced-motion: reduce) { .sculpture, .barChart > span, .preview, .insight { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .sculpture, .barChart > span, .preview, .insight, .orbit::before, .orbit i, .scanLine, .signalNode { animation: none !important; } }

@@ -108,14 +108,15 @@ export async function POST(request: NextRequest) {
       throw new ServiceError(400, 'A valid YouTube video ID or link is required.');
     }
 
-    const cacheKey = `transcript:${videoId}`;
+    const cacheKey = `transcript:v2:${isDemo ? 'demo' : 'live'}:${videoId}`;
     const cached = cacheService.get<{ segments: SerpApiTranscriptSegment[]; analysis: HookAnalysis }>(cacheKey);
     if (cached) {
       return NextResponse.json({ success: true, ...cached, source: 'cache' });
     }
 
-    // Demo fallback or if SerpApi key isn't provided
-    if (isDemo || !process.env.SERPAPI_API_KEY?.trim()) {
+    // Sample transcripts are only valid for explicit demo reports. Live reports must not
+    // silently present sample speech as if it came from the requested channel.
+    if (isDemo) {
       const segments = SAMPLE_TRANSCRIPTS[videoId] || SAMPLE_TRANSCRIPTS.default;
       const analysis = analyzeTranscript(segments);
       return NextResponse.json({
@@ -125,6 +126,10 @@ export async function POST(request: NextRequest) {
         source: 'sample',
         notice: 'Sample demonstration transcript and hook breakdown.',
       });
+    }
+
+    if (!process.env.SERPAPI_API_KEY?.trim()) {
+      throw new ServiceError(503, 'Live transcript analysis is unavailable because SerpApi is not configured.');
     }
 
     try {

@@ -86,8 +86,6 @@
   font-size: 10px;
   font-family: var(--font-mono);
   color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   font-weight: var(--weight-semibold);
 }
 
@@ -108,8 +106,6 @@
   font-size: 11px;
   font-family: var(--font-mono);
   color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   font-weight: var(--weight-semibold);
 }
 

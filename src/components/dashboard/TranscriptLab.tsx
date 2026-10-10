@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AudioLines, Check, Copy, ExternalLink, Loader2, MessageSquare, Mic, Pause, Play, Search, Sparkles, X, Zap } from 'lucide-react';
+import { AudioLines, Award, Check, ChevronDown, Copy, ExternalLink, Loader2, MessageSquare, Mic, Pause, Play, Search, Sparkles, X, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/utils/animations';
 import type { VideoData } from '@/types/analysis';
 import type { HookAnalysis } from '@/utils/transcript-analyzer';
+import { ConfidenceLabel } from '@/components/ui/ConfidenceLabel';
 import styles from './TranscriptLab.module.css';
 
 interface TranscriptResponse {
@@ -180,6 +181,9 @@ export const TranscriptLab = ({
   }, [segments, searchQuery]);
 
   const analysis = data?.analysis;
+  const hookTakeaway = analysis
+    ? `${analysis.questionCount > 0 ? 'Open with a curiosity question' : 'Make the promise explicit'}, then use the ${analysis.hookArchetype.toLowerCase()} structure within the first ${analysis.hookDurationSeconds} seconds.`
+    : '';
 
   const waveformSlices = useMemo(() => {
     if (!analysis) return [];
@@ -233,24 +237,18 @@ export const TranscriptLab = ({
     <motion.div className={styles.container} initial="hidden" animate="visible" variants={fadeIn}>
       <div className={styles.headingRow}>
         <div className={styles.titleArea}>
-          <span>SERPAPI SPEECH INTELLIGENCE</span>
-          <h2>Hook & Script Breakdown</h2>
-          <p>Analyze how {channelName} hooks viewers in the first 40 seconds of their top uploads.</p>
+           <span>OPENING MOMENTS</span>
+           <h2>How do the best videos begin?</h2>
+           <p>Read the first moments of {channelName}&apos;s top videos and see what the opening is trying to do.</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+         <div className={styles.headingActions}>
           <div className={styles.serpBadge}>
             <Mic size={13} />
-            <span>SerpApi youtube_video_transcript</span>
+             <span>Transcript available</span>
           </div>
           <button
             type="button"
-            className={styles.copyBtn}
-            style={{
-              background: isPlayingInline ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 193, 110, 0.15)',
-              color: isPlayingInline ? '#ef4444' : '#ffc16e',
-              borderColor: isPlayingInline ? 'rgba(239, 68, 68, 0.35)' : 'rgba(255, 193, 110, 0.35)',
-              cursor: 'pointer',
-            }}
+             className={`${styles.copyBtn} ${isPlayingInline ? styles.hideVideoBtn : styles.watchVideoBtn}`}
             onClick={() => {
               if (isPlayingInline) {
                 handleHidePlayer();
@@ -263,7 +261,7 @@ export const TranscriptLab = ({
             title="Toggle in-page video playback"
           >
             <Play size={12} fill="currentColor" />
-            <span>{isPlayingInline ? 'Hide In-Page Video' : 'Watch In-Page Video'}</span>
+             <span>{isPlayingInline ? 'Hide video' : 'Watch video'}</span>
           </button>
         </div>
       </div>
@@ -290,8 +288,8 @@ export const TranscriptLab = ({
             title={video.title}
           >
             <span>#{idx + 1}</span>
-            {idx === 0 && <span className={styles.standoutChipBadge}>★ Standout</span>}
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{video.title}</span>
+             {idx === 0 && <span className={styles.standoutChipBadge}><Award size={10} /> Top video</span>}
+             <span className={styles.videoChipTitle}>{video.title}</span>
             {video.viewsFormatted && <span className={styles.chipViews}>{video.viewsFormatted}</span>}
           </button>
         ))}
@@ -301,22 +299,14 @@ export const TranscriptLab = ({
       {isPlayingInline && activeVideoId && (
         <div className={styles.inlinePlayerContainer}>
           <div className={styles.inlinePlayerHeader}>
-            <span className={styles.inlinePlayerTitle}>
-              <Play size={12} fill="currentColor" /> Playing in-page: {currentVideo?.title}
+               <span className={styles.inlinePlayerTitle}>
+               <Play size={12} fill="currentColor" /> Playing: {currentVideo?.title}
             </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+             <div className={styles.inlinePlayerActions}>
               <button
                 type="button"
-                className={styles.copyBtn}
+                 className={`${styles.copyBtn} ${isPlaying ? styles.playingBtn : styles.pausedBtn}`}
                 onClick={togglePlayPause}
-                style={{
-                  padding: '0.25rem 0.6rem',
-                  fontSize: '0.72rem',
-                  cursor: 'pointer',
-                  background: isPlaying ? 'rgba(255, 193, 110, 0.15)' : 'rgba(74, 222, 128, 0.15)',
-                  color: isPlaying ? '#ffc16e' : '#4ade80',
-                  borderColor: isPlaying ? 'rgba(255, 193, 110, 0.35)' : 'rgba(74, 222, 128, 0.35)',
-                }}
                 title={isPlaying ? 'Pause video audio' : 'Play video'}
               >
                 {isPlaying ? <Pause size={11} /> : <Play size={11} />}
@@ -348,38 +338,27 @@ export const TranscriptLab = ({
       {loading && (
         <div className={styles.loadingBox}>
           <Loader2 size={24} className={styles.spinner} />
-          <span>Extracting spoken transcript via SerpApi...</span>
+           <span>Reading the transcript…</span>
         </div>
       )}
 
       {!loading && !data?.success && (
         <div className={styles.emptyState}>
-          <MessageSquare size={24} style={{ marginBottom: 8, opacity: 0.7 }} />
-          <p>{data?.error || 'No public transcript or spoken audio found for this video.'}</p>
-          <small style={{ color: 'var(--text-3)', display: 'block', marginTop: 4 }}>
-            Try selecting another video above or testing a sample report.
+           <MessageSquare size={24} className={styles.emptyIcon} />
+           <p>{data?.error || 'There is no transcript available for this video.'}</p>
+           <small className={styles.emptyHint}>
+             Try another video above, or open a sample report to explore this tool.
           </small>
-          <div style={{ marginTop: 12 }}>
+           <div className={styles.retryWrap}>
             <button
               type="button"
               onClick={() => {
                 transcriptClientCache.delete(activeVideoId);
                 setRetryCount((c) => c + 1);
               }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 14px',
-                borderRadius: '8px',
-                background: 'var(--surface-3)',
-                color: 'var(--text)',
-                border: '1px solid var(--line)',
-                cursor: 'pointer',
-                fontSize: '12px',
-              }}
+               className={styles.retryButton}
             >
-              Retry transcript
+               Try again
             </button>
           </div>
         </div>
@@ -388,28 +367,28 @@ export const TranscriptLab = ({
       {!loading && data?.success && analysis && (
         <>
           {/* Hook Hero Card */}
-          <div className={styles.hookCard}>
+           <div className={styles.hookCard}>
             <div className={styles.cardHeader}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+               <div className={styles.cardHeaderMain}>
+                 <div className={styles.archetypeRow}>
                   <span className={styles.archetypeBadge}>
                     <Sparkles size={13} />
                     {analysis.hookArchetype}
                   </span>
-                  <span className={styles.archetypeWhy}>
-                    <strong>Why this hook works:</strong> {analysis.archetypeDescription}
+                     <span className={styles.archetypeWhy}>
+                     <strong>Why this opening may work:</strong> {analysis.archetypeDescription}
                   </span>
-                </div>
+               </div>
+               <ConfidenceLabel sampleSize={topVideos.length} detail="top video sample" />
               </div>
               {currentVideo?.url && (
                 <a
                   href={currentVideo.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={styles.timestamp}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                   className={`${styles.timestamp} ${styles.originalLink}`}
                 >
-                  Watch Video <ExternalLink size={12} />
+                   Watch original <ExternalLink size={12} />
                 </a>
               )}
             </div>
@@ -419,14 +398,19 @@ export const TranscriptLab = ({
               &ldquo;{analysis.hookText}&rdquo;
             </div>
 
+            <div className={styles.hookTakeaway}>
+              <div className={styles.takeawayLabel}><Zap size={12} /> What to borrow</div>
+              <p>{hookTakeaway}</p>
+            </div>
+
             {/* Interactive Spoken Waveform & Hook Timeline Scrubber */}
             <div className={styles.waveformContainer}>
               <div className={styles.waveformHeader}>
                 <div className={styles.waveformTitle}>
                   <AudioLines size={14} className={styles.waveformIcon} />
-                  <span>Opening 45s Spoken Cadence &amp; Hook Waveform</span>
+                   <span>First 45 seconds</span>
                 </div>
-                <span className={styles.waveformHint}>Click any bar to scrub video</span>
+                 <span className={styles.waveformHint}>Select a bar to jump to that moment</span>
               </div>
               <div className={styles.waveformBars} role="region" aria-label="Audio timeline scrubber">
                 {waveformSlices.map((slice) => {
@@ -453,14 +437,14 @@ export const TranscriptLab = ({
             {/* Metrics Grid */}
             <div className={styles.hookMetrics}>
               <div className={`${styles.metricTile} ${styles.pacingTile}`}>
-                <div className={styles.metricLabel}>Speech Pacing</div>
-                <div className={styles.metricValue}>{analysis.wordsPerMinute} <small style={{ fontSize: 11, fontWeight: 400 }}>WPM</small></div>
+                 <div className={styles.metricLabel}>Speech pace</div>
+                <div className={styles.metricValue}>{analysis.wordsPerMinute} <small className={styles.metricUnit}>WPM</small></div>
                 <div className={styles.metricSub}>
                   {analysis.wordsPerMinute < 130
-                    ? 'Deliberate cadence'
+                     ? 'Slower, deliberate delivery'
                     : analysis.wordsPerMinute > 165
-                      ? '⚡ High-energy'
-                      : '🗣️ Conversational'}
+                       ? 'Fast, high-energy delivery'
+                       : 'Conversational delivery'}
                 </div>
                 <div className={styles.wpmScaleBar} aria-label={`Pacing benchmark: ${analysis.wordsPerMinute} WPM`}>
                   <div className={styles.wpmTrack}>
@@ -491,17 +475,17 @@ export const TranscriptLab = ({
                 </div>
               </div>
               <div className={styles.metricTile}>
-                <div className={styles.metricLabel}>Hook Duration</div>
+                 <div className={styles.metricLabel}>Opening length</div>
                 <div className={styles.metricValue}>{analysis.hookDurationSeconds}s</div>
                 <div className={styles.metricSub}>{analysis.wordCount} words spoken</div>
               </div>
               <div className={styles.metricTile}>
-                <div className={styles.metricLabel}>Viewer Address</div>
+                 <div className={styles.metricLabel}>Direct viewer cues</div>
                 <div className={styles.metricValue}>{analysis.audienceAddresses}x</div>
-                <div className={styles.metricSub}>Direct &apos;You / We&apos; cues</div>
+                 <div className={styles.metricSub}>Uses words like &apos;you&apos; or &apos;we&apos;</div>
               </div>
               <div className={styles.metricTile}>
-                <div className={styles.metricLabel}>Open Loops</div>
+                 <div className={styles.metricLabel}>Questions asked</div>
                 <div className={styles.metricValue}>{analysis.questionCount}</div>
                 <div className={styles.metricSub}>Curiosity questions</div>
               </div>
@@ -510,8 +494,8 @@ export const TranscriptLab = ({
             {/* Power Words */}
             {analysis.powerWords.length > 0 && (
               <div className={styles.powerWordsRow}>
-                <span style={{ color: 'var(--text-3)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                  <Zap size={12} style={{ color: 'var(--accent)' }} /> Psychological Power Words:
+                 <span className={styles.powerWordsLabel}>
+                    <Zap size={12} /> Words that create curiosity:
                 </span>
                 {analysis.powerWords.map((word) => (
                   <span key={word} className={styles.powerWordTag}>{word}</span>
@@ -521,74 +505,79 @@ export const TranscriptLab = ({
           </div>
 
           {/* Full Transcript Inspector */}
-          <div className={styles.transcriptCard}>
-            <div className={styles.transcriptControls}>
-              <div className={styles.searchBox}>
-                <Search size={14} style={{ color: 'var(--text-3)' }} />
-                <input
-                  type="text"
-                  placeholder="Search spoken keywords in script..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+          <details className={styles.transcriptDetails}>
+            <summary className={styles.transcriptSummary}>
+              <span><MessageSquare size={14} /> Inspect full transcript</span>
+              <small>{segments?.length || 0} timestamped lines <ChevronDown size={14} /></small>
+            </summary>
+            <div className={styles.transcriptCard}>
+              <div className={styles.transcriptControls}>
+                <div className={styles.searchBox}>
+                  <Search size={14} className={styles.searchIcon} />
+                  <input
+                    type="text"
+                     placeholder="Search the transcript"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+
+                <button type="button" className={styles.copyBtn} onClick={handleCopyTranscript}>
+                  {copied ? <Check size={13} style={{ color: '#34D399' }} /> : <Copy size={13} />}
+                   <span>{copied ? 'Transcript copied' : 'Copy transcript'}</span>
+                </button>
               </div>
 
-              <button type="button" className={styles.copyBtn} onClick={handleCopyTranscript}>
-                {copied ? <Check size={13} style={{ color: '#34D399' }} /> : <Copy size={13} />}
-                <span>{copied ? 'Copied Transcript!' : 'Copy Full Transcript'}</span>
-              </button>
-            </div>
+              <div className={styles.segmentList}>
+                {filteredSegments.map((segment, index) => {
+                  const isHook = segment.startMs <= 40_000;
+                  const seconds = Math.floor(segment.startMs / 1000);
 
-            <div className={styles.segmentList}>
-              {filteredSegments.map((segment, index) => {
-                const isHook = segment.startMs <= 40_000;
-                const seconds = Math.floor(segment.startMs / 1000);
-
-                return (
-                  <div
-                    key={`${segment.startMs}-${index}`}
-                    className={`${styles.segmentItem} ${isHook ? styles.highlightHook : ''}`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setInlineSecond(seconds);
-                        setIsPlaying(true);
-                        if (!isPlayingInline) {
-                          setIsPlayingInline(true);
-                          onPlayStart?.();
-                        } else {
-                          try {
-                            iframeRef.current?.contentWindow?.postMessage(
-                              JSON.stringify({ event: 'command', func: 'seekTo', args: [seconds, true] }),
-                              '*'
-                            );
-                            iframeRef.current?.contentWindow?.postMessage(
-                              JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
-                              '*'
-                            );
-                          } catch {}
-                        }
-                      }}
-                      className={styles.timestamp}
-                      title={`Play at ${segment.timestampText} in-page`}
-                      style={{ cursor: 'pointer', border: 'none', background: 'none' }}
+                  return (
+                    <div
+                      key={`${segment.startMs}-${index}`}
+                      className={`${styles.segmentItem} ${isHook ? styles.highlightHook : ''}`}
                     >
-                      <Play size={10} fill="currentColor" style={{ marginRight: 4 }} />
-                      {segment.timestampText}
-                    </button>
-                    <span className={styles.segmentText}>{segment.text}</span>
-                  </div>
-                );
-              })}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInlineSecond(seconds);
+                          setIsPlaying(true);
+                          if (!isPlayingInline) {
+                            setIsPlayingInline(true);
+                            onPlayStart?.();
+                          } else {
+                            try {
+                              iframeRef.current?.contentWindow?.postMessage(
+                                JSON.stringify({ event: 'command', func: 'seekTo', args: [seconds, true] }),
+                                '*'
+                              );
+                              iframeRef.current?.contentWindow?.postMessage(
+                                JSON.stringify({ event: 'command', func: 'playVideo', args: '' }),
+                                '*'
+                              );
+                            } catch {}
+                          }
+                        }}
+                        title={`Play at ${segment.timestampText} in-page`}
+                        className={`${styles.timestamp} ${styles.segmentTimestamp}`}
+                      >
+                        <Play size={10} fill="currentColor" />
+                        {segment.timestampText}
+                      </button>
+                      <span className={styles.segmentText}>{segment.text}</span>
+                    </div>
+                  );
+                })}
 
-              {filteredSegments.length === 0 && (
-                <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-3)', fontSize: '13px' }}>
-                  No spoken lines match &quot;{searchQuery}&quot;
-                </div>
-              )}
+                {filteredSegments.length === 0 && (
+                  <div className={styles.noTranscriptMatch}>
+                    No spoken lines match &quot;{searchQuery}&quot;
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </details>
         </>
       )}
     </motion.div>

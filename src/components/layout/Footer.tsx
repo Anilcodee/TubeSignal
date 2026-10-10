@@ -41,7 +41,7 @@ export const Footer = () => {
               </span>
             </Link>
             <p className={styles.brandDescription}>
-              The competitive intelligence platform for high-growth YouTube creators. Reverse-engineer what works — packaging, timing, and spoken hooks.
+              A clear way to study what makes a YouTube channel work — from the videos it publishes to the ideas it repeats.
             </p>
 
             {/* Engine Status */}
@@ -51,14 +51,14 @@ export const Footer = () => {
                   <span className={styles.statusDot} />
                   <span className={styles.statusRing} />
                 </span>
-                <span>All systems operational</span>
+                <span>Ready to analyze public data</span>
               </div>
               <div className={styles.enginesList}>
                 <span className={styles.engineTag}>
-                  <Zap size={10} /> SerpApi
+                  <Zap size={10} /> Public YouTube data
                 </span>
                 <span className={styles.engineTag}>
-                  <Sparkles size={10} /> Gemini 2.5
+                  <Sparkles size={10} /> Assisted summaries
                 </span>
               </div>
             </div>
@@ -68,7 +68,7 @@ export const Footer = () => {
           <div className={styles.navColumns}>
             {/* Column 1: Intelligence */}
             <div className={styles.navCol}>
-              <h4 className={styles.colHeading}>Intelligence</h4>
+              <h2 className={styles.colHeading}>Intelligence</h2>
               <ul className={styles.navList}>
                 <li>
                   <Link href="/analyze/mkbhd?demo=true" className={styles.navLink}>
@@ -96,7 +96,7 @@ export const Footer = () => {
 
             {/* Column 2: Explore */}
             <div className={styles.navCol}>
-              <h4 className={styles.colHeading}>Explore</h4>
+              <h2 className={styles.colHeading}>Explore</h2>
               <ul className={styles.navList}>
                 <li>
                   <Link href="/analyze/mkbhd?demo=true" className={styles.navLink}>
@@ -118,7 +118,7 @@ export const Footer = () => {
 
             {/* Column 3: Technology */}
             <div className={styles.navCol}>
-              <h4 className={styles.colHeading}>Technology</h4>
+              <h2 className={styles.colHeading}>Built with</h2>
               <ul className={styles.navList}>
                 <li>
                   <a
@@ -127,7 +127,7 @@ export const Footer = () => {
                     rel="noopener noreferrer"
                     className={styles.navLink}
                   >
-                    <span>SerpApi YouTube</span>
+                    <span>YouTube data</span>
                     <ExternalLink size={11} className={styles.extIcon} />
                   </a>
                 </li>
@@ -138,7 +138,7 @@ export const Footer = () => {
                     rel="noopener noreferrer"
                     className={styles.navLink}
                   >
-                    <span>Google Gemini AI</span>
+                    <span>AI-assisted notes</span>
                     <ExternalLink size={11} className={styles.extIcon} />
                   </a>
                 </li>

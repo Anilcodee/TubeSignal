@@ -81,12 +81,12 @@ export const ViewsDistribution = ({ data, medianViews }: { data: FullAnalysisRes
 
   return (
     <ChartWrapper
-      title="Which uploads stand out?"
-      caption={`Top 8 uploads by cumulative views. Dashed line denotes channel median (${formatViews(medianViews)}).`}
+       title="Which videos get the most views?"
+       caption={`The top 8 videos by lifetime views. The line shows the typical video (${formatViews(medianViews)}).`}
       badge={
         entries.length > 0 ? (
           <span>
-            Peak: <strong style={{ color: 'var(--accent)' }}>{formatViews(peakVal)}</strong> · Median: {formatViews(medianViews)}
+             Highest: <strong style={{ color: 'var(--accent)' }}>{formatViews(peakVal)}</strong> · Typical: {formatViews(medianViews)}
           </span>
         ) : undefined
       }

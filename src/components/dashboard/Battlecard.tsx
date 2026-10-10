@@ -41,7 +41,7 @@ ${analysis.performanceInsights.underperformingTraits.map((t) => `- ${t}`).join('
             <BookOpen size={15} />
           </div>
           <div>
-            <h3 className={styles.title}>Channel Strategy Playbook</h3>
+             <h3 className={styles.title}>Channel strategy notes</h3>
             <span className={styles.subtitle}>
               Format structure and content patterns for {channelName}
             </span>
@@ -50,19 +50,19 @@ ${analysis.performanceInsights.underperformingTraits.map((t) => `- ${t}`).join('
 
         <button type="button" className={styles.copyBtn} onClick={handleCopy}>
           {copied ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
-          <span>{copied ? 'Copied' : 'Copy Playbook'}</span>
+               <span>{copied ? 'Copied' : 'Copy notes'}</span>
         </button>
       </div>
 
       {/* Summary Box */}
       <div className={styles.summaryBox}>
-        <span className={styles.summaryLabel}>Content Positioning</span>
+         <span className={styles.summaryLabel}>Channel summary</span>
         <p className={styles.summaryText}>{analysis.summary}</p>
       </div>
 
       {/* Directives */}
       <div className={styles.directivesSection}>
-        <span className={styles.sectionTitle}>Key Strategy Rules</span>
+       <span className={styles.sectionTitle}>Ideas worth testing</span>
         <div className={styles.directiveList}>
           {analysis.recommendations.map((rec, idx) => (
             <div key={idx} className={styles.directiveItem}>
@@ -78,7 +78,7 @@ ${analysis.performanceInsights.underperformingTraits.map((t) => `- ${t}`).join('
         <div className={styles.traitBox}>
           <div className={styles.traitHeaderGreen}>
             <TrendingUp size={13} />
-            <span>High-Performing Traits</span>
+             <span>Patterns in stronger videos</span>
           </div>
           <div className={styles.traitList}>
             {analysis.performanceInsights.topPerformingTraits.map((trait, i) => (
@@ -99,7 +99,7 @@ ${analysis.performanceInsights.underperformingTraits.map((t) => `- ${t}`).join('
         <div className={styles.traitBox}>
           <div className={styles.traitHeaderRed}>
             <AlertTriangle size={13} />
-            <span>Retention Risks</span>
+             <span>Patterns to watch</span>
           </div>
           <div className={styles.traitList}>
             {analysis.performanceInsights.underperformingTraits.map((trait, i) => (

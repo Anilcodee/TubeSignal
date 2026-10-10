@@ -1,0 +1,20 @@
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-width: 0;
+  padding: .3rem .5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .035);
+  font-size: .625rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.dot { width: .4rem; height: .4rem; flex: 0 0 auto; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 13%, transparent); }
+.label strong { font-weight: 700; }
+.label small { color: var(--text-3); font-size: .625rem; }
+.strong { color: var(--positive); border-color: rgba(52, 211, 153, .25); background: rgba(52, 211, 153, .06); }
+.directional { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
+.early { color: var(--accent-cool); border-color: rgba(138, 184, 255, .24); background: rgba(138, 184, 255, .06); }

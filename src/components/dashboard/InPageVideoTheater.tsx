@@ -105,8 +105,8 @@ export const InPageVideoTheater = ({
       {/* Header Bar */}
       <div className={styles.header}>
         <div className={styles.titleInfo}>
-          <span className={styles.badge}>
-            <Play size={10} fill="currentColor" /> IN-PAGE THEATER
+             <span className={styles.badge}>
+             <Play size={10} fill="currentColor" /> In-page video
           </span>
           <h3 className={styles.title} title={videoTitle}>
             {videoTitle}
@@ -158,8 +158,8 @@ export const InPageVideoTheater = ({
 
       {/* Jump Scrubber Controls */}
       <div className={styles.controlsBar}>
-        <span className={styles.controlsLabel}>
-          <Zap size={13} style={{ color: '#ffc16e' }} /> DISSECT THE SCRIPT (JUMP TO SECOND):
+           <span className={styles.controlsLabel}>
+           <Zap size={13} style={{ color: '#ffc16e' }} /> Jump to a part of the video:
         </span>
 
         <div className={styles.jumpPills}>

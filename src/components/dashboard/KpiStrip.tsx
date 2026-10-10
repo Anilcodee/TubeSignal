@@ -114,7 +114,7 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
       sparkPoints: [4, 6, 7, 9, 11, 13, 15],
     },
     {
-      label: 'Typical views',
+       label: 'Typical views',
       value: viewCount ? formatViews(analytics.medianViews) : '—',
       targetNum: viewCount ? analytics.medianViews : undefined,
       formatFn: formatViews,
@@ -123,14 +123,14 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
       sparkPoints: viewsSpark,
     },
     {
-      label: 'Average duration',
+       label: 'Average video length',
       value: durationCount ? analytics.avgVideoLength : '—',
       caption: durationCaption,
       Icon: Clock3,
       sparkPoints: [6, 9, 11, 8, 12, 10, 13],
     },
     {
-      label: 'Upload pace',
+       label: 'Uploads per week',
       value: paceDisplay,
       caption: paceCaption,
       Icon: CalendarDays,

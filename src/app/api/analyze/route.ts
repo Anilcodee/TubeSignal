@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!channelId) throw new ServiceError(400, 'Enter a YouTube @handle, UC channel ID, or channel URL. Search by name to discover a channel, or choose a sample report.');
 
     // 1. Cache hit check: Return instantly with 0 SerpApi/AI quota usage
-    const fullCacheKey = `full_analysis:${channelId.toLowerCase()}:${Boolean(body.isDemo)}`;
+    const fullCacheKey = `full_analysis:v2:${channelId.toLowerCase()}:${Boolean(body.isDemo)}`;
     const cachedAnalysis = cacheService.get<FullAnalysisResponse>(fullCacheKey);
     if (cachedAnalysis) {
       return NextResponse.json(cachedAnalysis);

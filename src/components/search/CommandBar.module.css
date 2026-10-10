@@ -1,5 +1,5 @@
 .wrapper { position: relative; width: 100%; min-width: 0; }
-.form { height: 42px; display: flex; align-items: center; gap: var(--s-2); padding: 0 var(--s-2) 0 var(--s-3); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--r-control); transition: border-color var(--transition-fast), box-shadow var(--transition-fast); }
+.form { height: 42px; display: flex; align-items: center; gap: var(--s-2); padding: 0 var(--s-2) 0 var(--s-3); background: color-mix(in srgb, var(--surface-2) 92%, transparent); border: 1px solid var(--line-strong); border-radius: var(--r-control); transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast); }
 .form:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .searchIcon { flex-shrink: 0; color: var(--text-3); }
 .form input { width: 100%; min-width: 0; background: none; border: none; outline: none; color: var(--text); font-size: 13px; }
@@ -8,9 +8,8 @@
 .form button:hover:not(:disabled) { background: var(--color-accent-hover); }
 .form button:disabled { opacity: .5; cursor: not-allowed; }
 .hero { position: relative; max-width: 720px; }
-.spotlightGlow {
-  display: none;
-}
+.hero::before { content: ''; position: absolute; inset: -1.25rem -1.5rem; border: 1px solid rgba(255,255,255,.035); border-radius: calc(var(--radius-lg, 14px) + 1rem); background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 4%, transparent), transparent 34%, transparent 66%, color-mix(in srgb, var(--accent-cool) 4%, transparent)); opacity: 0; transform: scale(.98); transition: opacity var(--transition-normal), transform var(--transition-normal); pointer-events: none; }
+.hero:focus-within::before, .hero:hover::before { opacity: 1; transform: scale(1); }
 .hero .form {
   position: relative;
   z-index: 1;
@@ -20,14 +19,14 @@
   border-radius: var(--radius-lg, 14px);
   background: rgba(18, 21, 26, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-hero), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 .hero:hover .form {
   border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 14px 44px -4px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 26px 64px -22px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .hero .form:focus-within {
   border-color: var(--accent);
@@ -52,6 +51,7 @@
 }
 .hero button:disabled { opacity: .5; cursor: not-allowed; }
 .popover { position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 100; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--r-panel); box-shadow: var(--shadow-popover); padding: var(--s-2); max-height: 420px; overflow-y: auto; }
+.popover { animation: popoverIn 180ms ease-out both; transform-origin: top center; }
 .popoverHeading { padding: var(--s-2); color: var(--text-2); font-size: 12px; line-height: 1.5; }
 .popover ul { list-style: none; }
 .result { min-height: 44px; width: 100%; display: flex; align-items: center; gap: var(--s-3); text-align: left; border-radius: var(--r-control); padding: var(--s-3) var(--s-2); }
@@ -63,4 +63,5 @@
 .result > svg { flex-shrink: 0; color: var(--text-3); }
 .sampleLink { display: flex; align-items: center; gap: var(--s-2); color: var(--accent); font-size: 12px; padding: var(--s-3) var(--s-2); }
 .spinner { animation: spin 1s linear infinite; }
+@keyframes popoverIn { from { opacity: 0; transform: translateY(-4px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @media (max-width: 480px) { .form input, .hero input { font-size: 16px; } .hero .form { height: 56px; padding-left: var(--s-3); } .hero button { padding: 0 var(--s-3); font-size: 12px; } }

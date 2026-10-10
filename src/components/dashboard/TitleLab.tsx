@@ -7,6 +7,15 @@ import { analyzeTitleLengthBuckets } from '@/utils/math-analytics';
 import styles from './TitleLab.module.css';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/utils/animations';
+import { ConfidenceLabel } from '@/components/ui/ConfidenceLabel';
+
+const compactPattern = (pattern: string) => {
+  const countMatch = pattern.match(/^(\d+)\s+of\s+(\d+)\s+titles?\s+contain\s+(.+)$/i);
+  if (!countMatch) return { metric: '', label: pattern };
+
+  const label = countMatch[3].replace(/[.!]+$/, '');
+  return { metric: `${countMatch[1]}/${countMatch[2]}`, label: label.charAt(0).toUpperCase() + label.slice(1) };
+};
 
 interface TitleLabProps {
   patterns: TitlePatterns;
@@ -45,16 +54,18 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
           <Type size={18} />
         </span>
         <div>
-          <h3 id="title-lab-heading">The anatomy of a title.</h3>
-          <p>Recurring structure and length brackets benchmarked against channel median.</p>
+           <span className={styles.headerKicker}>Title packaging</span>
+           <h3 id="title-lab-heading">The titles have a shape.</h3>
+           <p>Spot the length and phrasing signals worth testing again.</p>
         </div>
+        <span className={styles.headerMetric}><strong>{patterns.commonPatterns.length}</strong><small>signals found</small></span>
       </div>
 
       <div className={styles.layout}>
         {/* Left Column: Title Length Spectrum & Brackets */}
         <div className={styles.lengthCard}>
           <div className={styles.lengthHeader}>
-            <span className={styles.eyebrow}>AVERAGE TITLE LENGTH</span>
+             <span className={styles.eyebrow}>Average title length</span>
             <div className={styles.lengthHero}>
               <span className={styles.lengthNumber}>{avgLen > 0 ? avgLen : '—'}</span>
               <span className={styles.lengthUnit}>characters</span>
@@ -78,35 +89,28 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
               )}
             </div>
             <div className={styles.spectrumLegend}>
-              <span>0 Chars</span>
-              <span>35 (Punchy)</span>
-              <span>65 (Mobile Cutoff)</span>
+               <span>0 characters</span>
+               <span>35 · punchy</span>
+               <span>65 · feed cutoff</span>
               <span>100+</span>
             </div>
           </div>
 
-          <p className={styles.lengthNote}>
-            YouTube mobile feed truncates titles around 65 characters. Longer titles lean heavily on search keywords.
-          </p>
+          <span className={styles.feedHint}>Feed-friendly zone ends around 65 characters</span>
 
           {/* Performance Brackets */}
           {bucketAnalysis && bucketAnalysis.buckets.some((b) => b.count > 0) && (
             <div className={styles.bucketSection}>
               <div className={styles.bucketSectionHeader}>
-                <span className={styles.bucketSectionTitle}>Length Performance Brackets</span>
-                <span className={styles.bucketSectionSub}>Normalized vs channel median</span>
+                  <span className={styles.bucketSectionTitle}>Performance by length</span>
+                  <span className={styles.bucketSectionSub}>vs typical views</span>
+                  <ConfidenceLabel sampleSize={videos.length} detail={`${videos.length} uploads`} />
               </div>
 
               <div className={styles.bucketList}>
                 {bucketAnalysis.buckets.map((b) => {
                   const maxAvg = Math.max(...bucketAnalysis.buckets.map((x) => x.avgViews), 1);
                   const pct = Math.round((b.avgViews / maxAvg) * 100);
-                  const exampleVideo = videos.find((v) => {
-                    const len = (v.title || '').length;
-                    if (b.id === 'short') return len <= 35;
-                    if (b.id === 'medium') return len > 35 && len <= 65;
-                    return len > 65;
-                  });
 
                   // Format label cleanly
                   const cleanLabel = b.id === 'short' ? 'Punchy' : b.id === 'medium' ? 'Balanced' : 'Detailed / SEO';
@@ -124,21 +128,9 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
                           <span className={styles.bracketRangePill}>{b.rangeText}</span>
                         </div>
 
-                        <div className={styles.bracketBadgeGroup}>
-                          {isTopWinner && (
-                            <span className={styles.sweetSpotBadge}>
-                              <Sparkles size={11} /> Sweet Spot
-                            </span>
-                          )}
-                          {isEarlySignal && (
-                            <span className={styles.earlySignalBadge}>
-                              <TrendingUp size={11} /> Early Signal
-                            </span>
-                          )}
-                          <span className={b.count > 0 ? styles.bracketMultiplier : styles.bracketZero}>
-                            {b.count > 0 ? `${b.liftMultiplier}× typical` : '0 uploads'}
-                          </span>
-                        </div>
+                        <span className={b.count > 0 ? styles.bracketMultiplier : styles.bracketZero}>
+                          {b.count > 0 ? `${b.liftMultiplier}× typical` : '0 uploads'}
+                        </span>
                       </div>
 
                       {/* Progress Bar Track */}
@@ -152,29 +144,19 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
                       {/* Card Bottom: Upload Count & Sample Title */}
                       <div className={styles.bracketBottomRow}>
                         <span className={styles.bracketCount}>{b.count} upload{b.count === 1 ? '' : 's'}</span>
-                        {exampleVideo && (
-                          <span className={styles.bracketExample} title={exampleVideo.title}>
-                            e.g. &ldquo;{exampleVideo.title}&rdquo;
-                          </span>
-                        )}
+                        <div className={styles.bracketBottomRight}>
+                          {(isTopWinner || isEarlySignal) && (
+                            <span className={isTopWinner ? styles.sweetSpotBadge : styles.earlySignalBadge}>
+                              {isTopWinner ? <><Sparkles size={10} /> Strongest</> : <><TrendingUp size={10} /> Early signal</>}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Analytical Callout */}
-              {bucketAnalysis.insight && (
-                <div className={styles.insightBox}>
-                  <div className={styles.insightIconBox}>
-                    <TrendingUp size={14} />
-                  </div>
-                  <div className={styles.insightContent}>
-                    <strong>Key Finding</strong>
-                    <p>{bucketAnalysis.insight}</p>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -183,14 +165,14 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
         <div className={styles.patterns}>
           <div className={styles.patternsHeader}>
             <h4>Patterns to notice</h4>
-            <span className={styles.patternsCount}>{patterns.commonPatterns.length} detected</span>
+             <span className={styles.patternsCount}>{patterns.commonPatterns.length} found</span>
           </div>
 
-          {patterns.commonPatterns.length ? (
+           {patterns.commonPatterns.length ? (
             patterns.commonPatterns.map((pattern, index) => (
               <div key={index} className={styles.pattern}>
-                <span className={styles.index}>{String(index + 1).padStart(2, '0')}</span>
-                <p>{pattern}</p>
+                <span className={styles.index}>{compactPattern(pattern).metric || String(index + 1).padStart(2, '0')}</span>
+                <p>{compactPattern(pattern).label}</p>
                 <button
                   type="button"
                   onClick={() => void copyPattern(pattern, index)}
@@ -212,7 +194,7 @@ export const TitleLab = ({ patterns, videos = [], medianViews = 0 }: TitleLabPro
 
           {patterns.emotionalTriggers.length > 0 && (
             <div className={styles.tagsContainer}>
-              <span className={styles.tagsLabel}>Emotional trigger vocabulary:</span>
+               <span className={styles.tagsLabel}>Words that create curiosity:</span>
               <div className={styles.tags}>
                 {patterns.emotionalTriggers.map((word, index) => (
                   <span key={index}>{word}</span>

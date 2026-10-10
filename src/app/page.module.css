@@ -3,7 +3,8 @@
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: 0 var(--gutter) var(--s-16);
+  padding: 0 var(--gutter) var(--s-24);
+  isolation: isolate;
 }
 
 .workspace::before {
@@ -31,6 +32,7 @@
   pointer-events: none;
   z-index: 0;
   animation: beamPulse 9s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
 }
 
 .gridRays {
@@ -58,13 +60,18 @@
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   gap: var(--s-12);
   align-items: center;
-  padding: var(--s-12) 0 var(--s-12);
+  min-height: min(42rem, calc(100vh - 4.5rem));
+  padding: clamp(3.5rem, 8vw, 6rem) 0 clamp(3rem, 7vw, 5rem);
+  position: relative;
 }
+
+.hero::before { content: ''; position: absolute; top: 6%; left: -10vw; width: 38rem; height: 22rem; background: radial-gradient(ellipse, color-mix(in srgb, var(--accent-cool) 5%, transparent), transparent 68%); filter: blur(30px); pointer-events: none; z-index: -1; }
 
 .heroCopy {
   position: relative;
   z-index: 2;
   animation: slideUp 0.7s both;
+  max-width: 42rem;
 }
 
 .eyebrow {
@@ -79,7 +86,11 @@
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
 }
+
+.eyebrow b { color: var(--text-3); font-weight: 400; }
+.eyebrow > span:last-child { color: var(--accent); font-family: var(--font-mono); font-size: .68rem; }
 
 .liveDot {
   width: 0.4rem;
@@ -94,6 +105,7 @@
   font-weight: 500;
   letter-spacing: -0.07em;
   line-height: 1.04;
+  text-wrap: balance;
 }
 
 .hero h1 > span {
@@ -106,12 +118,12 @@
   line-height: 1.75;
   margin-top: var(--s-6);
   letter-spacing: -0.01em;
+  max-width: 34rem;
 }
 
 .flipWordHighlight {
   color: var(--accent);
   font-weight: 600;
-  display: inline-block;
   padding: 0 2px;
 }
 
@@ -149,6 +161,13 @@
   font-size: 0.75rem;
   color: var(--text-3);
 }
+
+.signalStats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 42rem; margin-top: 2.15rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.signalStats > div { display: flex; gap: .6rem; padding: .85rem .9rem .85rem 0; min-width: 0; }
+.signalStats > div + div { padding-left: .9rem; border-left: 1px solid var(--line); }
+.signalStats strong { display: block; color: var(--text-2); font-size: .72rem; font-weight: 600; white-space: nowrap; }
+.signalStats small { display: block; color: var(--text-3); font-size: .68rem; line-height: 1.45; margin-top: .22rem; }
+.statIndex { color: var(--accent); font: .65rem var(--font-mono); padding-top: .12rem; }
 
 .trustRow > span {
   display: inline-flex;
@@ -199,7 +218,11 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  position: relative;
 }
+
+.journey::before { content: ''; position: absolute; left: 8%; right: 5%; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-line), transparent); opacity: .55; pointer-events: none; }
 
 .journeyIntro {
   display: flex;
@@ -233,7 +256,12 @@
   display: flex;
   gap: var(--s-3);
   align-items: center;
+  position: relative;
+  z-index: 1;
+  transition: transform var(--transition-normal);
 }
+
+.journeyItem:hover { transform: translateY(-2px); }
 
 .journeyItem > span {
   color: var(--accent);
@@ -338,7 +366,7 @@
   min-height: 270px;
   min-width: 0;
   padding: 1.5rem;
-  background: rgba(18, 21, 26, 0.75);
+  background: linear-gradient(145deg, rgba(30, 34, 40, .86), rgba(13, 16, 20, .94));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -350,6 +378,8 @@
   overflow: hidden;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
 }
+
+.sampleCard::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.06) 48%, transparent 66%); transform: translateX(-120%); transition: transform .8s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
 
 .sampleCard::before {
   content: '';
@@ -368,6 +398,9 @@
   border-color: color-mix(in srgb, var(--card-color) 45%, rgba(255, 255, 255, 0.15));
   box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.5), 0 0 24px color-mix(in srgb, var(--card-color) 10%, transparent);
 }
+
+.sampleCard:hover::after, .sampleCard:focus-visible::after { transform: translateX(120%); }
+.sampleCard:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .sampleTop {
   display: flex;
@@ -488,6 +521,12 @@
   opacity: 0.3;
 }
 
+.miniBars i { transform-origin: bottom; animation: barRise .8s cubic-bezier(.22,1,.36,1) both; }
+.miniBars i:nth-child(2) { animation-delay: .05s; }
+.miniBars i:nth-child(3) { animation-delay: .1s; }
+.miniBars i:nth-child(4) { animation-delay: .15s; }
+.miniBars i:nth-child(5) { animation-delay: .2s; }
+
 .disclosure {
   display: flex;
   gap: var(--s-2);
@@ -536,6 +575,7 @@
   .hero h1 {
     font-size: clamp(3rem, 9vw, 4.25rem);
   }
+  .signalStats { max-width: none; }
   .journey {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -559,16 +599,27 @@
 }
 
 @media (max-width: 640px) {
+  .workspace { padding-bottom: var(--s-16); }
+  .hero { min-height: auto; padding-top: var(--s-8); }
+  .hero::before { left: -16rem; }
   .trustRow {
     gap: var(--s-2);
   }
   .trustSep {
     display: none;
   }
+  .signalStats { grid-template-columns: 1fr; margin-top: 1.6rem; }
+  .signalStats > div, .signalStats > div + div { padding: .7rem 0; border-left: 0; }
+  .signalStats > div + div { border-top: 1px solid var(--line); }
+  .journey::before { left: 2rem; top: 2.4rem; bottom: 2.4rem; width: 1px; height: auto; background: linear-gradient(180deg, transparent, var(--accent-line), transparent); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sampleCard:hover {
     transform: none;
   }
+  .journeyItem:hover { transform: none; }
+  .miniBars i { animation: none; }
 }
+
+@keyframes barRise { from { transform: scaleY(.2); opacity: .2; } to { transform: scaleY(1); } }

@@ -35,6 +35,11 @@ export interface ChannelAnalytics {
   publishingFrequency: string;
   avgVideoLength: string;
   medianVideoLength: string;
+  /** Median of per-video lifetime averages, not a recent growth measurement. */
+  medianViewsPerDay: number | null;
+  medianViewsPerDayFormatted: string;
+  velocitySampleSize: number;
+  approximateVelocityCount: number;
   mostActiveDay: string;
   viewsGrowthTrend: 'rising' | 'stable' | 'declining' | 'unknown';
 }
@@ -74,11 +79,21 @@ export interface AIAnalysis {
   summary: string;
 }
 
+export interface HookSummary {
+  sampledVideoCount: number;
+  dominantArchetype: string;
+  averageWordsPerMinute: number;
+  averageHookDurationSeconds: number;
+  questionRate: number;
+  directAddressRate: number;
+}
+
 export interface FullAnalysisResponse {
   channel: ChannelData;
   videos: VideoData[];
   analytics: ChannelAnalytics;
   aiAnalysis: AIAnalysis;
+  hookSummary?: HookSummary;
   chartData: {
     viewsDistribution: NumericChartData;
     publishingTimeline: NumericChartData;

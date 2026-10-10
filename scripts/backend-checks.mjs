@@ -53,6 +53,8 @@ const { PaidRequestGuard } = require('../src/services/request-guard.ts');
 const { SerpApiService } = require('../src/services/serpapi.ts');
 const { AIAnalyzerService, validateAIAnalysis } = require('../src/services/ai-analyzer.ts');
 const { buildSampleAnalysis, resolveSampleName } = require('../src/services/sample-analysis.ts');
+const { calculateVelocity } = require('../src/utils/math-analytics.ts');
+const { summarizeHooks } = require('../src/utils/hook-summary.ts');
 const analyze = require('../src/app/api/analyze/route.ts').POST;
 const search = require('../src/app/api/search/route.ts').POST;
 const ID = 'UCBcRF18a7Qf58cCRy5xuWwQ';
@@ -171,6 +173,32 @@ await test('publishing metrics use parsed dates; relative dates are approximate,
   assert.match(transform.toPublishingTimeline(relative, now).datasets[0].label, /approximate/);
   assert.deepEqual(transform.toPublishingTimeline([video('Recently')], now).labels, []);
   assert.equal(transform.calculateAnalytics([video('Recently')]).publishingFrequency, 'Unavailable');
+});
+
+await test('velocity analytics exclude unknown dates and label approximate dates', () => {
+  const now = Date.parse('2026-06-30T00:00:00Z');
+  assert.equal(calculateVelocity(video('Unavailable'), now).available, false);
+  assert.equal(calculateVelocity(video('Unavailable'), now).formatted, 'Unavailable');
+  const exact = calculateVelocity(video('2026-06-20', { views: 1000 }), now);
+  assert.equal(exact.available, true);
+  assert.equal(exact.isApproximate, false);
+  assert.equal(exact.viewsPerDay, 100);
+  const approximate = calculateVelocity(video('1 week ago', { views: 700 }), now);
+  assert.equal(approximate.isApproximate, true);
+  assert.equal(approximate.viewsPerDay, 100);
+  const analytics = transform.calculateAnalytics([video('2026-06-20', { views: 1000 }), video('Unavailable', { views: 99999 })], now);
+  assert.equal(analytics.velocitySampleSize, 1);
+  assert.equal(analytics.medianViewsPerDay, 100);
+});
+
+await test('hook summaries aggregate available analyses without fabricating empty results', () => {
+  assert.equal(summarizeHooks([]), null);
+  const sample = { wordCount: 10, hookArchetype: 'Curiosity Question', wordsPerMinute: 120, hookDurationSeconds: 30, questionCount: 1, audienceAddresses: 2 };
+  const summary = summarizeHooks([sample, { ...sample, wordsPerMinute: 160, questionCount: 0 }]);
+  assert.equal(summary.sampledVideoCount, 2);
+  assert.equal(summary.averageWordsPerMinute, 140);
+  assert.equal(summary.questionRate, 50);
+  assert.equal(summary.directAddressRate, 100);
 });
 
 await test('AI validation rejects malformed nested fields and fabricated observed metrics', () => {

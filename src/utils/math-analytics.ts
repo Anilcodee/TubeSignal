@@ -2,74 +2,58 @@ import type { VideoData } from '@/types/analysis';
 import { parsePublishingDate } from './publishing-date';
 import { formatViews } from './format';
 
-/**
- * Calculates days elapsed since the video's publication date.
- * Gracefully falls back to parsed dates or minimum 1 day.
- */
-export function getDaysSincePublish(video: VideoData, now = Date.now()): number {
-  if (video.publishedDate && video.publishedDate !== 'Unavailable') {
-    const parsed = parsePublishingDate(video.publishedDate, now);
-    if (parsed && Number.isFinite(parsed.timestamp)) {
-      const days = Math.floor((now - parsed.timestamp) / 86_400_000);
-      return Math.max(1, days);
-    }
-    const d = new Date(video.publishedDate);
-    if (!isNaN(d.getTime())) {
-      const days = Math.floor((now - d.getTime()) / 86_400_000);
-      return Math.max(1, days);
-    }
-  }
-  if (video.relativeDate) {
-    const parsedRel = parsePublishingDate(video.relativeDate, now);
-    if (parsedRel && Number.isFinite(parsedRel.timestamp)) {
-      const days = Math.floor((now - parsedRel.timestamp) / 86_400_000);
-      return Math.max(1, days);
-    }
-  }
-  return 30; // sensible fallback for unparsed sample
+/** Parse only supported dates; never invent ages or accept future publication dates. */
+export function getPublishingAge(video: VideoData, now = Date.now()) {
+  if (!Number.isFinite(now)) return null;
+  const parsed = parsePublishingDate(video.publishedDate || '', now)
+    ?? parsePublishingDate(video.relativeDate || '', now);
+  if (!parsed || parsed.timestamp > now) return null;
+  return { days: (now - parsed.timestamp) / 86_400_000, approximate: parsed.approximate };
+}
+
+export function getDaysSincePublish(video: VideoData, now = Date.now()): number | null {
+  const age = getPublishingAge(video, now);
+  return age ? age.days : null;
 }
 
 export interface VideoVelocity {
-  viewsPerDay: number;
+  viewsPerDay: number | null;
   formatted: string;
-  daysSince: number;
+  daysSince: number | null;
   isApproximate: boolean;
+  available: boolean;
+  usesOneDayFloor: boolean;
 }
 
 /**
- * Normalizes cumulative lifetime views into current pace: views ÷ days_since_publish.
+ * Lifetime average, not current velocity or first-7/30-day performance.
+ * Ages below one day use a one-day denominator to avoid unstable hourly extrapolation.
  */
 export function calculateVelocity(video: VideoData, now = Date.now()): VideoVelocity {
-  const views = Number.isFinite(video.views) && video.views >= 0 ? video.views : 0;
-  let daysSince = 30;
-  let isApproximate = true;
-
-  if (video.publishedDate && video.publishedDate !== 'Unavailable') {
-    const parsed = parsePublishingDate(video.publishedDate, now);
-    if (parsed && Number.isFinite(parsed.timestamp)) {
-      daysSince = Math.max(1, Math.floor((now - parsed.timestamp) / 86_400_000));
-      isApproximate = parsed.approximate;
-    } else {
-      const d = new Date(video.publishedDate);
-      if (!isNaN(d.getTime())) {
-        daysSince = Math.max(1, Math.floor((now - d.getTime()) / 86_400_000));
-        isApproximate = false;
-      }
-    }
-  } else if (video.relativeDate) {
-    const parsedRel = parsePublishingDate(video.relativeDate, now);
-    if (parsedRel && Number.isFinite(parsedRel.timestamp)) {
-      daysSince = Math.max(1, Math.floor((now - parsedRel.timestamp) / 86_400_000));
-      isApproximate = true;
-    }
-  }
-
-  const viewsPerDay = Math.round(views / daysSince);
+  const age = getPublishingAge(video, now);
+  const available = !!age && video.viewsAvailable !== false && Number.isFinite(video.views) && video.views >= 0;
+  const viewsPerDay = available && age ? video.views / Math.max(1, age.days) : null;
+  const isApproximate = age?.approximate ?? false;
   return {
     viewsPerDay,
-    formatted: `${isApproximate ? '~' : ''}${formatViews(viewsPerDay)}/day`,
-    daysSince,
+    formatted: viewsPerDay !== null ? `${isApproximate ? '~' : ''}${formatViews(viewsPerDay)}/day` : 'Unavailable',
+    daysSince: age?.days ?? null,
     isApproximate,
+    available,
+    usesOneDayFloor: !!age && age.days < 1,
+  };
+}
+
+export function summarizeVelocity(videos: VideoData[], now = Date.now()) {
+  const values = videos.map((video) => calculateVelocity(video, now)).filter((v) => v.viewsPerDay !== null);
+  const sorted = values.map((v) => v.viewsPerDay!).sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  const medianViewsPerDay = sorted.length ? (sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2) : null;
+  return {
+    medianViewsPerDay,
+    medianViewsPerDayFormatted: medianViewsPerDay === null ? 'Unavailable' : formatViews(medianViewsPerDay),
+    velocitySampleSize: values.length,
+    approximateVelocityCount: values.filter((v) => v.isApproximate).length,
   };
 }
 

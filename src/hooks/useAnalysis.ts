@@ -11,7 +11,7 @@ const memoryCache = new Map<string, FullAnalysisResponse>();
 
 export function getClientCachedAnalysis(channelId: string, isDemo = false): FullAnalysisResponse | null {
   const normId = channelId.toLowerCase().trim().replace(/^@/, '');
-  const key = `tubesignal_analysis:${normId}:${isDemo}`;
+  const key = `tubesignal_analysis:v2:${normId}:${isDemo}`;
   const fromMem = memoryCache.get(key);
   if (fromMem) return fromMem;
   if (typeof window !== 'undefined') {
@@ -31,7 +31,7 @@ export function getClientCachedAnalysis(channelId: string, isDemo = false): Full
 
 export function setClientCachedAnalysis(channelId: string, isDemo = false, data: FullAnalysisResponse): void {
   const normId = channelId.toLowerCase().trim().replace(/^@/, '');
-  const key = `tubesignal_analysis:${normId}:${isDemo}`;
+  const key = `tubesignal_analysis:v2:${normId}:${isDemo}`;
   memoryCache.set(key, data);
   if (typeof window !== 'undefined') {
     try {

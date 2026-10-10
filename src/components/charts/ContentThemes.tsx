@@ -65,12 +65,12 @@ export const ContentThemes = ({ data }: { data: FullAnalysisResponse['chartData'
 
   return (
     <ChartWrapper
-      title="Topics in this sample"
-      caption="AI-estimated topic share across categorized uploads. Ranked by relative content frequency."
+       title="What topics does this channel cover?"
+       caption="Estimated share of videos by topic. Use this to see where the channel spends its attention."
       badge={
         topTheme ? (
           <span>
-            Dominant Topic: <strong style={{ color: 'var(--accent)' }}>{topTheme.label}</strong> ({topTheme.value}%)
+             Largest topic: <strong style={{ color: 'var(--accent)' }}>{topTheme.label}</strong> ({topTheme.value}%)
           </span>
         ) : undefined
       }

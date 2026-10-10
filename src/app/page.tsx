@@ -24,7 +24,7 @@ export default function WorkspacePage() {
       <div className={styles.gridRays} aria-hidden="true" />
       <section className={styles.hero} aria-labelledby="workspace-title">
         <div className={styles.heroCopy}>
-          <div className={styles.eyebrow}><span className={styles.liveDot} /> A clearer lens on YouTube</div>
+          <div className={styles.eyebrow}><span className={styles.liveDot} /> <span>Creator intelligence</span><b>/</b><span>01</span></div>
           <h1 id="workspace-title">Less noise.<br /><span>More signal.</span></h1>
           <p className={styles.subtitle}>
             Understand any channel.<br />
@@ -48,6 +48,11 @@ export default function WorkspacePage() {
               <TrendingUp size={14} />
               <span>Compare creators</span>
             </Link>
+          </div>
+          <div className={styles.signalStats} aria-label="TubeSignal workflow">
+            <div><span className={styles.statIndex}>01</span><span><strong>Spot the outlier</strong><small>Find the uploads worth studying.</small></span></div>
+            <div><span className={styles.statIndex}>02</span><span><strong>Read the pattern</strong><small>See what repeats across the catalog.</small></span></div>
+            <div><span className={styles.statIndex}>03</span><span><strong>Make the next move</strong><small>Leave with a testable idea.</small></span></div>
           </div>
         </div>
         <SignalScene />

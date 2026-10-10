@@ -23,10 +23,10 @@ interface GrowthPlaybookProps {
 type GrowthLens = 'duration' | 'titles' | 'schedule' | 'concepts';
 
 const LENSES = [
-  { id: 'duration' as const, label: 'Video Length', Icon: Clock },
-  { id: 'titles' as const, label: 'Title Packaging', Icon: Zap },
-  { id: 'schedule' as const, label: 'Release Windows', Icon: Calendar },
-  { id: 'concepts' as const, label: 'Content Ideas', Icon: Flame },
+  { id: 'duration' as const, label: 'Video length', Icon: Clock },
+  { id: 'titles' as const, label: 'Title style', Icon: Zap },
+  { id: 'schedule' as const, label: 'Publishing days', Icon: Calendar },
+  { id: 'concepts' as const, label: 'Topic ideas', Icon: Flame },
 ];
 
 export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybookProps) => {
@@ -49,13 +49,13 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
   const maxDayVideos = Math.max(...insights.publishingDays.map(d => d.videoCount), 1);
 
   return (
-    <section className={styles.section} aria-label="What Drives Growth">
+    <section className={styles.section} aria-label="Patterns worth testing">
       {/* ── Studio Header & Integrated Segment Switcher ── */}
       <div className={styles.header}>
         <div>
-          <h2 className={styles.title}>What Drives Growth</h2>
+          <h2 className={styles.title}>What tends to work?</h2>
           <p className={styles.subtitle}>
-            Empirical levers identified across video length, title packaging, and publishing timing.
+            Patterns worth testing across video length, title style, publishing days, and topics. They describe this sample, not a guarantee.
           </p>
         </div>
 
@@ -103,19 +103,19 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               <div className={styles.lensLayout}>
                 <div className={styles.metricStrip}>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Optimal Duration</span>
+                           <span className={styles.metricLabel}>Best-performing length</span>
                     <span className={styles.metricValue} style={{ color: 'var(--accent)' }}>
                       {insights.winningDuration?.rangeText || '15–30 mins'}
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Performance Lift</span>
+                           <span className={styles.metricLabel}>Compared with typical</span>
                     <span className={styles.metricValue}>
                       {insights.winningDuration ? `${insights.winningDuration.viewMultiplier}× median` : 'Higher views'}
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Sample Density</span>
+                           <span className={styles.metricLabel}>Videos in this range</span>
                     <span className={styles.metricValue}>
                       {insights.winningDuration?.count ?? 0} uploads in sample
                     </span>
@@ -131,10 +131,10 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                         <div className={styles.tierTop}>
                           <span className={`${styles.tierLabel} ${tier.isWinner ? styles.tierLabelWinner : ''}`}>
                             {tier.label}
-                            {tier.isWinner && <span className={styles.winnerBadge}>Top Performer</span>}
+                               {tier.isWinner && <span className={styles.winnerBadge}>Strongest range</span>}
                           </span>
                           <span className={styles.tierStat}>
-                            <strong>{tier.avgViewsFormatted}</strong> views ({tier.viewMultiplier}× typical)
+                             <strong>{tier.avgViewsFormatted}</strong> views ({tier.viewMultiplier}× typical views)
                           </span>
                         </div>
                         <div className={styles.tierTrack}>
@@ -157,19 +157,19 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               <div className={styles.lensLayout}>
                 <div className={styles.metricStrip}>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Lead Hook Pattern</span>
+                           <span className={styles.metricLabel}>Most common title style</span>
                     <span className={styles.metricValue} style={{ color: '#60a5fa' }}>
                       {insights.topFormula?.badge || 'Structured'}
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Win Rate</span>
+                           <span className={styles.metricLabel}>Videos above typical</span>
                     <span className={styles.metricValue}>
                       {insights.topFormula?.winRate || 75}% beat typical
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>View Multiplier</span>
+                           <span className={styles.metricLabel}>Typical view lift</span>
                     <span className={styles.metricValue}>
                       {insights.topFormula?.avgMultiplier || 1.3}× typical views
                     </span>
@@ -186,7 +186,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                             {formula.badge}
                           </span>
                           <span className={styles.formulaStat}>
-                            <strong>{formula.winRate}%</strong> win rate ({formula.avgMultiplier}× views)
+                             <strong>{formula.winRate}%</strong> beat typical ({formula.avgMultiplier}× views)
                           </span>
                         </div>
                         <div className={styles.tierTrack}>
@@ -215,19 +215,19 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               <div className={styles.lensLayout}>
                 <div className={styles.metricStrip}>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Momentum Day</span>
+                           <span className={styles.metricLabel}>Busiest day</span>
                     <span className={styles.metricValue} style={{ color: '#34d399' }}>
                       {insights.hasExactDates ? insights.peakPublishingDay : 'Mid-Week'}
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Velocity Lift</span>
+                           <span className={styles.metricLabel}>Compared with typical</span>
                     <span className={styles.metricValue}>
                       {insights.hasExactDates ? `${insights.peakLiftMultiplier}× typical` : 'Approximate dates'}
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Active Windows</span>
+                           <span className={styles.metricLabel}>Days with uploads</span>
                     <span className={styles.metricValue}>
                       {insights.publishingDays.filter(d => d.videoCount > 0).length} of 7 days
                     </span>
@@ -266,7 +266,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                   </div>
                 ) : (
                   <p className={styles.emptyNote}>
-                    Exact release weekdays require specific calendar timestamps.
+                     We need exact publication dates to compare weekdays reliably.
                   </p>
                 )}
               </div>
@@ -277,19 +277,19 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
               <div className={styles.lensLayout}>
                 <div className={styles.metricStrip}>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Top Content Demand</span>
+                           <span className={styles.metricLabel}>Topic to explore</span>
                     <span className={styles.metricValue} style={{ color: '#a78bfa' }}>
                       {insights.audiencePulse.contentDemands[0]?.topic || 'Reviews & Teardowns'}
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Audience Appetite</span>
+                           <span className={styles.metricLabel}>Strength of the signal</span>
                     <span className={styles.metricValue}>
-                      High Market Demand
+                       Strongest signal in this sample
                     </span>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Opportunities</span>
+                           <span className={styles.metricLabel}>Ideas found</span>
                     <span className={styles.metricValue}>
                       {insights.audiencePulse.contentDemands.length} strategic themes
                     </span>
@@ -305,7 +305,7 @@ export const GrowthPlaybook = ({ videos, medianViews, aiAnalysis }: GrowthPlaybo
                         type="button"
                         className={styles.conceptCard}
                         onClick={() => handleCopyTopic(demand.topic)}
-                        title="Click to copy concept outline to clipboard"
+                         title="Copy a simple concept prompt"
                       >
                         <div className={styles.conceptCardTop}>
                           <span className={styles.conceptTitle}>{demand.topic}</span>

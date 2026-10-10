@@ -52,12 +52,12 @@ export const PublishingTimeline = ({ data }: { data: FullAnalysisResponse['chart
 
   return (
     <ChartWrapper
-      title="When were these videos published?"
-      caption="Monthly cadence across analyzed uploads. Amber marks the highest-volume month."
+       title="When does this channel publish?"
+       caption="The number of analyzed videos published each month. Amber marks the busiest month."
       badge={
         maxUploads > 0 ? (
           <span>
-            Peak Month: <strong style={{ color: 'var(--accent)' }}>{peakMonth}</strong> ({maxUploads} uploads)
+             Busiest month: <strong style={{ color: 'var(--accent)' }}>{peakMonth}</strong> ({maxUploads} videos)
           </span>
         ) : undefined
       }

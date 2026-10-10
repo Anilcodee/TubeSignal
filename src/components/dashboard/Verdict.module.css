@@ -1,6 +1,6 @@
-.verdict { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: var(--s-8); padding: var(--s-8); position: relative; overflow: hidden; border: 1px solid var(--accent-line); border-radius: var(--r-panel); background: radial-gradient(ellipse at 0 0, var(--accent-soft), transparent 70%), var(--surface-1); animation: fadeIn .5s both; }
+.verdict { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: var(--s-8); padding: var(--s-8); position: relative; overflow: hidden; border: 1px solid var(--line-strong); border-left: 3px solid var(--accent); border-radius: var(--r-panel); background: var(--surface-1); animation: fadeIn .5s both; }
 .content { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-width: 0; }
-.tag { display: flex; align-items: center; gap: var(--s-2); color: var(--accent); font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; letter-spacing: .08em; margin-bottom: var(--s-5); }
+.tag { display: flex; align-items: center; gap: var(--s-2); color: var(--accent); font-size: 0.78rem; font-weight: 600; margin-bottom: var(--s-5); }
 .headline { font-size: clamp(1.8rem, 3.4vw, 2.8rem); font-weight: 500; letter-spacing: -.055em; line-height: 1.18; max-width: 24ch; text-wrap: balance; }
 .headline em { font-style: normal; color: var(--accent); }
 .ageCaveat { font-size: 0.75rem; color: var(--text-3); font-weight: 400; letter-spacing: normal; vertical-align: middle; margin-left: 0.4rem; white-space: nowrap; }
@@ -15,8 +15,8 @@
 .meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); font-size: 0.75rem; color: var(--text-3); margin-top: var(--s-6); }
 .metaDot { height: .3rem; width: .3rem; border-radius: 50%; background: var(--positive); }
 .spotlightChip { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm, 6px); background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); }
-.spotlight { padding: var(--s-5); background: color-mix(in srgb, var(--bg) 50%, transparent); border: 1px solid var(--line-strong); border-radius: var(--radius-lg, 14px); align-self: center; min-width: 0; }
-.spotlightLabel { display: flex; justify-content: space-between; align-items: center; gap: var(--s-2); color: var(--text-3); font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: .08em; margin-bottom: var(--s-3); padding: 0 4px; }
+.spotlight { padding: var(--s-5); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius-lg, 14px); align-self: center; min-width: 0; }
+.spotlightLabel { display: flex; justify-content: space-between; align-items: center; gap: var(--s-2); color: var(--text-2); font-size: 0.75rem; font-weight: 600; margin-bottom: var(--s-3); padding: 0 4px; }
 .spotlightLabel svg { color: var(--accent); margin-right: 2px; }
 .videoArt { position: relative; display: grid; place-items: center; height: 6.5rem; border-radius: var(--radius-md, 8px); overflow: hidden; color: var(--accent); background: radial-gradient(ellipse at 50% 120%, var(--accent-line), transparent 80%), var(--surface-warm); border: 1px solid var(--accent-soft); }
 .artGrid { position: absolute; inset: -40%; background-image: linear-gradient(var(--accent-soft) 1px, transparent 1px), linear-gradient(90deg, var(--accent-soft) 1px, transparent 1px); background-size: 1.6rem 1.6rem; transform: perspective(12rem) rotateX(40deg) rotateZ(-15deg); }

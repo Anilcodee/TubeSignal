@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, ArrowLeft, ArrowRight, ChartNoAxesCombined, ChevronDown, Info, LayoutGrid, Mic, Play, RefreshCw, TrendingUp } from 'lucide-react';
 import { useAnalysis } from '@/hooks/useAnalysis';
 import { ChannelOverview } from './ChannelOverview';
-import { Verdict } from './Verdict';
 import { KpiStrip } from './KpiStrip';
 import { Recommendations } from './Recommendations';
 import { TitleLab } from './TitleLab';
@@ -18,26 +18,27 @@ import { PublishingTimeline } from '@/components/charts/PublishingTimeline';
 import { LengthVsViews } from '@/components/charts/LengthVsViews';
 import { InPageVideoTheater } from './InPageVideoTheater';
 import { GrowthPlaybook } from './GrowthPlaybook';
-import { TracingBeam } from '@/components/ui/TracingBeam';
+import { ReportPulse } from './ReportPulse';
 import Loading from '@/app/analyze/[channelId]/loading';
 import styles from '@/app/analyze/[channelId]/page.module.css';
 
 const TABS = [
-  { id: 'overview', label: 'At a glance', Icon: LayoutGrid },
-  { id: 'patterns', label: 'Content patterns', Icon: ChartNoAxesCombined },
-  { id: 'transcripts', label: 'Hook & Script Lab', Icon: Mic },
-  { id: 'uploads', label: 'All uploads', Icon: Play },
+  { id: 'overview', label: 'Overview', description: 'Decide what matters', step: '01', Icon: LayoutGrid },
+  { id: 'patterns', label: 'Patterns', description: 'Find what repeats', step: '02', Icon: ChartNoAxesCombined },
+  { id: 'transcripts', label: 'Hook & Script', description: 'Study the opening', step: '03', Icon: Mic },
+  { id: 'uploads', label: 'Videos', description: 'Verify the evidence', step: '04', Icon: Play },
 ] as const;
 type ReportTab = typeof TABS[number]['id'];
+const isReportTab = (value: string | null): value is ReportTab => TABS.some((tab) => tab.id === value);
 
 export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; isDemo: boolean }) => {
   const { data, isLoading, error, refetch } = useAnalysis(channelId, isDemo);
-  const [activeTab, setActiveTab] = useState<ReportTab>('overview');
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActiveTab('overview');
-  }, [channelId]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get('tab');
+  const initialTab: ReportTab = isReportTab(requestedTab) ? requestedTab : 'overview';
+  const [selectedTab, setSelectedTab] = useState<ReportTab>(initialTab);
+  const activeTab: ReportTab = isReportTab(requestedTab) ? requestedTab : selectedTab;
   const [activeModalVideo, setActiveModalVideo] = useState<{
     videoId: string;
     title: string;
@@ -48,11 +49,11 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
     <div className={styles.pageContainer}>
       <section className={styles.errorPanel} role="alert">
         <span className={styles.errorIcon}><AlertCircle size={26} /></span>
-        <h1 className={styles.errorTitle}>No signal. Let’s try again.</h1>
-        <p className={styles.errorDesc}>{error || 'No analysis is available for this channel.'}</p>
+         <h1 className={styles.errorTitle}>We couldn’t build this report yet.</h1>
+         <p className={styles.errorDesc}>{error || 'No report is available for this channel right now.'}</p>
         <div className={styles.errorActions}>
           <button type="button" className={styles.btnSecondary} onClick={refetch}><RefreshCw size={14} /> Try again</button>
-          <Link href="/analyze/mkbhd?demo=true" className={styles.btnPrimary}>Explore a sample <ArrowRight size={14} /></Link>
+           <Link href="/analyze/mkbhd?demo=true" className={styles.btnPrimary}>Open a sample report <ArrowRight size={14} /></Link>
         </div>
         <Link href="/" className={styles.backLink}><ArrowLeft size={13} /> Search another channel</Link>
       </section>
@@ -60,8 +61,14 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
   );
   const sample = data.meta.dataSource === 'sample';
   const handleTabChange = (targetTab: ReportTab) => {
-    setActiveTab(targetTab);
+    setSelectedTab(targetTab);
     setActiveModalVideo(null);
+    const params = new URLSearchParams(searchParams.toString());
+    if (targetTab === 'overview') params.delete('tab');
+    else params.set('tab', targetTab);
+    if (isDemo) params.set('demo', 'true');
+    const query = params.toString();
+    router.replace(`/analyze/${encodeURIComponent(channelId)}${query ? `?${query}` : ''}`, { scroll: false });
   };
   const nextView = () => {
     handleTabChange('patterns');
@@ -70,35 +77,41 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
   };
   return (
     <div className={styles.pageContainer}>
-      <TracingBeam>
         <div className={styles.dashboard}>
-        <div className={`${styles.breadcrumb} no-print`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Link href="/">Workspace</Link><span>/</span><span>Channel report</span><span className={styles.reportLabel}>Signal Report</span>
+        <div className={`${styles.breadcrumb} ${styles.breadcrumbRow} no-print`}>
+          <div className={styles.breadcrumbPath}>
+            <Link href="/">Workspace</Link><span>/</span><span>Channel report</span><span className={styles.reportLabel}>Channel report</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <div className={styles.breadcrumbMeta}>
             <span className={styles.provenancePill}>
               <span
-                className={styles.provenanceDot}
-                style={{ background: sample ? '#A78BFA' : '#34D399' }}
+                className={`${styles.provenanceDot} ${sample ? styles.sampleDot : styles.liveDot}`}
                 aria-hidden="true"
               />
-              {sample ? 'Sample Fixture' : 'Live YouTube Data'} • {data.videos.length} uploads • {data.meta.analysisSource === 'gemini' ? 'Gemini AI' : 'Deterministic'}
+              {sample ? 'Illustrative sample' : 'Public YouTube data'} • {data.videos.length} videos
             </span>
-            <Link href={`/compare?c1=${encodeURIComponent(data.channel.handle || data.channel.channelId)}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 'var(--radius-sm, 6px)', background: 'var(--accent-soft)', border: '1px solid var(--accent-line)' }}>
-              <TrendingUp size={13} /> Compare against competitor
+            <Link href={`/compare?c1=${encodeURIComponent(data.channel.handle || data.channel.channelId)}`} className={styles.compareLink}>
+              <TrendingUp size={13} /> Compare with another creator
             </Link>
           </div>
         </div>
         <ChannelOverview channel={data.channel} meta={data.meta} data={data} />
         <details className={styles.notice}>
-          <summary><Info size={14} /><span>{sample ? 'Sample report · illustrative data, not live channel stats' : `Public-data snapshot · ${data.videos.length} uploads, not the full channel history`}</span><span className={styles.noticeMore}>About the data</span><ChevronDown size={13} /></summary>
-          <p>{data.meta.notice} {sample ? 'Metrics use only the supplied sample uploads.' : 'Views are cumulative; older videos have had more time to accumulate them.'} {data.meta.analysisSource === 'gemini' ? 'Interpretations are Gemini-assisted.' : 'Interpretations are calculated, not AI-generated.'}</p>
+          <summary><Info size={14} /><span>{sample ? 'Illustrative sample · use it to explore the report' : `Public-data snapshot · ${data.videos.length} recent videos`}</span><span className={styles.noticeMore}>How to read the numbers</span><ChevronDown size={13} /></summary>
+          <p>{data.meta.notice} {sample ? 'The numbers come from the sample videos shown here.' : 'Views are lifetime totals, so older videos have had more time to collect views.'} {data.meta.analysisSource === 'gemini' ? 'Written explanations are AI-assisted.' : 'Written explanations are calculated from the available data.'}</p>
         </details>
-        <div id="report-tabs" className={`${styles.tabBar} no-print`}>
-          <div role="tablist" aria-label="Report views" className={styles.tabs}>
-            {TABS.map(({ id, label, Icon }, index) => <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={activeTab === id} aria-controls={`panel-${id}`} tabIndex={activeTab === id ? 0 : -1}
-              onClick={() => handleTabChange(id)} onKeyDown={(event) => {
+         <ReportPulse
+           data={data}
+           onExplorePatterns={() => {
+             handleTabChange('patterns');
+             document.getElementById('tab-patterns')?.focus();
+             document.getElementById('report-tabs')?.scrollIntoView({ block: 'start' });
+           }}
+         />
+         <div id="report-tabs" className={`${styles.tabBar} no-print`}>
+           <div role="tablist" aria-label="Report views" className={styles.tabs}>
+             {TABS.map(({ id, label, description, step, Icon }, index) => <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={activeTab === id} aria-controls={`panel-${id}`} tabIndex={activeTab === id ? 0 : -1}
+               onClick={() => handleTabChange(id)} onKeyDown={(event) => {
                 let target = index;
                 if (event.key === 'ArrowRight') target = (index + 1) % TABS.length;
                 else if (event.key === 'ArrowLeft') target = (index + TABS.length - 1) % TABS.length;
@@ -106,10 +119,9 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
                 else if (event.key === 'End') target = TABS.length - 1;
                 else return;
                 event.preventDefault(); handleTabChange(TABS[target].id); document.getElementById(`tab-${TABS[target].id}`)?.focus();
-              }}><Icon size={15} /><span>{label}</span>{id === 'uploads' && <span className={styles.tabCount}>{data.videos.length}</span>}</button>)}
-          </div>
-          <span className={styles.tabHint}>The overview first. The details when you need them.</span>
-        </div>
+               }}><span className={styles.tabStep}>{step}</span><Icon size={15} /><span className={styles.tabCopy}><span className={styles.tabLabel}>{label}</span><small>{description}</small></span>{id === 'uploads' && <span className={styles.tabCount}>{data.videos.length}</span>}</button>)}
+           </div>
+         </div>
         <AnimatePresence mode="wait">
           <motion.div 
             key={activeTab} 
@@ -124,24 +136,20 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
             transition={{ duration: 0.15, ease: "easeOut" }}
           >
             {activeTab === 'overview' && <>
-            <Verdict
-              data={data}
-              onPlayStart={() => setActiveModalVideo(null)}
-            />
-            <KpiStrip channel={data.channel} analytics={data.analytics} videos={data.videos} />
-            {data.videos.length > 0 && (
-              <GrowthPlaybook
-                videos={data.videos}
-                medianViews={data.analytics.medianViews}
-                aiAnalysis={data.aiAnalysis}
-              />
-            )}
-            {data.videos.length > 0 && <div className={styles.grid7_5}><ViewsDistribution data={data.chartData.viewsDistribution} medianViews={data.analytics.medianViews} /><Recommendations analysis={data.aiAnalysis} source={data.meta.analysisSource} /></div>}
-            {data.videos.length > 0 && <button type="button" className={`${styles.continueButton} no-print`} onClick={nextView}><span><ChartNoAxesCombined size={18} /><span>Curious about the pattern?<small>Explore titles, video length and publishing pace.</small></span></span><ArrowRight size={18} /></button>}
+             <KpiStrip channel={data.channel} analytics={data.analytics} videos={data.videos} />
+             {data.videos.length > 0 && <div className={styles.grid7_5}><ViewsDistribution data={data.chartData.viewsDistribution} medianViews={data.analytics.medianViews} /><Recommendations analysis={data.aiAnalysis} source={data.meta.analysisSource} /></div>}
+             {data.videos.length > 0 && <button type="button" className={`${styles.continueButton} no-print`} onClick={nextView}><span><ChartNoAxesCombined size={18} /><span>Want to understand the pattern?<small>Compare titles, video length, topics, and publishing pace.</small></span></span><ArrowRight size={18} /></button>}
           </>}
-          {activeTab === 'patterns' && <>
-            <div className={styles.viewHeading}><span>CONNECT THE DOTS</span><h2>A closer look at the craft.</h2><p>How this channel packages and publishes its content.</p></div>
-            <TitleLab
+           {activeTab === 'patterns' && <>
+              <div className={styles.viewHeading}><div className={styles.viewHeadingCopy}><span>PACKAGING AND TIMING</span><h2>What repeats across the videos?</h2><p>Find the repeatable lever behind performance, then turn it into one testable idea.</p></div><span className={styles.viewOutcome}>Leave with one pattern to reuse</span></div>
+             {data.videos.length > 0 && (
+               <GrowthPlaybook
+                 videos={data.videos}
+                 medianViews={data.analytics.medianViews}
+                 aiAnalysis={data.aiAnalysis}
+               />
+             )}
+             <TitleLab
               patterns={data.aiAnalysis.titlePatterns}
               videos={data.videos}
               medianViews={data.analytics.medianViews}
@@ -159,7 +167,7 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
             >
               <span>
                 <Mic size={18} />
-                <span>Ready to dissect spoken delivery?<small>Inspect top hook pacing & transcript in Hook Lab.</small></span>
+                 <span>Want to study the opening?<small>See how the strongest videos begin and what they say first.</small></span>
               </span>
               <ArrowRight size={18} />
             </button>
@@ -184,14 +192,14 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
               >
                 <span>
                   <Play size={18} />
-                  <span>See the numbers behind every video?<small>Compare all uploads side-by-side in All Uploads.</small></span>
+                   <span>Ready to see every video?<small>Compare the uploads side by side and open the original video.</small></span>
                 </span>
                 <ArrowRight size={18} />
               </button>
             </>
           )}
-          {activeTab === 'uploads' && <>
-            <div className={styles.viewHeading}><span>THE SOURCE MATERIAL</span><h2>Every upload. In perspective.</h2><p>Compare the videos behind the numbers, ranked by public views.</p></div>
+           {activeTab === 'uploads' && <>
+              <div className={styles.viewHeading}><div className={styles.viewHeadingCopy}><span>THE SOURCE VIDEOS</span><h2>Every video, side by side.</h2><p>Use the source list to validate the story, spot outliers, and choose the next upload to study.</p></div><span className={styles.viewOutcome}>Verify before you copy</span></div>
             {activeModalVideo && (
               <InPageVideoTheater
                 videoId={activeModalVideo.videoId}
@@ -213,15 +221,14 @@ export const AnalysisDashboard = ({ channelId, isDemo }: { channelId: string; is
           </motion.div>
         </AnimatePresence>
         <details className={styles.methodNote}>
-          <summary>ℹ️ How TubeSignal Analyzes Public Channel Data</summary>
+           <summary>How this report is made</summary>
           <p>
-            This report analyzes the latest <strong>{data.videos.length} public uploads</strong> to extract packaging, duration, and publishing patterns.
-            Public YouTube metadata reflects observable cumulative views and release dates; private internal metrics like retention curve drop-offs and revenue remain protected in YouTube Studio.
-            {data.meta.analysisSource === 'gemini' ? ' Narrative insights are synthesized by Gemini AI.' : ' Insights are generated via deterministic calculations.'}
+             This report looks at the latest <strong>{data.videos.length} public videos</strong> to find patterns in titles, length, topics, timing, and openings.
+             Public YouTube data can show views and publishing history, but not private metrics such as audience retention, click-through rate, or revenue.
+             {data.meta.analysisSource === 'gemini' ? ' The written explanations are assisted by AI.' : ' The written explanations are calculated from the available data.'}
           </p>
         </details>
-      </div>
-      </TracingBeam>
+       </div>
     </div>
   );
 };

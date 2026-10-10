@@ -21,7 +21,7 @@ export const Header = () => {
         {!isHome && <div className={styles.searchSlot}><CommandBar onSearch={(id) => router.push(`/analyze/${encodeURIComponent(id)}`)} /></div>}
         <nav className={styles.navigation} aria-label="Main navigation">
           <Link href="/compare" className={styles.sampleNav} style={isCompare ? { color: 'var(--accent)' } : undefined}>
-            Compare
+             Compare creators
           </Link>
           {isHome ? (
             <>

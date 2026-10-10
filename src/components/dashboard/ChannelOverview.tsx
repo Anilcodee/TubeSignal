@@ -100,7 +100,7 @@ export const ChannelOverview = ({ channel, meta, data }: { channel: ChannelData;
     const html = generateHtmlDossier(data);
     const filename = `tubesignal-${cleanSlug}-dossier.html`;
     downloadFile(html, filename, 'text/html');
-    showToast('Executive HTML Dossier downloaded');
+     showToast('Web report downloaded');
     setExportOpen(false);
   };
 
@@ -109,7 +109,7 @@ export const ChannelOverview = ({ channel, meta, data }: { channel: ChannelData;
     const report = generateReport(data);
     const filename = `tubesignal-${cleanSlug}-report.md`;
     downloadFile(report, filename, 'text/markdown');
-    showToast('Report downloaded as Markdown');
+     showToast('Summary downloaded');
     setExportOpen(false);
   };
 
@@ -117,7 +117,7 @@ export const ChannelOverview = ({ channel, meta, data }: { channel: ChannelData;
     if (!data) return;
     const filename = `tubesignal-${cleanSlug}-data.json`;
     downloadFile(JSON.stringify(data, null, 2), filename, 'application/json');
-    showToast('Structured data downloaded as JSON');
+     showToast('Raw data downloaded');
     setExportOpen(false);
   };
 
@@ -144,7 +144,7 @@ export const ChannelOverview = ({ channel, meta, data }: { channel: ChannelData;
             <span>{channel.totalVideosAnalyzed} uploads analyzed</span>
           </div>
           <p className={styles.timestamp}>
-            {sample ? 'Illustrative data' : `Retrieved ${new Date(meta.generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`} · {meta.analysisSource === 'gemini' ? 'Gemini-assisted interpretation' : 'Calculated observations'}
+             {sample ? 'Illustrative data' : `Retrieved ${new Date(meta.generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`} · {meta.analysisSource === 'gemini' ? 'Written summary assisted by AI' : 'Calculated from public data'}
           </p>
         </div>
       </div>
@@ -183,18 +183,18 @@ export const ChannelOverview = ({ channel, meta, data }: { channel: ChannelData;
         {/* Export / Save dropdown */}
         <div ref={exportRef} className={styles.dropdown}>
           <button type="button" className={`${styles.actionBtn} ${styles.exportBtn}`} onClick={() => { setExportOpen(!exportOpen); setShareOpen(false); }}>
-            <Download size={14} /> Save Dossier <ChevronDown size={12} className={`${styles.chevron} ${exportOpen ? styles.chevronOpen : ''}`} />
+             <Download size={14} /> Save report <ChevronDown size={12} className={`${styles.chevron} ${exportOpen ? styles.chevronOpen : ''}`} />
           </button>
           {exportOpen && (
             <div className={styles.dropdownMenu} role="menu">
               <button role="menuitem" onClick={downloadHtmlReport}>
-                <FileCode size={14} /> Download HTML Dossier (.html)
+                 <FileCode size={14} /> Download web report (.html)
               </button>
               <button role="menuitem" onClick={downloadMarkdown}>
-                <FileText size={14} /> Download Markdown (.md)
+                 <FileText size={14} /> Download summary (.md)
               </button>
               <button role="menuitem" onClick={downloadJSON}>
-                <Copy size={14} /> Download Raw Data (.json)
+                 <Copy size={14} /> Download raw data (.json)
               </button>
             </div>
           )}

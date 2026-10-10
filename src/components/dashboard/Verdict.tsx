@@ -4,10 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/utils/animations';
-import { ArrowUpRight, Eye, Pause, Play, Sparkles, X, Zap } from 'lucide-react';
+import { ArrowUpRight, Compass, Eye, Pause, Play, X, Zap } from 'lucide-react';
 import type { FullAnalysisResponse } from '@/types/analysis';
 import { formatViews } from '@/utils/format';
-import { TextGenerate } from '@/components/ui/TextGenerate';
 import styles from './Verdict.module.css';
 
 export const Verdict = ({
@@ -115,7 +114,7 @@ export const Verdict = ({
   }, []);
 
   return (
-    <section className={styles.verdict} aria-label="Your 60-second brief">
+    <section className={styles.verdict} aria-label="Channel summary">
       <motion.div
         className={styles.content}
         initial="hidden"
@@ -123,16 +122,16 @@ export const Verdict = ({
         variants={fadeIn}
       >
         <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.tag}>
-          <Sparkles size={14} />
-          <span>Executive Brief</span>
+          <Compass size={14} />
+          <span>Quick read</span>
         </motion.div>
         <motion.h2 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.headline}>
           {headline}
         </motion.h2>
-        {inlineSummary ? (
-          <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.inlineSummary}>
-            <TextGenerate words={inlineSummary} delayPerWord={0.02} initialDelay={0.25} />
-          </motion.p>
+         {inlineSummary ? (
+           <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.inlineSummary}>
+             {inlineSummary}
+           </motion.p>
         ) : (
           <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.supporting}>
             {hasComparison ? `A typical upload in this report has ${formatViews(analytics.medianViews)} views. Compare the leading upload, then explore the patterns.` : 'A snapshot of the public uploads available.'}
@@ -140,7 +139,7 @@ export const Verdict = ({
         )}
         {remainingSummary && (
           <motion.details variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.summary}>
-            <summary>{meta.analysisSource === 'gemini' ? 'Read full AI interpretation' : 'Read full calculated summary'}</summary>
+            <summary>{meta.analysisSource === 'gemini' ? 'Read the full written summary' : 'Read the full calculated summary'}</summary>
             <p>{remainingSummary}</p>
           </motion.details>
         )}
@@ -154,7 +153,7 @@ export const Verdict = ({
         transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
       >
         <div className={styles.spotlightLabel}>
-          <span>Standout Upload</span>
+          <span>Top video in this sample</span>
           <ArrowUpRight size={15} />
         </div>
 
@@ -247,13 +246,13 @@ export const Verdict = ({
         <div className={styles.spotlightStats}>
           <span><Eye size={14} /> {formatViews(top.views)} views</span>
           {ratio !== null && (
-            <span className={styles.spotlightChip}>
-              <Zap size={11} /> {ratio.toFixed(1)}× typical
+               <span className={styles.spotlightChip}>
+               <Zap size={11} /> {ratio.toFixed(1)}× typical views
             </span>
           )}
-          {share !== null && <span>{share}% of total</span>}
+          {share !== null && <span>{share}% of sample views</span>}
         </div>
-        <p className={styles.scope}>Highest views among these uploads · not age-adjusted</p>
+        <p className={styles.scope}>This uses lifetime views, so older videos may have had more time to grow.</p>
 
         {!isPlayingInline && (
           <button
@@ -261,7 +260,7 @@ export const Verdict = ({
             className={styles.watchBtn}
             onClick={handleStartInlinePlay}
           >
-            <Play size={12} fill="currentColor" /> Watch In-Page
+             <Play size={12} fill="currentColor" /> Watch top video
           </button>
         )}
       </motion.div>}

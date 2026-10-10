@@ -56,12 +56,12 @@ export const LengthVsViews = ({ data }: { data: FullAnalysisResponse['chartData'
 
   return (
     <ChartWrapper
-      title="Duration and views"
-      caption="Correlation between video length and cumulative views. Amber node marks the top-performing upload."
+       title="Do longer videos get more views?"
+       caption="Each dot is one video. This shows a relationship, not a promise that length causes views."
       badge={
         peakPoint ? (
           <span>
-            Top Performer: <strong style={{ color: 'var(--accent)' }}>{peakPoint.x}m</strong> ({formatViews(maxViews)})
+             Highest-viewed: <strong style={{ color: 'var(--accent)' }}>{peakPoint.x}m</strong> ({formatViews(maxViews)})
           </span>
         ) : undefined
       }

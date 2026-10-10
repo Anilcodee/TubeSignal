@@ -1,0 +1,17 @@
+.panel { border-top: 1px solid var(--line); margin-top: 1.5rem; padding-top: 1.5rem; }
+.header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.header h3 { font-size: 1rem; }
+.header p, .panel .note, .grid small, .grid p { color: var(--text-3); font-size: .75rem; line-height: 1.6; }
+.header button { border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--accent); border-radius: var(--r-control); padding: .65rem .85rem; min-height: 44px; font-size: .8125rem; }
+.header button:disabled { opacity: .6; cursor: wait; }
+.panel .note { margin-top: .75rem; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
+.grid article { min-width: 0; border: 1px solid var(--line-strong); padding: 1rem; border-radius: var(--r-panel); }
+.grid h4 { font-size: .875rem; overflow-wrap: anywhere; }
+.grid strong { display: block; color: var(--accent); font-size: 1rem; margin: 1rem 0; }
+.grid article:nth-child(2) strong { color: var(--accent-cool); }
+.grid dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.grid dt { color: var(--text-3); font-size: .75rem; }
+.grid dd { color: var(--text); font-family: var(--font-mono); font-size: .875rem; margin-top: .3rem; }
+.grid a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-cool); font-size: .75rem; margin-top: .75rem; }
+@media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 1fr); } }

@@ -4,6 +4,7 @@ import type { SerpApiChannelResponse, SerpApiChannelResult, SerpApiVideoResult }
 import { formatViews, parseCount, parseDurationToSeconds, formatSecondsToDuration } from '@/utils/format';
 import { isChannelId, normalizeChannelInput } from '@/utils/channel-input';
 import { parsePublishingDate } from '@/utils/publishing-date';
+import { summarizeVelocity } from '@/utils/math-analytics';
 
 const text = (value: unknown, max = 1000): string => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
@@ -120,6 +121,7 @@ export class DataTransformerService {
       publishingFrequency: spanDays >= 1 ? `${((dates.length - 1) * 7 / spanDays).toFixed(1)} videos/week (${approximate ? 'approximate, ' : ''}observed dated sample)` : 'Unavailable',
       avgVideoLength: durations.length ? formatSecondsToDuration(Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length)) : 'Unavailable',
       medianVideoLength: durations.length ? formatSecondsToDuration(median(durations)) : 'Unavailable',
+      ...summarizeVelocity(videos, now),
       mostActiveDay,
       // Differently aged lifetime view totals are not a historical growth series.
       viewsGrowthTrend: 'unknown',

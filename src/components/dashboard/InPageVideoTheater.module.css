@@ -1,7 +1,7 @@
 .theaterContainer {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #161a1e, #121518);
+  background: var(--surface-1);
   border: 1px solid rgba(255, 193, 110, 0.3);
   border-radius: 1rem;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(255, 193, 110, 0.08);
@@ -37,7 +37,6 @@
   font-family: var(--font-mono, monospace);
   font-weight: 700;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: #ffc16e;
   background: rgba(255, 193, 110, 0.12);
   border: 1px solid rgba(255, 193, 110, 0.3);
@@ -149,8 +148,7 @@
 .controlsLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
   color: #8d949a;
   display: flex;
   align-items: center;

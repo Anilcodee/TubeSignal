@@ -39,6 +39,8 @@
   --accent-soft: rgba(255, 178, 36, 0.10);
   --accent-line: rgba(255, 178, 36, 0.35);
   --accent-glow: rgba(255, 178, 36, 0.15);
+  --accent-cool: #8ab8ff;
+  --accent-cool-soft: rgba(138, 184, 255, 0.12);
   --color-accent: var(--accent);
   --color-accent-hover: #FFD39A;
   --color-accent-muted: var(--accent-soft);
@@ -150,6 +152,7 @@
   --shadow-glow: 0 0 40px var(--accent-glow);
   --shadow-tactile: none;
   --shadow-panel: none;
+  --shadow-hero: 0 32px 90px rgba(0, 0, 0, 0.38);
 
   --page-max: 1280px;
   --gutter: clamp(16px, 4vw, 32px);
@@ -181,7 +184,9 @@ body {
   background-color: var(--bg);
   color: var(--text);
   font-feature-settings: 'tnum' 1, 'cv11' 1;
-  background-image: radial-gradient(ellipse at 75% 0%, var(--accent-soft), transparent 38rem);
+  background-image:
+    radial-gradient(ellipse at 75% -8%, rgba(255, 178, 36, 0.08), transparent 34rem),
+    radial-gradient(ellipse at 12% 48%, rgba(138, 184, 255, 0.025), transparent 32rem);
   overflow-x: clip;
 }
 
