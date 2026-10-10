@@ -144,7 +144,7 @@ export const ChannelOverview = ({ channel, meta, data }: { channel: ChannelData;
             <span>{channel.totalVideosAnalyzed} uploads analyzed</span>
           </div>
           <p className={styles.timestamp}>
-             {sample ? 'Illustrative data' : `Retrieved ${new Date(meta.generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`} · {meta.analysisSource === 'gemini' ? 'Written summary assisted by AI' : 'Calculated from public data'}
+             {sample ? 'Illustrative sample data' : `SerpApi YouTube data · Retrieved ${new Date(meta.generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`} · {meta.analysisSource === 'gemini' ? 'Gemini AI interpretation' : sample ? 'Offline computed sample · Gemini AI on live reports' : 'Computed interpretation'}
           </p>
         </div>
       </div>
@@ -183,7 +183,7 @@ export const ChannelOverview = ({ channel, meta, data }: { channel: ChannelData;
         {/* Export / Save dropdown */}
         <div ref={exportRef} className={styles.dropdown}>
           <button type="button" className={`${styles.actionBtn} ${styles.exportBtn}`} onClick={() => { setExportOpen(!exportOpen); setShareOpen(false); }}>
-             <Download size={14} /> Save report <ChevronDown size={12} className={`${styles.chevron} ${exportOpen ? styles.chevronOpen : ''}`} />
+             <Download size={14} /> Save Dossier <ChevronDown size={12} className={`${styles.chevron} ${exportOpen ? styles.chevronOpen : ''}`} />
           </button>
           {exportOpen && (
             <div className={styles.dropdownMenu} role="menu">

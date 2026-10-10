@@ -4,6 +4,7 @@ import type { ChannelData, ChannelAnalytics, VideoData } from '@/types/analysis'
 import { formatViews, parseSubscribers } from '@/utils/format';
 import { motion } from 'framer-motion';
 import { kpiCardVariant } from '@/utils/animations';
+import { Sparkline } from './Sparkline';
 
 
 import styles from './KpiStrip.module.css';
@@ -95,13 +96,9 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
     ? (isApproximatePace ? 'Estimated from dated sample' : 'Observed dated upload pace')
     : 'More publication dates needed';
 
-  // Sparkline data
-  const recentViews = [...videos].slice(0, 8).reverse().map((v) => (v.views && v.views >= 0 ? v.views : 0));
-  const maxSpark = Math.max(...recentViews, 1);
-  const minSpark = Math.min(...recentViews, 0);
-  const viewsSpark = recentViews.length >= 2
-    ? recentViews.map((val) => Math.round(((val - minSpark) / (maxSpark - minSpark || 1)) * 12 + 2))
-    : [4, 6, 8, 12, 10, 14];
+  // Per-upload distributions, not historical growth. Never invent unavailable history.
+  const viewsSpark = observedVideos.slice(0, 8).map((video) => video.views);
+  const durationSpark = durationVideos.slice(0, 8).map((video) => video.lengthSeconds);
 
   const metrics = [
     {
@@ -111,7 +108,8 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
       formatFn: formatViews,
       caption: 'Public channel audience',
       Icon: Users,
-      sparkPoints: [4, 6, 7, 9, 11, 13, 15],
+      sparkPoints: [],
+      sparkLabel: '',
     },
     {
        label: 'Typical views',
@@ -121,20 +119,23 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
       caption: viewsCaption,
       Icon: Eye,
       sparkPoints: viewsSpark,
+      sparkLabel: 'Lifetime views per sampled upload in report order; not a growth trend',
     },
     {
        label: 'Average video length',
       value: durationCount ? analytics.avgVideoLength : '—',
       caption: durationCaption,
       Icon: Clock3,
-      sparkPoints: [6, 9, 11, 8, 12, 10, 13],
+      sparkPoints: durationSpark,
+      sparkLabel: 'Duration per sampled upload in report order',
     },
     {
        label: 'Uploads per week',
       value: paceDisplay,
       caption: paceCaption,
       Icon: CalendarDays,
-      sparkPoints: [5, 12, 7, 13, 9, 11, 14],
+      sparkPoints: [],
+      sparkLabel: '',
     },
   ];
 
@@ -157,6 +158,11 @@ export const KpiStrip = ({ channel, analytics, videos }: { channel: ChannelData;
             <span className={styles.value}>
               <AnimatedValue value={metric.value} targetNum={targetNum} formatFn={formatFn} />
             </span>
+            {metric.sparkPoints.length >= 2 && (
+              <span role="img" aria-label={metric.sparkLabel} title={metric.sparkLabel}>
+                <Sparkline data={metric.sparkPoints} width={64} height={24} color="var(--accent)" />
+              </span>
+            )}
           </div>
           <span className={styles.caption} title={metric.caption}>{metric.caption}</span>
         </motion.div>

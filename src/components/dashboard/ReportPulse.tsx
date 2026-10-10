@@ -43,7 +43,7 @@ export const ReportPulse = ({ data, onExplorePatterns }: ReportPulseProps) => {
       <div className={styles.pulseHeader}>
         <div className={styles.headerCopy}>
           <span className={styles.eyebrow}><Sparkles size={13} /> Channel pulse</span>
-          <h2 id="channel-pulse-title">Three signals. One move.</h2>
+           <h2 id="channel-pulse-title">Executive verdict: three signals. One move.</h2>
           <p>Start with the standout, understand what repeats, then turn one observation into your next test.</p>
         </div>
         <ConfidenceLabel sampleSize={observed.length} detail={`${observed.length} uploads with view data`} />

@@ -50,6 +50,8 @@
 .valueRow {
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
   margin-top: 0.65rem;
 }
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUp, AudioLines, CheckCircle2, Code2, ExternalLink, Heart, Sparkles, Zap } from 'lucide-react';
+import { ArrowUp, AudioLines, CheckCircle2, Code2, ExternalLink, Sparkles, Zap } from 'lucide-react';
 import styles from './Footer.module.css';
 
 export const Footer = () => {
@@ -172,7 +172,7 @@ export const Footer = () => {
             </span>
             <span className={styles.separator}>·</span>
             <span className={styles.madeWith}>
-              Built with <Heart size={12} className={styles.heartIcon} /> for the SerpApi Hackathon
+               Built for SerpApi Hackathon
             </span>
           </div>
 

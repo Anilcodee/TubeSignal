@@ -23,9 +23,9 @@ import Loading from '@/app/analyze/[channelId]/loading';
 import styles from '@/app/analyze/[channelId]/page.module.css';
 
 const TABS = [
-  { id: 'overview', label: 'Overview', description: 'Decide what matters', step: '01', Icon: LayoutGrid },
-  { id: 'patterns', label: 'Patterns', description: 'Find what repeats', step: '02', Icon: ChartNoAxesCombined },
-  { id: 'transcripts', label: 'Hook & Script', description: 'Study the opening', step: '03', Icon: Mic },
+  { id: 'overview', label: 'At a glance', description: 'Decide what matters', step: '01', Icon: LayoutGrid },
+  { id: 'patterns', label: 'Content patterns', description: 'Find what repeats', step: '02', Icon: ChartNoAxesCombined },
+  { id: 'transcripts', label: 'Hook & Script Lab', description: 'Study the opening', step: '03', Icon: Mic },
   { id: 'uploads', label: 'Videos', description: 'Verify the evidence', step: '04', Icon: Play },
 ] as const;
 type ReportTab = typeof TABS[number]['id'];
